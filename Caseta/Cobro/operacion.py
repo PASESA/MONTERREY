@@ -11,10 +11,6 @@ class Operacion:
                                 passwd="",
                                 database="db")
 
-        #conexion = pymysql.connect(host="192.168.1.91",
-        #                   user="Aurelio",
-        #                   passwd="RG980320",
-        #                   database="Parqueadero1")
         return conexion
 
 
@@ -154,7 +150,7 @@ class Operacion:
     def corte(self):
         cone=self.abrir()
         cursor=cone.cursor()
-        sql="select sum(importe) from Entradas where CorteInc = 0"
+        sql="select COALESCE(sum(importe), 0) from Entradas where CorteInc = 0"
         cursor.execute(sql)
         cone.close()
         return cursor.fetchall()
@@ -320,7 +316,7 @@ class Operacion:
     def UpdPensionado(self, datos):
         cone=self.abrir()
         cursor=cone.cursor()
-        sql="UPDATE Pensionados SET Vigencia=%s, Fecha_vigencia=%s, Monto=%s WHERE id_cliente=%s"
+        sql="UPDATE Pensionados SET Vigencia=%s, Fecha_vigencia=%s WHERE id_cliente=%s"
         #sql = "update Entradas set CorteInc = %s, vobo = %s where TiempoTotal is not null and CorteInc=0;"
         cursor.execute(sql, datos)
         cone.commit()
@@ -351,10 +347,10 @@ class Operacion:
     def TreaPenAdentro(self):
         cone=self.abrir()
         cursor=cone.cursor()
-        sql="select Placas, Modelo_auto from Pensionados where Estatus='Adentro'"
+        sql="""SELECT Num_tarjeta, Nom_cliente, Apell1_cliente, Placas, Modelo_auto from Pensionados where Estatus = "Adentro";"""
         cursor.execute(sql)
         cone.close()
-        return cursor.fetchall()      
+        return cursor.fetchall()
 
 #####USUARIOS###
 
@@ -401,3 +397,74 @@ class Operacion:
         cursor.execute(sql,dato)        
         cone.commit()
         cone.close()    
+
+
+    def nombre_usuario_activo(self):
+        """
+        Esta función realiza una consulta a la base de datos para obtener el nombre del usuario que esta activo.
+
+        Args:
+        - self: referencia a la clase donde está definida la función.
+
+        Returns:
+        - resultados: lista de tuplas que contienen la siguiente información:
+            - nombre: El nombre del usuario
+
+        Esta función utiliza la librería de MySQL Connector para conectarse a la base de datos y ejecutar una consulta SQL.
+        """
+
+        # Se establece la conexión con la base de datos.
+        cone = self.abrir()
+
+        # Se crea un cursor para ejecutar la consulta.
+        cursor = cone.cursor()
+
+        # Se define la consulta SQL.
+        sql = f"""SELECT nombre FROM MovsUsuarios WHERE CierreCorte IS Null"""
+
+        # Se ejecuta la consulta y se almacenan los resultados en una lista de tuplas.
+        cursor.execute(sql)
+        resultados = cursor.fetchall()
+
+        # Se cierra la conexión con la base de datos.
+        cone.close()
+
+        # Se devuelve la lista de tuplas con los resultados de la consulta.
+        return resultados
+
+    def total_pensionados_corte(self, corte):
+        """
+        Realiza una consulta a la base de datos para obtener la cantidad y el importe total de los pagos de pensiones 
+        realizados en un corte específico.
+
+        Args:
+            self: referencia a la clase donde está definida la función.
+            corte (int): el número de folio del corte que se desea consultar.
+
+        Returns:
+            resultados (list): una lista de tuplas que contienen la siguiente información:
+                - Cuantos (int): la cantidad de pagos de pensiones realizados en el corte.
+                - Concepto (str): una cadena que indica el tipo de pago (en este caso, siempre será "Pensionados").
+                - ImporteTotal (float): el importe total de los pagos de pensiones realizados en el corte.
+
+        Esta función utiliza la librería de MySQL Connector para conectarse a la base de datos y ejecutar una consulta SQL.
+
+        """
+        # Se establece la conexión con la base de datos.
+        cone = self.abrir()
+
+        # Se crea un cursor para ejecutar la consulta.
+        cursor = cone.cursor()
+
+        # Se define la consulta SQL.
+        sql = f"""SELECT COUNT(*) AS Cuantos, "Pensionados" AS Concepto, COALESCE(FORMAT(SUM(p.Monto), 2), 0) AS ImporteTotal FROM PagosPens p INNER JOIN Cortes c ON p.Fecha_pago BETWEEN c.FechaIni AND c.FechaFin WHERE c.Folio = {corte};"""
+
+        # Se ejecuta la consulta y se almacenan los resultados en una lista de tuplas.
+        cursor.execute(sql)
+        resultados = cursor.fetchall()
+
+        # Se cierra la conexión con la base de datos.
+        cone.close()
+
+        # Se devuelve la lista de tuplas con los resultados de la consulta.
+        return resultados

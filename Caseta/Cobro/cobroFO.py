@@ -1140,24 +1140,53 @@ class FormularioOperacion:
         p.text("Cantidad - Tarifa - valor C/U - Total "+'\n')
         for fila in respuesta:
             self.scrolledtxt2.insert(tk.END, str(fila[0])+" Boletos con tarifa "+str(fila[1])+"\n"+"valor c/u $"+str(fila[2])+" Total $"+str(fila[3])+"\n\n")
-            p.text('   ')
-            p.text(str(fila[0]))
-            p.text('   -  ')
-            p.text(str(fila[1]))
-            p.text(' -  $')
-            #p.text('valor c/u $')
-            p.text(str(fila[2]))
-            p.text('  -  $')
-            p.text(str(fila[3]))
-            p.text('\n')
+
+            
+            # p.text('   ')
+            # p.text(str(fila[0]))
+            # p.text('   -  ')
+            # p.text(str(fila[1]))
+            # p.text(' -  $')
+            # #p.text('valor c/u $')
+            # p.text(str(fila[2]))
+            # p.text('  -  $')
+            # p.text(str(fila[3]))
+            # p.text('\n')
+
+            p.text(f"   {str(fila[0])}   -   {str(fila[1])}   -   ${str(fila[2])}   -   ${str(fila[3])}\n")
+
         else:
-            p.text(BolCobrImpresion+' Boletos           Suma total $'+Im38+'\n')    
+            p.text("\n")
+            p.text(f"{BolCobrImpresion} Boletos         Suma total ${Im38}\n\n")    
+
+        p.text("----------------------------------\n")
+        respuesta = self.operacion1.total_pensionados_corte(Numcorte)
+
+        if int(respuesta[0][0]) == 0:
             p.cut()
             self.Cerrar_Programa()
-        #ser = serial.Serial('/dev/ttyAMA0', 9600)
-        #Enviamos el caracter por serial, codificado en Unicode
-        #entrada='c'
-        #ser.write(str(entrada).encode())
+
+        else:
+            p.text("Cantidad e Importes Pensiones"+'\n')
+            p.text("Cuantos - Concepto - ImporteTotal "+'\n')
+            for fila in respuesta:
+                p.text(f"   {str(fila[0])}   -  {str(fila[1])}   -   ${str(fila[2])}\n")
+
+                # p.text('   ')
+                # p.text(str(fila[0]))
+                # p.text('   -  ')
+                # p.text(str(fila[1]))
+                # p.text(' -  $')
+                # #p.text('valor c/u $')
+                # p.text(str(fila[2]))
+                # p.text('\n')
+
+            else:
+                p.text("----------------------------------\n")
+                p.cut()
+                self.Cerrar_Programa()
+
+
     def Cerrar_Programa(self):
         self.ventana1.destroy()  
 ###################################
@@ -1306,7 +1335,7 @@ class FormularioOperacion:
                         #mb.showinfo("msj Registros",fila[0])
                         workbook.close()       
                         mb.showinfo("Reporte de Corte",'Reporte Guardado')     
-                #except:
+                #except Exception as e:
                     #print('lo que escribiste no es un entero')
                     #mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")                        
             else:
@@ -1522,7 +1551,7 @@ class FormularioOperacion:
         self.entryMonto=ttk.Entry(self.labelframe3, width=10, textvariable=self.Monto, state="readonly")
         self.entryMonto.grid(column=1, row=2)
         self.comboMensual = ttk.Combobox(self.labelframe3, width=8, justify=tk.RIGHT, state="readonly")
-        self.comboMensual["values"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        self.comboMensual["values"] = ["1"]#, "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
         self.comboMensual.bind('<Return>',self.CalculaPagoPen)#Calcula el monto a pagar
         self.comboMensual.current(0)
         self.comboMensual.grid(column=1, row=3, padx=1, pady=1)
@@ -1677,7 +1706,8 @@ class FormularioOperacion:
                         self.Clave.set("")
                         self.entryNumTarjeta.focus()
                         mb.showinfo("Alta de Pensionados",'Pensionado Guardado') 
-            except:
+            except Exception as e:
+                print(e)
                 mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")
         else:
             mb.showwarning("ERROR", 'CLAVE Incorrecta')
@@ -1753,7 +1783,8 @@ class FormularioOperacion:
                             self.Tole.set(str(fila[17]))
                             self.Clave.set("")
                             self.entryNumTarjeta.focus()
-            except:
+            except Exception as e:
+                print(e)
                 mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")
         else:
             mb.showwarning("ERROR", 'CLAVE Incorrecta')
@@ -1862,7 +1893,8 @@ class FormularioOperacion:
                     #global PensionadoOpen #reasignamos valor a la Variable global 
                     #PensionadoOpen=0
                     mb.showinfo("Modificar Información",'Los Cambios al pensionado se han guardado') 
-            except:
+            except Exception as e:
+                print(e)
                 mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")
         else:
             mb.showwarning("ERROR", 'CLAVE Incorrecta')
@@ -1928,10 +1960,14 @@ class FormularioOperacion:
         numtarjeta=str(self.NumTarjeta3.get(), )#self.NumTarjeta=tk.StringVar()
         #mb.showwarning("IMPORTANTE", numtarjeta)
         try:
+            usuario = self.operacion1.nombre_usuario_activo()
+            usuario = str(usuario[0][0])
+
             #Generales
-            mes=int(self.comboMensual.get(), )
-            fechaPago=date.today()
-            print(mes)
+            nummes=int(self.comboMensual.get(), )
+            fechaPago=datetime.now()
+            fechaPago = fechaPago.strftime("%Y-%m-%d %H:%M:%S")
+
             if len(numtarjeta) == 0 :
                 mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
                 self.comboMensual.current(0)
@@ -1953,43 +1989,114 @@ class FormularioOperacion:
                     #CP 7, Calle_num 8, Placas 9, Modelo_auto 10, Color_auto 11, Fecha_vigencia 12, Estatus 13,
                     #Vigencia 14, Monto 15, Cortesia 16, Tolerancia 17
                     for fila in respuesta:
-                        VigAct=fila[12]
+                        Nom_cliente = fila[0]
+                        Apell1_cliente = fila[1]
+                        Apell2_cliente = fila[2]
+                        VigAct=fila[12] #Fecha de Vigencia Actual
                         #VigActShow= datetime.strptime(VigAct, '%Y-%m-%d')
-                        Estatus=fila[14]
+                        Estatus=fila[14] #Activo/Inactiva
                         monto=fila[15]
                         cortesia=fila[16]
+                        Tolerancia=int(fila[17])
                         self.Vigencia.set(VigAct)
                         self.Estatus.set(Estatus)
-                        self.entryNumTarjeta.focus()
+                        self.entryNumTarjeta3.focus()
                     #Calculando la Nueva Vigencia apartir del dia de Pago
-                    #mb.showwarning("IMPORTANTE", VigAct)
-                    dias= 30*mes
-                    pago=monto*mes #Calculando monto a pagar
-                    if cortesia == "Si" :
-                        pago=0
-                    if VigAct == None:
-                        NvaVigencia= date.today() + timedelta(days = dias) #Primer pago del Pensionado
-                    elif VigAct <= datetime.today():
-                        NvaVigencia= date.today() + timedelta(days = dias) #Cuando la Vigencia ya vencio
-                    else :                  
-                        NvaVigencia= VigAct + timedelta(days = dias) #Cuando la Vigencia, sigue vigente
-                    #mb.showwarning("IMPORTANTE", NvaVigencia)
-                    datos=(Existe, tarjeta, fechaPago, NvaVigencia, mes, pago)
-                    datos1=('Activo', NvaVigencia, pago, Existe)
+                    #Calculo de Vigencia Pensionado Paga
+                    mes = date.today().month
+                    #mesVig = date.VigAct().month
+                    dia = date.today().day
+                    if mes == 1: #Enero
+                       dias = 31
+                       sigue = 28
+                    elif mes == 2: #Febrero
+                       dias = 28
+                       sigue = 31
+                    elif mes == 3: #Marzo
+                       dias = 31
+                       sigue = 30
+                    elif mes == 4: #Abril
+                       dias = 30
+                       sigue = 31
+                    elif mes == 5: #Mayo
+                       dias = 31
+                       sigue = 30
+                    elif mes == 6: #Junio
+                       dias = 30
+                       sigue = 31
+                    elif mes == 7: #Julio
+                       dias = 31
+                       sigue = 31
+                    elif mes == 8: #Agosto
+                       dias = 31
+                       sigue = 31
+                    elif mes == 9: #Septiembre
+                       dias = 30
+                       sigue = 31
+                    elif mes == 10: #Octubre
+                       dias = 31
+                       sigue = 30
+                    elif mes == 11: #Noviembre
+                       dias = 30
+                       sigue = 31
+                    elif mes == 12: #Diciembre
+                       dias = 31
+                       sigue = 30
+                    #NvaVigencia = fechaPago + relativedelta(months=1)
+                    #NvaVigencia = date(fechaPago.year, fechaPago.month, calendar.monthrange(fechaPago.year, fechaPago.month)[1])
+
+                    if Estatus == "Inactiva": #VigAct
+                    ##Si Pensionado paga por primera vez sólo paga los días faltantes al cierre de mes
+                    ##Esto se hizo así a petición de Alberto Ordaz
+                       if (dias - dia) > 0:
+                           pago = (monto/dias)*(dias-dia)
+                           NvaVigencia = date.today() + timedelta(days = (dias-dia))
+                       elif (dias - dia) == 0:
+                           pago = monto
+                           NvaVigencia = date.today() + timedelta(days = sigue)
+                    else:
+                       #if VigAct <= datetime.today()+timedelta(days = Tolerancia): #Vigencia vencida
+                           #pago = monto*nummes
+                           #NvaVigencia= date.today() + timedelta(days = (dias-dia))
+                       #else:
+                           pago = monto*nummes
+                           NvaVigencia= VigAct + timedelta(days = sigue)
+
+                    if NvaVigencia.day <= 10:#Tolerancia:
+                        print(f"Antes: {NvaVigencia}")
+                        NvaVigencia -= timedelta(days=NvaVigencia.day)
+                        print(f"Despues: {NvaVigencia}")
+                    else:print(f"despues de 10 dias: {NvaVigencia}")
+
+                    NvaVigencia = NvaVigencia.strftime("%Y-%m-%d")
+
+                    datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago)
+                    datos1=('Activo', NvaVigencia, Existe)
                     #sql="INSERT INTO PagosPens(id_cliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto) values (%s,%s,%s,%s,%s,%s)"
                     self.operacion1.CobrosPensionado(datos)
                     self.operacion1.UpdPensionado(datos1)
-                    self.lbldatosCortesia.configure(text=" ")
-                    self.lbldatosTotal.configure(text=" ")
-                    self.lbldatosTotal2.configure(text=" ")
+
+
+                    self.imprimir_comprobante_pago_pensinado(
+                                                             numero_tarjeta = tarjeta,
+                                                             Nom_cliente = Nom_cliente,
+                                                             Apell1_cliente = Apell1_cliente,
+                                                             Apell2_cliente = Apell2_cliente,
+                                                             fecha_pago = fechaPago,
+                                                             vigencia = NvaVigencia,
+                                                             monto = pago,
+                                                             usuario = usuario)
+
+                    mb.showinfo("IMPORTANTE", "PAGO realizado con éxito")
                     self.Monto.set("")
                     self.Vigencia.set("")
                     self.Estatus.set("")
                     self.comboMensual.current(0)
                     self.NumTarjeta3.set("")
                     self.entryNumTarjeta3.focus()
-                    mb.showinfo("Pago de Pension",'Pago de pension realizado')
-        except:
+
+        except Exception as e:
+            print(e)
             mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")
             self.Monto.set("")
             self.comboMensual.current(0)
@@ -1999,12 +2106,71 @@ class FormularioOperacion:
             self.entryNumTarjeta3.focus()
             
     def PenAdentro(self):
+        self.scrolledPen.configure(state="normal")
         respuesta=self.operacion1.TreaPenAdentro()
         self.scrolledPen.delete("1.0", tk.END)
-        cont=1
+        cont=0
         for fila in respuesta:
-            self.scrolledPen.insert(tk.END, str(cont)+") "+str(fila[0])+"-"+str(fila[1])+"\n\n")
-            cont=cont+1
-        self.lbldatosTotPen.configure(text="PENSIONADOS ADENTRO: "+str(cont-1))
+            self.scrolledPen.insert(tk.END,
+            f"{cont+1}) {fila[0]}: \n   {fila[1]} {fila[2]}\n   {fila[3]} - {fila[4]}\n\n")
 
-aplicacion1=FormularioOperacion()
+
+            cont=cont+1
+        self.lbldatosTotPen.configure(text="PENSIONADOS ADENTRO: "+str(cont))
+        self.scrolledPen.configure(state="disabled")
+
+    def imprimir_comprobante_pago_pensinado(self,
+                                            numero_tarjeta: str,
+                                            Nom_cliente: str,
+                                            Apell1_cliente: str,
+                                            Apell2_cliente: str,
+                                            fecha_pago: str,
+                                            vigencia: str,
+                                            monto: float,
+                                            usuario: str) -> None:
+        """Imprime un comprobante de pago de una pensión.
+
+        Args:
+            numero_tarjeta (str): El número de tarjeta del pensionado.
+            Nom_cliente (str): El nombre del pensionado.
+            Apell1_cliente (str): El primer apellido del pensionado.
+            Apell2_cliente (str): El segundo apellido del pensionado.
+            fecha_pago (str): La fecha en que se hizo el pago.
+            vigencia (str): La fecha de vigencia de la pensión.
+            monto (float): El monto que se pagó.
+            usuario (str): Nombre del usuario en turno
+
+        Returns:
+            None: Esta función no devuelve nada, simplemente imprime un comprobante.
+
+        Raises:
+            None
+        """
+        # Crea una instancia de la clase Usb con los parámetros necesarios para conectar con la impresora
+        #printer = Usb(0x04b8, 0x0e15, 0)
+        
+        print("----------------------------------\n")
+        # Agrega un encabezado al comprobante
+        print("        Comprobante de pago\n\n")
+        
+        # Establece la alineación del texto a la izquierda
+        #printer.set('left')
+    
+        # Agrega información sobre el pago al comprobante
+        #printer.image("LOGO1.jpg")
+        print(f"Numero de tarjeta: {numero_tarjeta}\n")
+        print(f"Nombre: {Nom_cliente}\n")
+        print(f"Apellido 1: {Apell1_cliente}\n")
+        print(f"Apellido 2: {Apell2_cliente}\n")
+        print(f"Fecha de pago: {fecha_pago}\n")
+        print(f"Monto pagado: ${monto}\n")
+        print(f"Cobro: {usuario}\n\n")
+        print(f"Fecha de vigencia: {vigencia}\n")
+
+        print("----------------------------------\n")
+
+        # Corta el papel para finalizar la impresión
+        #printer.cut()
+
+
+#aplicacion1=FormularioOperacion()
