@@ -7,7 +7,7 @@ class Operacion:
 		conexion=pymysql.connect(host="localhost",
 								user="root",
 								passwd="",
-								database="db_tenayuca")
+								database="db")
 
 		return conexion
 
@@ -307,7 +307,7 @@ class Operacion:
 	def CobrosPensionado(self, datos):
 		cone=self.abrir()
 		cursor=cone.cursor()
-		sql="INSERT INTO PagosPens(idcliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto) values (%s,%s,%s,%s,%s,%s)"
+		sql="INSERT INTO PagosPens(idcliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto, TipoPago) values (%s, %s, %s, %s, %s, %s, %s)"
 		cursor.execute(sql,datos)
 		cone.commit()
 		cone.close()
@@ -455,7 +455,7 @@ class Operacion:
 		cursor = cone.cursor()
 
 		# Se define la consulta SQL.
-		sql = f"""SELECT COUNT(*) AS Cuantos, "Pensionados" AS Concepto, COALESCE(FORMAT(SUM(p.Monto), 2), 0) AS ImporteTotal FROM PagosPens p INNER JOIN Cortes c ON p.Fecha_pago BETWEEN c.FechaIni AND c.FechaFin WHERE c.Folio = {corte};"""
+		sql = f"""SELECT COUNT(*) AS Cuantos, TipoPago AS Concepto, COALESCE(FORMAT(SUM(p.Monto), 2), 0) AS ImporteTotal FROM PagosPens p INNER JOIN Cortes c ON p.Fecha_pago BETWEEN c.FechaIni AND c.FechaFin WHERE c.Folio = {corte} GROUP BY TipoPago;"""
 
 		# Se ejecuta la consulta y se almacenan los resultados en una lista de tuplas.
 		cursor.execute(sql)
