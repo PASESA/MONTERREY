@@ -2,7 +2,7 @@ from datetime import datetime, date, time, timedelta
 formato = "%H:%M:%S"
 PensionadoOpen=1
 
-#---#from escpos.printer import *
+from escpos.printer import *
 import qrcode
 import tkinter as tk
 from tkinter import ttk
@@ -15,10 +15,10 @@ import re
 import operacion
 
 import time
-#---#import xlsxwriter
-#---#from PIL import ImageTk, Image
+import xlsxwriter
+from PIL import ImageTk, Image
 import os
-#---#import serial
+import serial
 #import RPi.GPIO as io
 # out1 = 17
 # io.setmode(io.BCM)              # modo in/out pin del micro
@@ -79,7 +79,7 @@ class FormularioOperacion:
 		#panel.pack(side = "bottom", fill = "both", expand = "yes")
 	def Autdentro(self):
 		DDESEM=(datetime.today().weekday())
-		print(DDESEM)
+		#print(DDESEM)
 		if DDESEM == 4:
 			print ('jueves')   
 		respuesta=self.operacion1.Autos_dentro()
@@ -441,18 +441,18 @@ class FormularioOperacion:
 						self.label9.configure(text =(importe, "Cobrar"))
 						#self.calcular_cambio()
 						self.entrypromo.focus()
-#                if minutos == 3:    
-#                        importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
-#                        self.importe.set(importe)
-#                        self.label9.configure(text =(importe, "Cobrar"))
-#                        #self.calcular_cambio()
-#                        self.entrypromo.focus() 
-#                if minutos > 3:    
-#                        importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
-#                        self.importe.set(importe)
-#                        self.label9.configure(text =(importe, "Cobrar"))
-#                        #self.calcular_cambio()
-#                        self.entrypromo.focus()                                  
+            #    if minutos == 3:    
+            #            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
+            #            self.importe.set(importe)
+            #            self.label9.configure(text =(importe, "Cobrar"))
+            #            #self.calcular_cambio()
+            #            self.entrypromo.focus() 
+            #    if minutos > 3:    
+            #            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
+            #            self.importe.set(importe)
+            #            self.label9.configure(text =(importe, "Cobrar"))
+            #            #self.calcular_cambio()
+            #            self.entrypromo.focus()                                  
 	def calcular_cambio(self):
 		elimporte=str(self.importe.get(), )
 		self.elimportees.set(elimporte)
@@ -589,13 +589,13 @@ class FormularioOperacion:
 			global TipoPromocion
 			TipoPromocion = str(self.promo.get(), )#se recibe el codigo
 			respuesta=self.operacion1.ValidaPromo(TipoPromocion)
-			print(str(respuesta))
+			#print(str(respuesta))
 			if respuesta:
 				mb.showwarning("IMPORTANTE", "LA PROMOCION YA FUE APLICADA")
 			else:   
 					
 				TipoProIni=TipoPromocion[:8]  
-				print("tIPO",str(TipoProIni))      
+				#print("tIPO",str(TipoProIni))      
 				if TipoProIni==("OM OFFIC") or TipoProIni==("om offic"):
 					fecha = datetime.today()
 					fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
@@ -697,7 +697,7 @@ class FormularioOperacion:
 				for fila in respuesta:
 					Existe=fila[0]
 					Estatus=fila[1]
-					print(Existe)
+					#print(Existe)
 					if Existe == None :
 						mb.showwarning("IMPORTANTE", "No existe Pensionado para ese Num de Tarjeta")
 						self.NumTarjeta2.set("")               
@@ -823,9 +823,9 @@ class FormularioOperacion:
 		self.FechUCORTE=tk.StringVar()
 		self.entryFechUCORTE=tk.Entry(self.labelframe2, width=20, textvariable=self.FechUCORTE, state= "readonly")
 		self.entryFechUCORTE.grid(column=1, row=3)
-#        self.CortesAnteri=tk.StringVar()
-#        self.CortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
-#        self.CortesAnteri.grid(column=1, row=1)
+    #    self.CortesAnteri=tk.StringVar()
+    #    self.CortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
+    #    self.CortesAnteri.grid(column=1, row=1)
 		self.CortesAnteri=tk.StringVar()
 		self.entryCortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
 		self.entryCortesAnteri.grid(column=1, row=0)
@@ -1051,7 +1051,7 @@ class FormularioOperacion:
 		#p.text('IMPORTE: $ '+ImpCorte2+'\n')
 		ultiCort1=str(self.FechUCORTE.get(),)
 		DDESEM=(datetime.today().weekday())
-		print(DDESEM)
+		#print(DDESEM)
 		if DDESEM == 0:
 			DDESEM = 'LUNES'
 		if DDESEM == 1:
@@ -1150,7 +1150,7 @@ class FormularioOperacion:
 		p.text("----------------------------------\n")
 		respuesta = self.operacion1.total_pensionados_corte(Numcorte)
 
-		if int(respuesta[0][0]) == 0:
+		if len(respuesta) == 0:
 			p.cut()
 			self.Cerrar_Programa()
 
@@ -1194,7 +1194,7 @@ class FormularioOperacion:
 						#Obtenemos Fecha (Inicialy Final) del mes que solicita el reporte
 						#CorteMax=self.operacion1.Cortes_Max(datos)
 						CorteMin=self.operacion1.Cortes_Min(datos)
-						print(CorteMin)
+						#print(CorteMin)
 						#print(CorteMax)
 						#for fila in CorteMax:
 							#UltCorte=fila[1]
@@ -1205,19 +1205,19 @@ class FormularioOperacion:
 							
 						#Obtenemos Fecha Inicial y Final del Folio de Cortes del Mes que se solicita el reporte
 						#datos=(IniCorte)
-						print(str(IniFecha))
+						#print(str(IniFecha))
 						datos=(IniFecha)
 						#print(str(datos))
 						CorteIni=self.operacion1.Cortes_Folio(datos)
 						for fila in CorteIni:
 							CorteIni2=fila[0]
-						print(CorteIni2)
+						#print(CorteIni2)
 						#datos=(UltCorte)
 						datos=(UltFecha)
 						CorteFin=self.operacion1.Cortes_Folio(datos)
 						for fila in CorteFin:
 							CorteFin2=fila[0]
-						print(CorteFin2)                        
+						#print(CorteFin2)                        
 						#Obtnemos los Registros entre estos dos Folios para el cuerpo del reporte       
 						datos=(CorteIni2, CorteFin2)
 						#datos=(IniCorte, UltCorte)
@@ -1499,10 +1499,13 @@ class FormularioOperacion:
 		self.Clave=tk.StringVar()
 		self.entryClave=ttk.Entry(self.labelframe1, width=8, textvariable=self.Clave, show="*")#, justify=tk.RIGHT
 		self.entryClave.grid(column=3, row=20, padx=4, pady=4)
-				
+
+		label_frame_tipo_pago = tk.LabelFrame(self.pagina4, text="Pago Pension")
+		label_frame_tipo_pago.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
+
 		######Pago, Vigencia y Numero de tarjeta
-		self.labelframe3=ttk.LabelFrame(self.pagina4, text="Pago Pension")
-		self.labelframe3.grid(column=0, row=1, padx=5, pady=10)
+		self.labelframe3=ttk.LabelFrame(label_frame_tipo_pago, text="Datos de pago")
+		self.labelframe3.grid(column=0, row=0, padx=5, pady=5)
 		self.lbldatos20=ttk.Label(self.labelframe3, text="Num. Tarjeta:")
 		self.lbldatos20.grid(column=0, row=1, padx=4, pady=4)              
 		self.lbldatos16=ttk.Label(self.labelframe3, text="Monto Mensual:")#informativo
@@ -1540,8 +1543,30 @@ class FormularioOperacion:
 		self.entryEstatus=ttk.Entry(self.labelframe3, width=15, textvariable=self.Estatus, state="readonly")#Informativo
 		self.entryEstatus.grid(column=4, row=3, padx=4, pady=4)
 		#####Botones de Accion: Pagar
-		self.boton2=tk.Button(self.labelframe3, text="Cobrar Pension", command=self.Cobro_Pensionado, width=12, height=1, anchor="center", background="red")#, background="red"
-		self.boton2.grid(column=4, row=10, padx=4, pady=4)
+
+		self.tipo_pago_ = None
+
+		label_frame_tipo_pago = tk.LabelFrame(label_frame_tipo_pago, text="Tipo de pago")
+		label_frame_tipo_pago.grid(column=1, row=0, padx=10, pady=10, sticky=tk.NW)
+
+		# Crear una variable de control para el estado del checkbox
+		self.variable_tipo_pago_efectivo = tk.BooleanVar()
+		# Crear un checkbox y asociarlo a la variable de control
+		checkbox_efectivo = tk.Checkbutton(label_frame_tipo_pago, text="Efectivo", variable=self.variable_tipo_pago_efectivo, command=lambda:{self.cambiar_valor(self.variable_tipo_pago_transferencia)})
+
+		# Ubicar el checkbox en la ventana principal
+		checkbox_efectivo.grid(column=0, row=0, padx=0, pady=0, sticky=tk.NW)
+
+		self.variable_tipo_pago_transferencia = tk.BooleanVar()
+
+		checkbox_transferencia = tk.Checkbutton(label_frame_tipo_pago, text="Transferencia", variable=self.variable_tipo_pago_transferencia, command=lambda:{self.cambiar_valor(self.variable_tipo_pago_efectivo)})
+
+		# Ubicar el checkbox en la ventana principal
+		checkbox_transferencia.grid(column=0, row=1, padx=0, pady=0, sticky=tk.NW)
+
+
+		self.boton2=tk.Button(label_frame_tipo_pago, text="Cobrar Pension", command=self.Cobro_Pensionado, width=12, height=1, anchor="center", background="red")#, background="red"
+		self.boton2.grid(column=0, row=3, padx=4, pady=4)
 
 		######Muestra de Pensionados Adentro
 		self.labelframe4=ttk.LabelFrame(self.pagina4, text="Consulta")
@@ -1930,14 +1955,16 @@ class FormularioOperacion:
 			self.lbldatosTotal2.configure(text=" ")
 			monto=int(monto)
 			pago=monto*mes #Calculando monto a pagar
-			print(pago)
+			#print(pago)
 			self.lbldatosTotal.configure(text="TOTAL A PAGAR:   "+str(pago))
 			
 
 	def Cobro_Pensionado(self):
-		numtarjeta=str(self.NumTarjeta3.get(), )#self.NumTarjeta=tk.StringVar()
+		numtarjeta=str(self.NumTarjeta3.get())#self.NumTarjeta=tk.StringVar()
 		#mb.showwarning("IMPORTANTE", numtarjeta)
 		try:
+			if (self.variable_tipo_pago_transferencia.get() == False) and (self.variable_tipo_pago_efectivo.get() == False):raise TypeError("Selecciona una forma de pago")
+
 			usuario = self.operacion1.nombre_usuario_activo()
 			usuario = str(usuario[0][0])
 
@@ -2048,7 +2075,7 @@ class FormularioOperacion:
 
 					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d")
 
-					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago)
+					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
 					datos1=('Activo', NvaVigencia, Existe)
 					#sql="INSERT INTO PagosPens(id_cliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto) values (%s,%s,%s,%s,%s,%s)"
 					self.operacion1.CobrosPensionado(datos)
@@ -2063,7 +2090,8 @@ class FormularioOperacion:
 															 fecha_pago = fechaPago,
 															 vigencia = NvaVigencia,
 															 monto = pago,
-															 usuario = usuario)
+															 usuario = usuario,
+															 tipo_pago = self.tipo_pago_)
 
 					mb.showinfo("IMPORTANTE", "PAGO realizado con éxito")
 					self.Monto.set("")
@@ -2072,6 +2100,9 @@ class FormularioOperacion:
 					self.comboMensual.current(0)
 					self.NumTarjeta3.set("")
 					self.entryNumTarjeta3.focus()
+					self.vaciar_tipo_pago()
+
+		except TypeError as e:mb.showwarning(f"IMPORTANTE", e)
 
 		except Exception as e:
 			print(e)
@@ -2105,7 +2136,8 @@ class FormularioOperacion:
 											fecha_pago: str,
 											vigencia: str,
 											monto: float,
-											usuario: str) -> None:
+											usuario: str,
+											tipo_pago: str) -> None:
 		"""Imprime un comprobante de pago de una pensión.
 
 		Args:
@@ -2116,7 +2148,8 @@ class FormularioOperacion:
 			fecha_pago (str): La fecha en que se hizo el pago.
 			vigencia (str): La fecha de vigencia de la pensión.
 			monto (float): El monto que se pagó.
-			usuario (str): Nombre del usuario en turno
+			usuario (str): Nombre del usuario en turno.
+			tipo_pago (str): Tipo de pago.
 
 		Returns:
 			None: Esta función no devuelve nada, simplemente imprime un comprobante.
@@ -2125,30 +2158,70 @@ class FormularioOperacion:
 			None
 		"""
 		# Crea una instancia de la clase Usb con los parámetros necesarios para conectar con la impresora
-		#printer = Usb(0x04b8, 0x0e15, 0)
+		printer = Usb(0x04b8, 0x0e15, 0)
 		
-		print("----------------------------------\n")
+		printer.text("----------------------------------\n")
 		# Agrega un encabezado al comprobante
-		print("        Comprobante de pago\n\n")
+		printer.text("        Comprobante de pago\n\n")
 		
 		# Establece la alineación del texto a la izquierda
-		#printer.set('left')
+		printer.set('left')
 	
 		# Agrega información sobre el pago al comprobante
-		#printer.image("LOGO1.jpg")
-		print(f"Numero de tarjeta: {numero_tarjeta}\n")
-		print(f"Nombre: {Nom_cliente}\n")
-		print(f"Apellido 1: {Apell1_cliente}\n")
-		print(f"Apellido 2: {Apell2_cliente}\n")
-		print(f"Fecha de pago: {fecha_pago}\n")
-		print(f"Monto pagado: ${monto}\n")
-		print(f"Cobro: {usuario}\n\n")
-		print(f"Fecha de vigencia: {vigencia}\n")
+		printer.image("LOGO1.jpg")
+		printer.text(f"Numero de tarjeta: {numero_tarjeta}\n")
+		printer.text(f"Nombre: {Nom_cliente}\n")
+		printer.text(f"Apellido 1: {Apell1_cliente}\n")
+		printer.text(f"Apellido 2: {Apell2_cliente}\n")
+		printer.text(f"Fecha de pago: {fecha_pago}\n")
+		printer.text(f"Monto pagado: ${monto}\n")
+		printer.text(f"Tipo de pago: {tipo_pago}\n")
+		printer.text(f"Cobro: {usuario}\n\n")
+		printer.text(f"Fecha de vigencia: {vigencia}\n")
 
-		print("----------------------------------\n")
+		printer.text("----------------------------------\n")
 
 		# Corta el papel para finalizar la impresión
-		#printer.cut()
+		printer.cut()
+
+	def cambiar_valor(self, contrario):
+		"""Cambia el valor de la variable según las variables de tipo de pago seleccionadas.
+
+		Args:
+			contrario (BooleanVar): Una variable booleana que se utiliza para establecer un valor opuesto.
+
+		Returns:
+			None
+		"""
+		try:
+			# Establece la variable contrario como False
+			contrario.set(False)
+
+			# Si la variable de tipo de pago transferencia está seleccionada, establece tipo_pago_ como "Transferencia"
+			if self.variable_tipo_pago_transferencia.get():
+				self.tipo_pago_ = "Transferencia"
+
+			# Si la variable de tipo de pago efectivo está seleccionada, establece tipo_pago_ como "Efectivo"
+			elif self.variable_tipo_pago_efectivo.get():
+				self.tipo_pago_ = "Efectivo"
+
+			# Si ninguna de las variables de tipo de pago está seleccionada, establece tipo_pago_ como None
+			else:
+				self.tipo_pago_ = None
+
+		except Exception as e:
+			# Si ocurre un error, no hace nada
+			pass
+
+	def vaciar_tipo_pago(self):
+		"""Vacia las variables de tipo de pago.
+
+		Returns:
+			None
+		"""
+		# Establece las variables de tipo de pago como False
+		self.variable_tipo_pago_transferencia.set(False)
+		self.variable_tipo_pago_efectivo.set(False)
 
 
-aplicacion1=FormularioOperacion()
+#aplicacion1=FormularioOperacion()
