@@ -392,7 +392,7 @@ class FormularioOperacion:
                     self.NumTarjeta4.set("")               
                     self.entryNumTarjeta4.focus()
                     return False                        
-                elif VigAct <= datetime.today()+timedelta(days = 5):
+                elif VigAct <= datetime.today():
                     self.labelMensaje.config(text= "Vigencia Vencida")
                     #mb.showwarning("IMPORTANTE", "NO PUEDE ACCEDER: La Vigencia esta vencida")
                     self.NumTarjeta4.set("")               
