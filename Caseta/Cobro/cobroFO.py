@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime, date, time, timedelta
 formato = "%H:%M:%S"
 PensionadoOpen=1
@@ -19,12 +20,12 @@ import xlsxwriter
 from PIL import ImageTk, Image
 import os
 import serial
-#import RPi.GPIO as io
-# out1 = 17
-# io.setmode(io.BCM)              # modo in/out pin del micro
-# io.setwarnings(False)           # no señala advertencias de pin ya usados
-# io.setup(out1,io.OUT)           # configura en el micro las salidas
-# io.output(out1,1)
+import RPi.GPIO as io
+out1 = 17
+io.setmode(io.BCM)              # modo in/out pin del micro
+io.setwarnings(False)           # no señala advertencias de pin ya usados
+io.setup(out1,io.OUT)           # configura en el micro las salidas
+io.output(out1,1)
 TipoPromocion = 1
 class FormularioOperacion:
 	def __init__(self):
@@ -344,7 +345,7 @@ class FormularioOperacion:
 			self.descripcion.set('')
 			self.precio.set('')
 			mb.showinfo("Información", "No existe un auto con dicho código")
-	def consultar(self):
+	def consultar(self, event):
 		datos=str(self.folio.get(), )
 		if len(datos) > 20:#con esto revisamos si lee el folio o la promocion
 			datos=datos[26:]
@@ -2076,7 +2077,7 @@ class FormularioOperacion:
 					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d")
 
 					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
-					datos1=('Activo', NvaVigencia, Existe)
+					datos1=("Activo", NvaVigencia, Existe)
 					#sql="INSERT INTO PagosPens(id_cliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto) values (%s,%s,%s,%s,%s,%s)"
 					self.operacion1.CobrosPensionado(datos)
 					self.operacion1.UpdPensionado(datos1)
@@ -2102,7 +2103,9 @@ class FormularioOperacion:
 					self.entryNumTarjeta3.focus()
 					self.vaciar_tipo_pago()
 
-		except TypeError as e:mb.showwarning(f"IMPORTANTE", e)
+		except TypeError as e:
+			mb.showwarning(f"IMPORTANTE", e)
+			traceback.print_exc()
 
 		except Exception as e:
 			print(e)
@@ -2139,7 +2142,6 @@ class FormularioOperacion:
 											usuario: str,
 											tipo_pago: str) -> None:
 		"""Imprime un comprobante de pago de una pensión.
-
 		Args:
 			numero_tarjeta (str): El número de tarjeta del pensionado.
 			Nom_cliente (str): El nombre del pensionado.
@@ -2150,15 +2152,13 @@ class FormularioOperacion:
 			monto (float): El monto que se pagó.
 			usuario (str): Nombre del usuario en turno.
 			tipo_pago (str): Tipo de pago.
-
 		Returns:
 			None: Esta función no devuelve nada, simplemente imprime un comprobante.
-
 		Raises:
 			None
 		"""
 		# Crea una instancia de la clase Usb con los parámetros necesarios para conectar con la impresora
-		printer = Usb(0x04b8, 0x0e15, 0)
+		printer = Usb(0x04b8, 0x0202, 0)
 		
 		printer.text("----------------------------------\n")
 		# Agrega un encabezado al comprobante
@@ -2186,10 +2186,8 @@ class FormularioOperacion:
 
 	def cambiar_valor(self, contrario):
 		"""Cambia el valor de la variable según las variables de tipo de pago seleccionadas.
-
 		Args:
 			contrario (BooleanVar): Una variable booleana que se utiliza para establecer un valor opuesto.
-
 		Returns:
 			None
 		"""
@@ -2215,7 +2213,6 @@ class FormularioOperacion:
 
 	def vaciar_tipo_pago(self):
 		"""Vacia las variables de tipo de pago.
-
 		Returns:
 			None
 		"""
