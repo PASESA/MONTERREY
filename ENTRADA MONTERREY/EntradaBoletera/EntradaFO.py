@@ -322,12 +322,18 @@ class FormularioOperacion:
         masuno=n1
         masuno = str(masuno)
         self.MaxId.set(masuno)
-        imgqr=(fSTR + masuno) 
+        #imgqr=(fSTR + masuno) 
         horaentrada = str(fechaEntro)
         horaentrada=horaentrada[:16]
         self.labelhr.configure(text=(horaentrada, "Entró"))
         fSTR=str(fechaEntro)
-        imgqr=(fSTR + masuno)
+        #imgqr=(fSTR + masuno)
+
+
+        folio_cifrado, iv = self.operacion1.cifrar_AES(texto_plano = masuno)
+        imgqr = tuple((folio_cifrado, iv))
+
+
         #img = qrcode.make(fechaEntro)
         img = qrcode.make(imgqr)
         # Obtener imagen con el tamaño indicado
