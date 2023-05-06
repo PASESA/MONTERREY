@@ -1,5 +1,6 @@
 import traceback
 from datetime import datetime, date, time, timedelta
+from dateutil.relativedelta import relativedelta
 formato = "%H:%M:%S"
 PensionadoOpen=1
 
@@ -2008,7 +2009,6 @@ class FormularioOperacion:
 				print("entro")
 				tarjeta=int(numtarjeta)
 				Existe=self.operacion1.ValidarRFID(tarjeta)
-				#mb.showwarning("IMPORTANTE", Existe)
 				if len(Existe) == 0 :
 					mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
 					self.NumTarjeta.set("")               
@@ -2035,7 +2035,6 @@ class FormularioOperacion:
 					#Calculando la Nueva Vigencia apartir del dia de Pago
 					#Calculo de Vigencia Pensionado Paga
 					mes = date.today().month
-					#mesVig = date.VigAct().month
 					dia = date.today().day
 					if mes == 1: #Enero
 						dias = 31
@@ -2073,42 +2072,30 @@ class FormularioOperacion:
 					elif mes == 12: #Diciembre
 						dias = 31
 						sigue = 30
-					#NvaVigencia = fechaPago + relativedelta(months=1)
-					#NvaVigencia = date(fechaPago.year, fechaPago.month, calendar.monthrange(fechaPago.year, fechaPago.month)[1])
 
 					if Estatus == "Inactiva": #VigAct
 					##Si Pensionado paga por primera vez sólo paga los días faltantes al cierre de mes
 					##Esto se hizo así a petición de Alberto Ordaz
 						if (dias - dia) > 0:
 							pago = (monto/dias)*(dias-dia)
-							NvaVigencia = date.today() + timedelta(days = (dias-dia))
+							NvaVigencia = self.nueva_vigencia(VigAct)
 						elif (dias - dia) == 0:
 							pago = monto
-							NvaVigencia = date.today() + timedelta(days = sigue)
+							NvaVigencia = self.nueva_vigencia(VigAct)
 					else:
-						#if VigAct <= datetime.today()+timedelta(days = Tolerancia): #Vigencia vencida
-							#pago = monto*nummes
-							#NvaVigencia= date.today() + timedelta(days = (dias-dia))
-						#else:
-							pago = monto*nummes
-							NvaVigencia= VigAct + timedelta(days = sigue)
+						pago = monto*nummes
+						NvaVigencia = self.nueva_vigencia(VigAct)
 
-					if NvaVigencia.day <= 10:#Tolerancia:
-						print(f"Antes: {NvaVigencia}")
-						NvaVigencia -= timedelta(days=NvaVigencia.day)
-						print(f"Despues: {NvaVigencia}")
-					else:print(f"despues de 10 dias: {NvaVigencia}")
-
+					NvaVigencia = datetime.strptime(NvaVigencia, "%Y-%m-%d %H:%M:%S")
 					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d")
 
 					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
 					datos1=("Activo", NvaVigencia, Existe)
-					#sql="INSERT INTO PagosPens(id_cliente, num_tarjeta, Fecha_pago, Fecha_vigencia, Mensualidad, Monto) values (%s,%s,%s,%s,%s,%s)"
 					self.operacion1.CobrosPensionado(datos)
 					self.operacion1.UpdPensionado(datos1)
 
 
-					self.imprimir_comprobante_pago_pensinado(
+					self.imprimir_comprobante_pago_pensionado(
 															 numero_tarjeta = tarjeta,
 															 Nom_cliente = Nom_cliente,
 															 Apell1_cliente = Apell1_cliente,
@@ -2156,7 +2143,7 @@ class FormularioOperacion:
 		self.lbldatosTotPen.configure(text="PENSIONADOS ADENTRO: "+str(cont))
 		self.scrolledPen.configure(state="disabled")
 
-	def imprimir_comprobante_pago_pensinado(self,
+	def imprimir_comprobante_pago_pensionado(self,
 											numero_tarjeta: str,
 											Nom_cliente: str,
 											Apell1_cliente: str,
@@ -2245,5 +2232,40 @@ class FormularioOperacion:
 		self.variable_tipo_pago_transferencia.set(False)
 		self.variable_tipo_pago_efectivo.set(False)
 
+	def nueva_vigencia(self, fecha):
+		"""
+		Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato '%Y-%m-%d %H:%M:%S'.
 
-aplicacion1=FormularioOperacion()
+		:param fecha (str or datetime): Fecha a partir de la cual se obtendrá la fecha del último día del mes siguiente.
+
+		:raises: TypeError si la fecha no es una cadena de texto ni un objeto datetime.
+
+		:return:
+			- nueva_vigencia (str): Una cadena de texto en el formato '%Y-%m-%d %H:%M:%S' que representa la fecha del último día del mes siguiente a la fecha dada.
+		"""
+
+		# Verificar que la fecha sea de tipo str o datetime
+		if not isinstance(fecha, (str, datetime)):
+			raise TypeError("La fecha debe ser una cadena de texto o un objeto datetime.")
+		
+		# Convertir la fecha dada en un objeto datetime si es de tipo str
+		if isinstance(fecha, str):
+			fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+		
+		# Obtener la fecha del primer día del siguiente mes
+		mes_siguiente = fecha + relativedelta(months=1, day=1)
+		
+		# Obtener la fecha del último día del mes siguiente
+		ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
+		if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
+			ultimo_dia_mes_siguiente -= relativedelta(days=1)
+		
+		# convertir la fecha del último día del mes siguiente en formato de cadena
+		nueva_vigencia = ultimo_dia_mes_siguiente.strftime('%Y-%m-%d %H:%M:%S')
+
+		# Devolver el valor
+		return nueva_vigencia
+
+
+#aplicacion1=FormularioOperacion()
+
