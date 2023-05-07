@@ -2243,28 +2243,34 @@ class FormularioOperacion:
 		:return:
 			- nueva_vigencia (str): Una cadena de texto en el formato '%Y-%m-%d %H:%M:%S' que representa la fecha del último día del mes siguiente a la fecha dada.
 		"""
+		try:
+			# Verificar que la fecha sea de tipo str o datetime
+			if not isinstance(fecha, (str, datetime)):
+				raise TypeError("La fecha debe ser una cadena de texto o un objeto datetime.")
+			
+			# Convertir la fecha dada en un objeto datetime si es de tipo str
+			if isinstance(fecha, str):
+				fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
+			
+			# Obtener la fecha del primer día del siguiente mes
+			mes_siguiente = fecha + relativedelta(months=1, day=1)
+			
+			# Obtener la fecha del último día del mes siguiente
+			ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
+			if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
+				ultimo_dia_mes_siguiente -= relativedelta(days=1)
+			
+			# convertir la fecha del último día del mes siguiente en formato de cadena
+			nueva_vigencia = ultimo_dia_mes_siguiente.strftime('%Y-%m-%d %H:%M:%S')
 
-		# Verificar que la fecha sea de tipo str o datetime
-		if not isinstance(fecha, (str, datetime)):
-			raise TypeError("La fecha debe ser una cadena de texto o un objeto datetime.")
+			# Devolver el valor
+			return nueva_vigencia
 		
-		# Convertir la fecha dada en un objeto datetime si es de tipo str
-		if isinstance(fecha, str):
-			fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
-		
-		# Obtener la fecha del primer día del siguiente mes
-		mes_siguiente = fecha + relativedelta(months=1, day=1)
-		
-		# Obtener la fecha del último día del mes siguiente
-		ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
-		if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
-			ultimo_dia_mes_siguiente -= relativedelta(days=1)
-		
-		# convertir la fecha del último día del mes siguiente en formato de cadena
-		nueva_vigencia = ultimo_dia_mes_siguiente.strftime('%Y-%m-%d %H:%M:%S')
+		except TypeError as e:
+			mb.showwarning("Error", f"{e}")
+		except Exception as e:
+			mb.showwarning("Error", f"{e}")
 
-		# Devolver el valor
-		return nueva_vigencia
 
 
 #aplicacion1=FormularioOperacion()
