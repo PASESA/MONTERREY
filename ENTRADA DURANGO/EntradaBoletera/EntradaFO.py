@@ -338,7 +338,7 @@ class FormularioOperacion:
         imgqr = tuple((folio_cifrado, iv))
 
 		#Generar QR
-        self.generar_QR(imgqr)
+        self.operacion1.generar_QR(imgqr)
         
         print("horaentrada",horaentrada)
 
