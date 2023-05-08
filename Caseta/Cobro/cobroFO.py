@@ -1,6 +1,13 @@
 import traceback
 from datetime import datetime, date, time, timedelta
 from dateutil.relativedelta import relativedelta
+import hashlib
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import base64
+import qrcode
+from tkinter import messagebox as mb
+
 formato = "%H:%M:%S"
 PensionadoOpen=1
 
@@ -102,6 +109,9 @@ class FormularioOperacion:
 		imgqr = tuple((folio_cifrado, iv))
 		print(imgqr)
 
+		#Generar QR
+		self.operacion1.generar_QR(imgqr)
+
 		fechaEntro = datetime.today()
 		horaentrada = str(fechaEntro)
 		horaentrada=horaentrada[:18]
@@ -109,20 +119,7 @@ class FormularioOperacion:
 		corteNum = 0
 		placa=str(self.Placa.get(), )
 		datos=(fechaEntro, corteNum, placa)
-		# hacer la foto de codigo qr
-		#img = qrcode.make("2 de septiembre")
-		fSTR=str(fechaEntro)
-		#imgqr=(fSTR + masuno)
-		#img = qrcode.make(fechaEntro)
-		img = qrcode.make(imgqr)
-		# Obtener imagen con el tamaño indicado
-		reducida = img.resize((100, 75))
-		# Mostrar imagen reducida.show()
-		# Guardar imagen obtenida con el formato JPEG
-		reducida.save("reducida.png")
-		f = open("reducida.png", "wb")
-		img.save(f)
-		f.close()
+
 		#aqui lo imprimimos
 		p = Usb(0x04b8, 0x0202, 0)
 		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
@@ -351,10 +348,12 @@ class FormularioOperacion:
 			self.descripcion.set('')
 			self.precio.set('')
 			mb.showinfo("Información", "No existe un auto con dicho código")
+
 	def consultar(self, event):
 		datos=str(self.folio.get())
+		print(len(datos))
 
-		if len(datos) > 60:
+		if len(datos) >= 30:
 			datos = eval(datos)
 
 			folio_cifrado = datos[0]
@@ -392,6 +391,8 @@ class FormularioOperacion:
 			mb.showinfo("Promocion", "leer primero el folio")
 			self.folio.set("")
 			self.entryfolio.focus()
+
+
 	def CalculaPermanencia(self):# funcion que  CALCULA LA PERMANENCIA DEL FOLIO SELECCIONADO
 		salida = str(self.precio.get(), )#deveria ser salida en lugar de precio pero asi estaba el base
 		if len(salida)>5:#None tiene 4 letras si es mayor a 5 es que tiene ya la fecha

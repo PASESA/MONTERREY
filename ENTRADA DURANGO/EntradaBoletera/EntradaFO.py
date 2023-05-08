@@ -1,4 +1,11 @@
-#programa de entrada en tenayuca 
+
+import hashlib
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import base64
+import qrcode
+from tkinter import messagebox as mb
+
 from datetime import datetime, date, time, timedelta
 formato = "%H:%M:%S"
 from escpos.printer import *
@@ -330,19 +337,11 @@ class FormularioOperacion:
         folio_cifrado, iv = self.operacion1.cifrar_AES(texto_plano = masuno)
         imgqr = tuple((folio_cifrado, iv))
 
-
-        #img = qrcode.make(fechaEntro)
-        img = qrcode.make(imgqr)
-        # Obtener imagen con el tamaño indicado
-        reducida = img.resize((100, 75))
-        # Mostrar imagen reducida.show()
-        # Guardar imagen obtenida con el formato JPEG
-        reducida.save("reducida.png")
-        f = open("reducida.png", "wb")
-        img.save(f)
-        f.close()
+		#Generar QR
+        self.generar_QR(imgqr)
+        
         print("horaentrada",horaentrada)
-        print("imgqr",imgqr)
+
         #p = Usb(0x04b8, 0x0202, 0)#0202
         p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
         p.set("center")
@@ -1351,6 +1350,13 @@ class FormularioOperacion:
         #AutosAnteriores = int(self.Autos_Anteriores.get(),)
         #Cuantos_hay_dentro = ((AutosAnteriores + EntradasSen) - SalidasSen)
         #self.AutosEnEstacionamiento.set(Cuantos_hay_entro)
+
+
+
+
+
+
+
 
 aplicacion1=FormularioOperacion()
 
