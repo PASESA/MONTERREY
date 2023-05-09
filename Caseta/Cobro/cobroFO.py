@@ -2088,7 +2088,7 @@ class FormularioOperacion:
 						NvaVigencia = self.nueva_vigencia(VigAct)
 
 					NvaVigencia = datetime.strptime(NvaVigencia, "%Y-%m-%d %H:%M:%S")
-					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d")
+					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d %H:%M:%S")
 
 					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
 					datos1=("Activo", NvaVigencia, Existe)
@@ -2102,7 +2102,7 @@ class FormularioOperacion:
 															 Apell1_cliente = Apell1_cliente,
 															 Apell2_cliente = Apell2_cliente,
 															 fecha_pago = fechaPago,
-															 vigencia = NvaVigencia,
+															 vigencia = NvaVigencia[:10],
 															 monto = pago,
 															 usuario = usuario,
 															 tipo_pago = self.tipo_pago_)
@@ -2179,7 +2179,7 @@ class FormularioOperacion:
 		
 		# Establece la alineación del texto a la izquierda
 		printer.set('left')
-	
+
 		# Agrega información sobre el pago al comprobante
 		printer.image("LOGO1.jpg")
 		printer.text(f"Numero de tarjeta: {numero_tarjeta}\n")

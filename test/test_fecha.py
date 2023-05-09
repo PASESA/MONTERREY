@@ -51,6 +51,26 @@ def nueva_vigencia(fecha):
         mb.showwarning("Error", f"{e}")
 
 
+Tolerancia = 5
+# Obtener la fecha y hora actual en formato deseado
+VigAct = "2023-05-31 23:59:59"
+# Convertir la cadena de caracteres en un objeto datetime
+VigAct = datetime.strptime(VigAct, "%Y-%m-%d %H:%M:%S")
+
+# Obtener la fecha y hora actual en formato deseado
+hoy = "2023-06-5 23:59:8"
+# Convertir la cadena de caracteres en un objeto datetime
+hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+limite = VigAct + timedelta(days=Tolerancia)
+
+print(f"Hoy     : {hoy}")
+print(f"Vigencia: {limite}")
 
 
-print(nueva_vigencia(fecha))
+if hoy >= limite:
+        print("No vigente")
+else:
+    print("------------------")
+    print("Aun hay tolerancia")
+

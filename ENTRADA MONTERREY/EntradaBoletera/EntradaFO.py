@@ -329,13 +329,10 @@ class FormularioOperacion:
         fSTR=str(fechaEntro)
         #imgqr=(fSTR + masuno)
 
-
-        folio_cifrado, iv = self.operacion1.cifrar_AES(texto_plano = masuno)
-        imgqr = tuple((folio_cifrado, iv))
+        folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
 
 		#Generar QR
-        self.operacion1.generar_QR(imgqr)
-
+        self.operacion1.generar_QR(folio_cifrado)
 
         #p = Usb(0x04b8, 0x0202, 0)#0202
         p = Usb(0x04b8, 0x0e28, 0)#0202
@@ -381,6 +378,18 @@ class FormularioOperacion:
             for fila in respuesta:
                 VigAct=fila[0]
                 Estatus=fila[1]
+                Tolerancia = fila[3]
+
+                # Obtener la fecha y hora actual en formato deseado
+                hoy = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+
+                # Convertir la cadena de caracteres en un objeto datetime
+                hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+                limite = VigAct + timedelta(days=Tolerancia)
+
+                print(limite)
+
                 if Estatus == 'Adentro' :
                     self.labelMensaje.config(text= "Ya está Adentro")
                     #mb.showwarning("IMPORTANTE", "NO PUEDE ACCEDER: Ya existe un auto adentro registrado")
@@ -392,13 +401,15 @@ class FormularioOperacion:
                     #mb.showwarning("IMPORTANTE", "SIN VIGENCIA ACTIVA: Pensionado sin pago, favor de realizar pago")
                     self.NumTarjeta4.set("")               
                     self.entryNumTarjeta4.focus()
-                    return False                        
-                elif VigAct <= datetime.today()+timedelta(days = 5):
+                    return False   
+
+                elif hoy >= limite:
                     self.labelMensaje.config(text= "Vigencia Vencida")
                     #mb.showwarning("IMPORTANTE", "NO PUEDE ACCEDER: La Vigencia esta vencida")
                     self.NumTarjeta4.set("")               
                     self.entryNumTarjeta4.focus()
                     return False
+
                 else:
                     Entrada=datetime.today()
                     datos=(Existe, tarjeta, Entrada, 'Adentro')
