@@ -105,12 +105,10 @@ class FormularioOperacion:
 		masuno = str(masuno)
 		self.MaxId.set(masuno)
 
-		folio_cifrado, iv = self.operacion1.cifrar_AES(texto_plano = masuno)
-		imgqr = tuple((folio_cifrado, iv))
-		print(imgqr)
+		folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
 
 		#Generar QR
-		self.operacion1.generar_QR(imgqr)
+		self.operacion1.generar_QR(folio_cifrado)
 
 		fechaEntro = datetime.today()
 		horaentrada = str(fechaEntro)
@@ -184,6 +182,10 @@ class FormularioOperacion:
 		self.boton2.grid(column=0, row=0)
 		self.boton3=tk.Button(self.labelPerdido, text="Boleto Perdido", command=self.BoletoPerdido, width=10, height=2, anchor="center")
 		self.boton3.grid(column=0, row=2)
+
+		self.boton_boleto_dañado=tk.Button(self.labelPerdido, text="Boleto Dañado", command=self.BoletoDañado, width=10, height=2, anchor="center")
+		self.boton_boleto_dañado.grid(column=1, row=2)
+
 		self.scrolledtxt=st.ScrolledText(self.labelPerdido, width=28, height=7)
 		self.scrolledtxt.grid(column=1,row=0, padx=10, pady=10)
 		self.labelpromo=ttk.LabelFrame(self.pagina2, text="Promociones")
@@ -351,15 +353,10 @@ class FormularioOperacion:
 
 	def consultar(self, event):
 		datos=str(self.folio.get())
-		print(len(datos))
+		#Verificar si lee el folio o la promocion
+		if len(datos) < 20:
+			folio = self.operacion1.descifrar_folio(folio_cifrado = datos)
 
-		if len(datos) >= 30:
-			datos = eval(datos)
-
-			folio_cifrado = datos[0]
-			vector = datos[1]
-
-			folio = self.operacion1.descifrar_AES(texto_cifrado = folio_cifrado, iv = vector)
 			print(f"\nFolio descifrado: {folio}")
 
 			respuesta=self.operacion1.consulta(folio)
@@ -372,21 +369,6 @@ class FormularioOperacion:
 				self.precio.set('')
 				mb.showinfo("Información", "No existe un auto con dicho código")
 
-		# elif len(datos) > 20:#con esto revisamos si lee el folio o la promocion
-		# 	datos=datos[26:]
-		# 	datos=int(datos)
-		# 	datos=str(datos)
-		# 	self.folio.set(datos)
-		# 	datos=(self.folio.get(), )
-		# 	respuesta=self.operacion1.consulta(datos)
-		# 	if len(respuesta)>0:
-		# 		self.descripcion.set(respuesta[0][0])
-		# 		self.precio.set(respuesta[0][1])
-		# 		self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
-		# 	else:
-		# 		self.descripcion.set('')
-		# 		self.precio.set('')
-		# 		mb.showinfo("Información", "No existe un auto con dicho código")
 		else:
 			mb.showinfo("Promocion", "leer primero el folio")
 			self.folio.set("")
@@ -469,18 +451,18 @@ class FormularioOperacion:
 						self.label9.configure(text =(importe, "Cobrar"))
 						#self.calcular_cambio()
 						self.entrypromo.focus()
-            #    if minutos == 3:    
-            #            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
-            #            self.importe.set(importe)
-            #            self.label9.configure(text =(importe, "Cobrar"))
-            #            #self.calcular_cambio()
-            #            self.entrypromo.focus() 
-            #    if minutos > 3:    
-            #            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
-            #            self.importe.set(importe)
-            #            self.label9.configure(text =(importe, "Cobrar"))
-            #            #self.calcular_cambio()
-            #            self.entrypromo.focus()                                  
+			#    if minutos == 3:    
+			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
+			#            self.importe.set(importe)
+			#            self.label9.configure(text =(importe, "Cobrar"))
+			#            #self.calcular_cambio()
+			#            self.entrypromo.focus() 
+			#    if minutos > 3:    
+			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
+			#            self.importe.set(importe)
+			#            self.label9.configure(text =(importe, "Cobrar"))
+			#            #self.calcular_cambio()
+			#            self.entrypromo.focus()                                  
 	def calcular_cambio(self):
 		elimporte=str(self.importe.get(), )
 		self.elimportees.set(elimporte)
@@ -494,6 +476,7 @@ class FormularioOperacion:
 		self.elcambioes.set(cambio)
 		self.Comprobante()#manda a llamar el comprobante y lo imprime
 		self.GuardarCobro()#manda a llamar guardar cobro para cobrarlo y guardar registro
+		self.PonerFOLIO.set('')
 		io.output(out1,0)
 		time.sleep(1)
 		io.output(out1,1)
@@ -608,6 +591,7 @@ class FormularioOperacion:
 			self.ffeecha.set("")
 			self.folio.set("")
 			self.PrTi.set("")
+			self.PonerFOLIO.set('')
 			#self.elcambioes.set("")
 			#self.elimportees.set("")
 			#self.cuantopagasen.set("")
@@ -851,9 +835,9 @@ class FormularioOperacion:
 		self.FechUCORTE=tk.StringVar()
 		self.entryFechUCORTE=tk.Entry(self.labelframe2, width=20, textvariable=self.FechUCORTE, state= "readonly")
 		self.entryFechUCORTE.grid(column=1, row=3)
-    #    self.CortesAnteri=tk.StringVar()
-    #    self.CortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
-    #    self.CortesAnteri.grid(column=1, row=1)
+	#    self.CortesAnteri=tk.StringVar()
+	#    self.CortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
+	#    self.CortesAnteri.grid(column=1, row=1)
 		self.CortesAnteri=tk.StringVar()
 		self.entryCortesAnteri=tk.Entry(self.labelframe3, width=20, textvariable=self.CortesAnteri)
 		self.entryCortesAnteri.grid(column=1, row=0)
@@ -1156,9 +1140,9 @@ class FormularioOperacion:
 		Numcorte=int(Numcorte)
 		Numcorte=str(Numcorte)
 		#mb.showinfo("segundo", Numcorte)
-		io.output(out1,0)
-		time.sleep(1)
-		io.output(out1,1) 
+		# io.output(out1,0)
+		# time.sleep(1)
+		# io.output(out1,1) 
 		respuesta=self.operacion1.desglose_cobrados(Numcorte)
 		self.scrolledtxt2.delete("1.0", tk.END)
 		#mb.showinfo("respuesta", respuesta)
@@ -2272,7 +2256,29 @@ class FormularioOperacion:
 		except Exception as e:
 			mb.showwarning("Error", f"{e}")
 
+	def BoletoDañado(self):
+		datos=self.PonerFOLIO.get()
 
+		if len(datos) > 0:
+			respuesta=self.operacion1.consulta(datos)
+			print(respuesta)
+			if len(respuesta) > 0:
+				self.descripcion.set(respuesta[0][0])
+				self.precio.set(respuesta[0][1])
+				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
+
+				self.PrTi.set("Maltratado")
+
+			else:
+				self.descripcion.set('')
+				self.precio.set('')
+				self.PonerFOLIO.set('')
+
+				mb.showinfo("Información", "No existe un auto con dicho código")
+		else:
+			mb.showinfo("Error", "Ingrese el folio del boleto dañado")
+			self.folio.set("")
+			self.entryfolio.focus()
 
 #aplicacion1=FormularioOperacion()
 
