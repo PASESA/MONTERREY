@@ -108,13 +108,14 @@ class FormularioOperacion:
 		self.MaxId.set(masuno)
 
 		folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
+		#print(f"Folio a cifrado: {folio_cifrado}")
 
 		#Generar QR
 		self.operacion1.generar_QR(folio_cifrado)
 
 		fechaEntro = datetime.today()
 		horaentrada = str(fechaEntro)
-		horaentrada=horaentrada[:18]
+		horaentrada=horaentrada[:19]
 		self.labelhr.configure(text=(horaentrada, "Entró"))
 		corteNum = 0
 		placa=str(self.Placa.get(), )
@@ -253,18 +254,8 @@ class FormularioOperacion:
 		self.entryPrTi=tk.Entry(self.labelpromo, width=20, textvariable=self.PrTi, state= "readonly")
 		self.entryPrTi.grid(column=1, row=2)
 		#botones
-		#self.boton1=tk.Button(self.labelframe2, text="Consultar", command=self.consultar, width=20, height=5, anchor="center")
-		#self.boton1.grid(column=1, row=4)
-		#self.boton2=tk.Button(self.labelpromo, text="Cliente OficeMax", command=self.CalculaPromocion, width=12, height=3, anchor="center")
-		#self.boton2.grid(column=1, row=4)
-		#self.btnTezo=tk.Button(self.labelpromo, text="Valet Durango", command=self.CalculaPromocionTezo, width=12, height=3, anchor="center")
-		#self.btnTezo.grid(column=1, row=5)
-		#self.btnTezo=tk.Button(self.labelpromo, text="Net Works", command=self.CalculaPromocionTezoEvento, width=12, height=3, anchor="center")
-		#self.btnTezo.grid(column=0, row=4)                   
-		#self.boton3=tk.Button(self.pagina2, text="COBRAR ", command=self.GuardarCobro, width=20, height=5, anchor="center", background="Cadetblue")
-		#self.boton3.grid(column=1, row=1)
-		#self.boton4=tk.Button(self.labelframe3, text="IMPRIMIR", command=self.Comprobante, width=10, height=2, anchor="center", background="Cadetblue")
-		#self.boton4.grid(column=0, row=4)
+
+
 		self.bcambio=tk.Button(self.labelcuantopagas, text="Cobro", command=self.calcular_cambio, width=10, height=2, anchor="center", background="red")
 		self.bcambio.grid(column=0, row=4)
 		
@@ -285,11 +276,9 @@ class FormularioOperacion:
 		for fila in respuesta:
 			self.scrolledtxt.insert(tk.END, "Folio num: "+str(fila[0])+"\nEntro: "+str(fila[1])+"\nPlacas: "+str(fila[2])+"\n\n")
 	def BoletoPerdido(self):
-		datos=str(self.PonerFOLIO.get(), )
-		datos=int(datos)
-		datos=str(datos)
+		datos=self.PonerFOLIO.get()
 		self.folio.set(datos)
-		datos=(self.folio.get(), )
+		datos=self.folio.get()
 		respuesta=self.operacion1.consulta(datos)
 		if len(respuesta)>0:
 			self.descripcion.set(respuesta[0][0])
@@ -317,7 +306,7 @@ class FormularioOperacion:
 			self.label9.configure(text =(importe, "cobro"))
 			self.PrTi.set("Per")
 			self.Comprobante()
-			###-####p = Usb(0x04b8, 0x0202, 0)
+			###p = Usb(0x04b8, 0x0202, 0)
 			#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 			p.text('Boleto Perdido\n')
 			FoliodelPerdido = str(self.PonerFOLIO.get(),)
@@ -348,7 +337,7 @@ class FormularioOperacion:
 		#Verificar si lee el folio o la promocion
 		if len(datos) < 20:
 			folio = self.operacion1.descifrar_folio(folio_cifrado = datos)
-
+			self.folio.set(folio)
 			print(f"\nFolio descifrado: {folio}")
 
 			respuesta=self.operacion1.consulta(folio)
@@ -474,7 +463,7 @@ class FormularioOperacion:
 		io.output(out1,1)
 
 	def Comprobante(self):
-		###-####p = Usb(0x04b8, 0x0202, 0)
+		###p = Usb(0x04b8, 0x0202, 0)
 		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 		p.text("        Comprobante de pago\n")
 		placa=str(self.Placa.get(), )
@@ -505,6 +494,8 @@ class FormularioOperacion:
 		p.text('El auto permanecio: '+TiempoCompro+'\n')
 		folioactual=str(self.folio.get(), )
 		p.text('El folio del boleto es: '+folioactual+'\n')
+		promoTipo = str(self.PrTi.get(),)
+		p.text('TIPO DE COBRO: '+promoTipo+'\n')
 		#p.text('Le atendio: ')
 		p.cut()
 
@@ -658,7 +649,7 @@ class FormularioOperacion:
 	###PENSIONADOS
 	def PensionadosSalida(self):
 		numtarjeta=str(self.NumTarjeta2.get(), )
-		#print(numtarjeta)
+
 		if len(numtarjeta) == 0:
 			mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
 			return False
@@ -666,7 +657,7 @@ class FormularioOperacion:
 			tarjeta=int(numtarjeta)
 			#print(tarjeta)
 			respuesta=self.operacion1.ValidarTarj(tarjeta)
-			#print(respuesta)
+
 			if len(respuesta) == 0:
 				mb.showwarning("IMPORTANTE", "No existe Pensionado para ese Num de Tarjeta")
 				self.NumTarjeta2.set("")               
@@ -676,7 +667,7 @@ class FormularioOperacion:
 				for fila in respuesta:
 					Existe=fila[0]
 					Estatus=fila[1]
-					#print(Existe)
+
 					if Existe == None :
 						mb.showwarning("IMPORTANTE", "No existe Pensionado para ese Num de Tarjeta")
 						self.NumTarjeta2.set("")               
@@ -846,12 +837,12 @@ class FormularioOperacion:
 		Numcorte=str(self.CortesAnteri.get(), )
 		Numcorte=int(Numcorte)
 		Numcorte=str(Numcorte)
-		###-####io.output(out1,0)
-		###-####time.sleep(1)
-		###-####io.output(out1,1)
+		###io.output(out1,0)
+		###time.sleep(1)
+		###io.output(out1,1)
 		respuesta=self.operacion1.desglose_cobrados(Numcorte)
 		self.scrolledtxt2.delete("1.0", tk.END)
-		###-####p = Usb(0x04b8, 0x0202, 0)
+		###p = Usb(0x04b8, 0x0202, 0)
 		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 		p.text("El Numero de corte es "+Numcorte+'\n')
 		for fila in respuesta:
@@ -868,61 +859,68 @@ class FormularioOperacion:
 		else:
 			p.cut()
 	def BoletoCancelado(self):
-		datos=str(self.FolioCancelado.get(), )
-		datos=int(datos)
-		datos=str(datos)
-		self.folio.set(datos)
-		datos=(self.folio.get(), )
-		respuesta=self.operacion1.consulta(datos)
-		if len(respuesta)>0:
-			self.descripcion.set(respuesta[0][0])
-			self.precio.set(respuesta[0][1])
-			self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
-			fecha = datetime.today()
-			fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
-			fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
-			date_time_str=str(self.descripcion.get())
-			date_time_obj= datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
-			date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
-			date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
-			ffeecha = fechaActual - date_time_mod2
-			#self.label11.configure(text=(ffeecha.days, "dias"))
-			segundos_vividos = ffeecha.seconds
-			horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
-		#    self.label12.configure(text=(horas_dentro, "horas"))
-			minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
-			if horas_dentro <= 24:
-				importe = 0
-			if horas_dentro > 24 or ffeecha.days >= 1:
-				importe =0
-			self.importe.set(importe)
-			self.label9.configure(text =(importe, "cobro"))
-			self.PrTi.set("CDO")
-			self.promo.set("")
-			###-####p = Usb(0x04b8, 0x0202, 0)
-			#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
-			p.text('Boleto Cancelado\n')
-			FoliodelCancelado = str(self.FolioCancelado.get(),)
-			p.text('Folio boleto cancelado: '+FoliodelCancelado+'\n')
-			fecha = datetime.today()
-			fechaNota = datetime.today()
-			fechaNota= fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
-			horaNota = str(fechaNota)
-			p.set(align="left")
-			p.set('Big line\n', font='b')
-			p.text('Fecha: '+horaNota+'\n')
-			EntradaCompro = str(self.descripcion.get(),)
-			p.text('El auto entro: '+EntradaCompro+'\n')
-			SalioCompro = str(self.copia.get(),)
-			p.text('El auto salio: '+SalioCompro+'\n')
-			self.GuardarCobro()
-			self.FolioCancelado.set("")
-			p.cut()
+		if len(self.FolioCancelado.get()) == 0:
+			mb.showerror("Error", "Ingrese un folio a cancelar")
+			return None
+		cancelar = mb.askokcancel("Advertencia", f"Estas seguro de querer cancelar el boleto con folio: {self.FolioCancelado.get()}")
+		if cancelar:
+			datos=self.FolioCancelado.get()
+			self.folio.set(datos)
+			datos=self.folio.get()
+			respuesta=self.operacion1.consulta(datos)
+			if len(respuesta)>0:
+				self.descripcion.set(respuesta[0][0])
+				self.precio.set(respuesta[0][1])
+				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
+				fecha = datetime.today()
+				fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
+				fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
+				date_time_str=str(self.descripcion.get())
+				date_time_obj= datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+				date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
+				date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
+				ffeecha = fechaActual - date_time_mod2
+				#self.label11.configure(text=(ffeecha.days, "dias"))
+				segundos_vividos = ffeecha.seconds
+				horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
+			#    self.label12.configure(text=(horas_dentro, "horas"))
+				minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
+				if horas_dentro <= 24:
+					importe = 0
+				if horas_dentro > 24 or ffeecha.days >= 1:
+					importe =0
+				self.importe.set(importe)
+				self.label9.configure(text =(importe, "cobro"))
+				self.PrTi.set("CDO")
+				self.promo.set("")
+				###p = Usb(0x04b8, 0x0202, 0)
+				#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
+				p.text('Boleto Cancelado\n')
+				FoliodelCancelado = str(self.FolioCancelado.get(),)
+				p.text('Folio boleto cancelado: '+FoliodelCancelado+'\n')
+				fecha = datetime.today()
+				fechaNota = datetime.today()
+				fechaNota= fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
+				horaNota = str(fechaNota)
+				p.set(align="left")
+				p.set('Big line\n', font='b')
+				p.text('Fecha: '+horaNota+'\n')
+				EntradaCompro = str(self.descripcion.get(),)
+				p.text('El auto entro: '+EntradaCompro+'\n')
+				SalioCompro = str(self.copia.get(),)
+				p.text('El auto salio: '+SalioCompro+'\n')
+				self.GuardarCobro()
+				self.FolioCancelado.set("")
+				p.cut()
 
+			else:
+				self.descripcion.set('')
+				self.precio.set('')
+				mb.showinfo("Información", "No existe un auto con dicho código")
 		else:
-			self.descripcion.set('')
-			self.precio.set('')
-			mb.showinfo("Información", "No existe un auto con dicho código")
+			self.FolioCancelado.set("")
+
+
 	def listar(self):
 		respuesta=self.operacion1.recuperar_todos()
 		self.scrolledtext1.delete("1.0", tk.END)
@@ -934,7 +932,7 @@ class FormularioOperacion:
 		#respuesta=str(respuesta)
 		for fila in respuesta:
 			self.scrolledtext1.insert(tk.END, "Entrada num: "+str(fila[0])+"\nEntro: "+str(fila[1])+"\nSalio: "+str(fila[2])+"\nImporte: "+str(fila[3])+"\n\n")
-			###-####p = Usb(0x04b8, 0x0202, 0)
+			###p = Usb(0x04b8, 0x0202, 0)
 			#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 			p.text('Entrada Num :')
 			p.text(str(fila[0]))
@@ -988,8 +986,8 @@ class FormularioOperacion:
 			usuario1 = fila[4]
 		hoy = str(datetime.today())
 		hoy1=hoy[:20]
-		#print(hoy1)
-		#print(str(cajero))  
+
+
 		datos=(hoy1, cajero1)
 		self.operacion1.Cierreusuario(datos)
 		dato=(cajero1)
@@ -1021,7 +1019,7 @@ class FormularioOperacion:
 		vobo = "cor"#este es para que la instruccion no marque error
 		ActEntradas = (maxnum, vobo )
 		self.label4.configure(text=("Numero de corte",maxnum))
-		###-####p = Usb(0x04b8, 0x0202, 0)
+		###p = Usb(0x04b8, 0x0202, 0)
 		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 		p.image("LOGO1.jpg")
 		p.text(" Est Monterrey CORTE Num "+maxnum+"\n")
@@ -1030,7 +1028,7 @@ class FormularioOperacion:
 		#p.text('IMPORTE: $ '+ImpCorte2+'\n')
 		ultiCort1=str(self.FechUCORTE.get(),)
 		DDESEM=(datetime.today().weekday())
-		#print(DDESEM)
+
 		if DDESEM == 0:
 			DDESEM = 'LUNES'
 		if DDESEM == 1:
@@ -1113,7 +1111,7 @@ class FormularioOperacion:
 		respuesta=self.operacion1.desglose_cobrados(Numcorte)
 		self.scrolledtxt2.delete("1.0", tk.END)
 		#mb.showinfo("respuesta", respuesta)
-		###-####p = Usb(0x04b8, 0x0202, 0)
+		###p = Usb(0x04b8, 0x0202, 0)
 		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 		p.text("Cantidad e Importes "+'\n')
 		p.text("Cantidad - Tarifa - valor C/U - Total "+'\n')
@@ -1173,8 +1171,8 @@ class FormularioOperacion:
 						#Obtenemos Fecha (Inicialy Final) del mes que solicita el reporte
 						#CorteMax=self.operacion1.Cortes_Max(datos)
 						CorteMin=self.operacion1.Cortes_Min(datos)
-						#print(CorteMin)
-						#print(CorteMax)
+						#p.text(CorteMin)
+						#p.text(CorteMax)
 						#for fila in CorteMax:
 							#UltCorte=fila[1]
 							#IniCorte=fila[1]
@@ -1184,19 +1182,19 @@ class FormularioOperacion:
 							
 						#Obtenemos Fecha Inicial y Final del Folio de Cortes del Mes que se solicita el reporte
 						#datos=(IniCorte)
-						#print(str(IniFecha))
+
 						datos=(IniFecha)
-						#print(str(datos))
+
 						CorteIni=self.operacion1.Cortes_Folio(datos)
 						for fila in CorteIni:
 							CorteIni2=fila[0]
-						#print(CorteIni2)
+
 						#datos=(UltCorte)
 						datos=(UltFecha)
 						CorteFin=self.operacion1.Cortes_Folio(datos)
 						for fila in CorteFin:
 							CorteFin2=fila[0]
-						#print(CorteFin2)                        
+                      
 						#Obtnemos los Registros entre estos dos Folios para el cuerpo del reporte       
 						datos=(CorteIni2, CorteFin2)
 						#datos=(IniCorte, UltCorte)
@@ -1232,7 +1230,7 @@ class FormularioOperacion:
 						row=2
 						col=4
 						for fila in ResumenPromo:
-							#print(str(fila[0]))
+
 							worksheet.write(row, col,   fila[1]) #Nombre de la Promo A12
 							worksheet.write(row, col+1, fila[0],cell_format6) #Numero de Folios por Promocion B12
 							worksheet.write(row, col+2, fila[3],cell_format5) #Monto Total por Promocion C12
@@ -1653,9 +1651,9 @@ class FormularioOperacion:
 					mb.showwarning("IMPORTANTE", "Debe capturar La Tolerancia a dar al Pensionado debe ser mayor a cero")
 					return False
 				else :
-					#print("paso")
+
 					tarjeta=int(numtarjeta)
-					#print(str(tarjeta))
+
 					Existe=self.operacion1.ValidarRFID(tarjeta)
 					#mb.showwarning("IMPORTANTE", Existe)
 					if len(Existe) != 0 :
@@ -1728,7 +1726,7 @@ class FormularioOperacion:
 				else:
 					tarjeta=int(numtarjeta)
 					Existe=self.operacion1.ValidarRFID(tarjeta)
-					#print(Existe)
+
 					#mb.showwarning("IMPORTANTE", Existe)
 					if Existe == None :
 						mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
@@ -1739,7 +1737,7 @@ class FormularioOperacion:
 						global PensionadoOpen #reasignamos valor a la Variable global
 						PensionadoOpen=Existe #Cachamos el Id_cliente por si se hacen modificaciones
 						respuesta=self.operacion1.ConsultaPensionado(Existe)
-						#print("Pensionado dese Consulta") #print(PensionadoOpen)
+
 						#Nom_cliente, Apell1_cliente, Apell2_cliente, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Fecha_vigencia, Estatus
 						for fila in respuesta:
 							#self.NumTarjeta.set(numtarjeta)
@@ -1848,7 +1846,7 @@ class FormularioOperacion:
 					mb.showwarning("IMPORTANTE", "Debe capturar La Tolerancia a dar al Pensionado debe ser mayor a cero")
 					return False
 				else :
-					#print("Pensionado dese Modificar") #print(PensionadoOpen)
+
 					datos=(numtarjeta, Nombre, ApellidoPat, ApellidoMat, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle, Placa, Modelo, Color, montoxmes, cortesia, tolerancia, fechaCambio, PensionadoOpen)
 					#mb.showwarning("GUARDO")
 					self.operacion1.ModificarPensionado(datos)
@@ -1883,12 +1881,12 @@ class FormularioOperacion:
 	
 	def ConsulPagoPen(self,event):
 		numtarjeta=str(self.NumTarjeta3.get(), )
-		#print("entro")
+
 		if len(numtarjeta) == 0 :
 			mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
 		else :
 			tarjeta=int(numtarjeta)
-			#print(numtarjeta)
+
 			Existe=self.operacion1.ValidarRFID(tarjeta)
 			if len(Existe) == 0 :
 				mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
@@ -1911,7 +1909,7 @@ class FormularioOperacion:
 					cortesia=fila[16]
 					self.Vigencia.set(VigAct)
 					self.Estatus.set(Estatus)
-					#print(cortesia)
+
 					if cortesia == "Si" :
 						self.Monto.set("")
 						self.lbldatosCortesia.configure(text="         Cliente con CORTESIA")
@@ -1934,7 +1932,7 @@ class FormularioOperacion:
 			self.lbldatosTotal2.configure(text=" ")
 			monto=int(monto)
 			pago=monto*mes #Calculando monto a pagar
-			#print(pago)
+
 			self.lbldatosTotal.configure(text="TOTAL A PAGAR:   "+str(pago))
 			
 
@@ -2225,10 +2223,11 @@ class FormularioOperacion:
 
 	def BoletoDañado(self):
 		datos=self.PonerFOLIO.get()
+		self.folio.set(datos)
 
 		if len(datos) > 0:
 			respuesta=self.operacion1.consulta(datos)
-			print(respuesta)
+
 			if len(respuesta) > 0:
 				self.descripcion.set(respuesta[0][0])
 				self.precio.set(respuesta[0][1])
