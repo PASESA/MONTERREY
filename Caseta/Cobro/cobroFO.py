@@ -224,18 +224,6 @@ class FormularioOperacion:
 		self.entryimporte.grid(column=1, row=3)
 
 
-		self.label11=ttk.Label(self.labelframe3, text="DIAS")
-		self.label11.grid(column=1, row=5, padx=1, pady=1)
-		self.label12=ttk.Label(self.labelframe3, text="HORAS")
-		self.label12.grid(column=1, row=6, padx=1, pady=1)
-		self.label7=ttk.Label(self.labelframe3, text="MINUTOS")
-		self.label7.grid(column=1, row=7, padx=1, pady=1)
-		self.label8=ttk.Label(self.labelframe3, text="SEGUNDOS")
-		self.label8.grid(column=1, row=8, padx=1, pady=1)
-		self.label9=ttk.Label(self.labelframe3, text="TOTAL COBRO")
-		self.label9.grid(column=1, row=9, padx=1, pady=1)
-
-
 		####PENSIONADOS
 		self.labelPensionado=ttk.LabelFrame(self.labelframe3_principal, text="SALIDA PENSIONADO")
 		self.labelPensionado.grid(column=0, row=1, padx=5, pady=10)
@@ -248,29 +236,42 @@ class FormularioOperacion:
 		self.botonPensinados.grid(column=1, row=3, padx=4, pady=4) 
 
 
-		self.labelPerdido_principal=ttk.LabelFrame(self.pagina2, text="Perdido")
+		self.scrol_datos_boleto_cobrado=st.ScrolledText(self.labelframe3_principal, width=28, height=7)
+		self.scrol_datos_boleto_cobrado.grid(column=0,row=2, padx=1, pady=1)
+
+
+		self.labelPerdido_principal=ttk.LabelFrame(self.pagina2, text="")
 		self.labelPerdido_principal.grid(column=2,row=0,padx=5, pady=10, sticky=tk.NW)
 
 		self.labelPerdido=ttk.LabelFrame(self.labelPerdido_principal, text="Boleto Perdido/Dañado")
 		self.labelPerdido.grid(column=0,row=0,padx=5, pady=10, sticky=tk.NW)
 
 
-		self.lblFOLIO=ttk.Label(self.labelPerdido, text="INGRESE FOLIO", font=("Arial", 11))
-		self.lblFOLIO.grid(column=0, row=1, sticky=tk.NW,padx=10, pady=10)
+		self.label_frame_folio=ttk.LabelFrame(self.labelPerdido, text="FOLIO")
+		self.label_frame_folio.grid(column=0,row=0,padx=5, pady=10, sticky=tk.NW)
+
+
+		self.lblFOLIO=ttk.Label(self.label_frame_folio, text="INGRESE FOLIO", font=("Arial", 11))
+		self.lblFOLIO.grid(column=0, row=0, sticky=tk.NW,padx=5, pady=5)
 
 		self.PonerFOLIO=tk.StringVar()
-		self.entryPonerFOLIO=tk.Entry(self.labelPerdido, width=15, textvariable=self.PonerFOLIO, font=("Arial", 11))
-		self.entryPonerFOLIO.grid(column=1, row=1, sticky=tk.NW,padx=10, pady=10)
+		self.entryPonerFOLIO=tk.Entry(self.label_frame_folio, width=15, textvariable=self.PonerFOLIO, font=("Arial", 11))
+		self.entryPonerFOLIO.grid(column=1, row=0, sticky=tk.NW,padx=5, pady=5)
 
 
-		self.boton3=tk.Button(self.labelPerdido, text="Boleto Perdido\nCON FOLIO", command=self.BoletoPerdido_conFolio, width=12, height=3, anchor="center", font=("Arial", 11))
-		self.boton3.grid(column=4, row=0, sticky=tk.NE, padx=12, pady=10)
+		self.label_botones_boletos_perdido=ttk.LabelFrame(self.labelPerdido, text="BOLETO DAÑADO/PERDIDO")
+		self.label_botones_boletos_perdido.grid(column=0,row=1,padx=5, pady=10, sticky=tk.NW)
 
-		self.boton3=tk.Button(self.labelPerdido, text="Boleto Perdido\nSIN FOLIO", command=self.BoletoPerdido_sinFolio, width=12, height=3, anchor="center", font=("Arial", 11))
-		self.boton3.grid(column=4, row=1, sticky=tk.NE, padx=12, pady=10)
+		self.boton_boleto_dañado=tk.Button(self.label_botones_boletos_perdido, text="Boleto Dañado", command=self.BoletoDañado, width=10, height=3, anchor="center", font=("Arial", 10))
+		self.boton_boleto_dañado.grid(column=0, row=1, sticky=tk.NE, padx=10, pady=5)
 
-		self.boton_boleto_dañado=tk.Button(self.labelPerdido, text="Boleto Dañado", command=self.BoletoDañado, width=12, height=3, anchor="center", font=("Arial", 11))
-		self.boton_boleto_dañado.grid(column=4, row=2, sticky=tk.NE, padx=15, pady=10)
+		self.boton3=tk.Button(self.label_botones_boletos_perdido, text="Boleto Perdido\nCON FOLIO", command=self.BoletoPerdido_conFolio, width=10, height=3, anchor="center", font=("Arial", 10))
+		self.boton3.grid(column=1, row=1, sticky=tk.NE, padx=10, pady=5)
+
+		self.boton3=tk.Button(self.label_botones_boletos_perdido, text="Boleto Perdido\nSIN FOLIO", command=self.BoletoPerdido_sinFolio, width=10, height=3, anchor="center", font=("Arial", 10))
+		self.boton3.grid(column=2, row=1, sticky=tk.NE, padx=10, pady=5)
+
+
 
 
 		self.labelPerdido2=ttk.LabelFrame(self.labelPerdido_principal, text="Boletos sin cobro")
@@ -281,11 +282,6 @@ class FormularioOperacion:
 
 		self.scrolledtxt=st.ScrolledText(self.labelPerdido2, width=28, height=7)
 		self.scrolledtxt.grid(column=1,row=0, padx=10, pady=10)
-
-
-
-
-
 
 
 
@@ -384,7 +380,6 @@ class FormularioOperacion:
 
 			# Establecer el importe y mostrarlo en la etiqueta label9
 			self.importe.set(importe)
-			self.label9.configure(text =(importe, "cobro"))
 
 			# Realizar otras operaciones y configuraciones
 			self.PrTi.set("Per")
@@ -422,21 +417,13 @@ class FormularioOperacion:
 
 
 
-
-
-
-
-
-
-
-
-
 	def consultar(self, event):
 		datos=str(self.folio.get())
 		#Verificar si lee el folio o la promocion
 		if len(datos) < 20:
 			folio = self.operacion1.descifrar_folio(folio_cifrado = datos)
 			self.folio.set(folio)
+			folio = self.folio.get()
 			print(f"\nFolio descifrado: {folio}")
 
 			respuesta=self.operacion1.consulta(folio)
@@ -459,6 +446,13 @@ class FormularioOperacion:
 		salida = str(self.precio.get(), )#deveria ser salida en lugar de precio pero asi estaba el base
 		if len(salida)>5:#None tiene 4 letras si es mayor a 5 es que tiene ya la fecha
 			self.label15.configure(text=("Este Boleto ya Tiene cobro"))
+
+			respuesta=self.operacion1.consulta({self.folio.get()})
+
+			self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
+			for fila in respuesta:
+				self.scrol_datos_boleto_cobrado.insert(tk.END, f"Folio: {fila[2]}\nEntró: {fila[0]}\nSalió: {fila[1]}\nTiempo: {fila[3]}\nTarifa: {fila[4]}\nImporte: {fila[5]}")
+
 			self.elcambioes.set("")
 			self.elimportees.set("")
 			self.cuantopagasen.set("")
@@ -468,15 +462,10 @@ class FormularioOperacion:
 			self.importe.set("")
 			self.ffeecha.set("")
 			self.folio.set("")
-			self.label7.configure(text=(""))
-			self.label8.configure(text =(""))
-			self.label9.configure(text =(""))
-#            self.label10.configure(text=(""))
-			self.label11.configure(text=(""))
-			self.label12.configure(text=(""))
-			# self.elimportees.configure(text=(""))
 			self.entryfolio.focus()
+
 		else:
+			self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
 			self.PrTi.set("Normal")
 			self.label15.configure(text="Lo puedes COBRAR")
 			fecha = datetime.today()
@@ -488,12 +477,9 @@ class FormularioOperacion:
 			date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
 			date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
 			ffeecha = fechaActual - date_time_mod2
-			self.label11.configure(text=(ffeecha.days, "dias"))
 			segundos_vividos = ffeecha.seconds
 			horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
-			self.label12.configure(text=(horas_dentro, "horas"))
 			minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
-			self.label7.configure(text=(minutos_dentro, "minutos"))
 			#calcular la diferencia de segundos
 			seg1 = ffeecha.seconds
 			#print ("dif = seg1 = ", seg1)
@@ -507,8 +493,6 @@ class FormularioOperacion:
 			#print ("seg5 =", seg5)
 			seg6 = round(seg5)
 			#print  ("segundos dentro ===> ", seg6)
-			self.label8.configure(text =(seg6, "segundos"))
-			#self.label9.configure(text =(ffeecha, "tiempo dentro"))
 			self.ffeecha.set(ffeecha)
 			if minutos_dentro < 15 and minutos_dentro  >= 0:
 				minutos = 1
@@ -523,26 +507,22 @@ class FormularioOperacion:
 				self.importe.set(importe)
 				#self.elimportees.set(importe)
 				self.IImporte.config(text=importe)
-				self.label9.configure(text =(importe, "cobro"))
 				self.entrypromo.focus()
 			else:
 				#if minutos <= 2:    
 						importe = ((ffeecha.days)*250 + (horas_dentro * 28)+(minutos)*7)
 						self.importe.set(importe)
 						self.IImporte.config(text=importe)
-						self.label9.configure(text =(importe, "Cobrar"))
 						#self.calcular_cambio()
 						self.entrypromo.focus()
 			#    if minutos == 3:    
 			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
 			#            self.importe.set(importe)
-			#            self.label9.configure(text =(importe, "Cobrar"))
 			#            #self.calcular_cambio()
 			#            self.entrypromo.focus() 
 			#    if minutos > 3:    
 			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
 			#            self.importe.set(importe)
-			#            self.label9.configure(text =(importe, "Cobrar"))
 			#            #self.calcular_cambio()
 			#            self.entrypromo.focus()                                  
 	def calcular_cambio(self):
@@ -600,9 +580,8 @@ class FormularioOperacion:
 		#p.text('Le atendio: ')
 		p.cut()
 
-
-		
 	def GuardarCobro(self):
+		self.IImporte.config(text="")
 		salida = str(self.precio.get(), )#deveria ser salida en lugar de precio pero asi estaba el base
 
 		if len(salida)>5:
@@ -614,11 +593,6 @@ class FormularioOperacion:
 			self.importe.set("")
 			self.ffeecha.set("")
 			self.folio.set("")
-			self.label7.configure(text=(""))
-			self.label8.configure(text =(""))
-			self.label9.configure(text =(""))
-			self.label11.configure(text=(""))
-			self.label12.configure(text=(""))
 			self.label15.configure(text=(""))
 			self.entryfolio.focus()
 		else:
@@ -640,11 +614,6 @@ class FormularioOperacion:
 			self.descripcion.set('')
 			self.precio.set('')
 			self.copia.set("")
-			self.label7.configure(text=(""))
-			self.label8.configure(text =(""))
-			self.label9.configure(text =(""))
-			self.label11.configure(text=(""))
-			self.label12.configure(text=(""))
 			self.label15.configure(text=(""))
 			self.importe.set("")
 			self.ffeecha.set("")
@@ -655,8 +624,10 @@ class FormularioOperacion:
 			#self.elimportees.set("")
 			#self.cuantopagasen.set("")
 			self.entryfolio.focus()#se posiciona en leer qr
+
+
 	def CalculaPromocion(self, event):
-########## Promocion ofice        
+			########## Promocion ofice        
 			global TipoPromocion
 			TipoPromocion = str(self.promo.get(), )#se recibe el codigo
 			respuesta=self.operacion1.ValidaPromo(TipoPromocion)
@@ -694,7 +665,6 @@ class FormularioOperacion:
 						#importe = ((ffeecha.days)*720 + (horas_dentro * 30)+(minutos_dentro)*1)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.label9.configure(text =(importe, "cobro"))
 					self.PrTi.set("OMax")
 					#mb.showinfo("liverpool",importe)
 					self.promo.set("")
@@ -716,7 +686,6 @@ class FormularioOperacion:
 					importe = int(importe)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.label9.configure(text =(importe, "cobro"))
 					self.PrTi.set("s/co")
 					self.promo.set("")                       
 				#if TipoProIni==("NW NETWO"):
@@ -747,7 +716,6 @@ class FormularioOperacion:
 						#importe = ((ffeecha.days)*720 + (horas_dentro * 30)+(minutos_dentro)*1)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.label9.configure(text =(importe, "cobro"))
 					self.PrTi.set("Netw")
 					#mb.showinfo("liverpool",importe)
 					self.promo.set("")                        
@@ -933,12 +901,16 @@ class FormularioOperacion:
 		self.entryAnoCorte=tk.Entry(self.labelframe5, width=7, textvariable=self.AnoCorte, justify=tk.RIGHT)
 		self.entryAnoCorte.grid(column=1, row=2)       
 		self.boton6=tk.Button(self.labelframe5, text="Reporte de Corte", command=self.Reporte_Corte, width=15, height=1, anchor="center", background="red")
-		self.boton6.grid(column=3, row=2, padx=4, pady=4)         
+		self.boton6.grid(column=3, row=2, padx=4, pady=4)       
+
+
 	def BoletoDentro2(self):
 		respuesta=self.operacion1.Autos_dentro()
 		self.scrolledtxt2.delete("1.0", tk.END)
 		for fila in respuesta:
 			self.scrolledtxt2.insert(tk.END, "Folio num: "+str(fila[0])+"\nEntro: "+str(fila[1])+"\nPlacas: "+str(fila[2])+"\n\n")
+
+
 	def desglose_cobrados(self):
 		Numcorte=str(self.CortesAnteri.get(), )
 		Numcorte=int(Numcorte)
@@ -964,6 +936,8 @@ class FormularioOperacion:
 			p.text('\n')
 		else:
 			p.cut()
+
+
 	def BoletoCancelado(self):
 		if len(self.FolioCancelado.get()) == 0:
 			mb.showerror("Error", "Ingrese un folio a cancelar")
@@ -986,10 +960,8 @@ class FormularioOperacion:
 				date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
 				date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
 				ffeecha = fechaActual - date_time_mod2
-				#self.label11.configure(text=(ffeecha.days, "dias"))
 				segundos_vividos = ffeecha.seconds
 				horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
-			#    self.label12.configure(text=(horas_dentro, "horas"))
 				minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
 				if horas_dentro <= 24:
 					importe = 0
@@ -997,7 +969,6 @@ class FormularioOperacion:
 					importe =0
 				self.importe.set(importe)
 				self.IImporte.config(text=importe)
-				self.label9.configure(text =(importe, "cobro"))
 				self.PrTi.set("CDO")
 				self.promo.set("")
 				###p = Usb(0x04b8, 0x0202, 0)
@@ -1469,7 +1440,7 @@ class FormularioOperacion:
 		self.cuaderno1.add(self.pagina4, text="Modulo Pensionados")
 		#enmarca los controles LabelFrame 
 		self.labelframe1=ttk.LabelFrame(self.pagina4, text="Pensionados")
-		self.labelframe1.grid(column=0, row=0, padx=5, pady=10)
+		self.labelframe1.grid(column=0, row=0, sticky=tk.NW)
 		self.lbltitulo=ttk.Label(self.labelframe1, text="--Datos del Pensionado--")
 		self.lbltitulo.grid(column=0, row=0, padx=8, pady=8)
 		self.lbldatos0=ttk.Label(self.labelframe1, text="Num. Tarjeta:")
@@ -1585,7 +1556,7 @@ class FormularioOperacion:
 		self.entryClave.grid(column=3, row=20, padx=4, pady=4)
 
 		label_frame_tipo_pago = tk.LabelFrame(self.pagina4, text="Pago Pension")
-		label_frame_tipo_pago.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
+		label_frame_tipo_pago.grid(column=0, row=1, sticky=tk.NW)
 
 		######Pago, Vigencia y Numero de tarjeta
 		self.labelframe3=ttk.LabelFrame(label_frame_tipo_pago, text="Datos de pago")
@@ -2330,7 +2301,8 @@ class FormularioOperacion:
 
 	def BoletoDañado(self):
 		datos=self.PonerFOLIO.get()
-		self.folio.set(datos)
+		self.folio.set(str(datos))
+		datos = self.folio.get()
 
 		if len(datos) > 0:
 			respuesta=self.operacion1.consulta(datos)
