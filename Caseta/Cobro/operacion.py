@@ -48,7 +48,7 @@ class Operacion:
 	def consulta(self, datos):
 		cone=self.abrir()
 		cursor=cone.cursor()
-		sql="select Entrada, Salida from Entradas where id=%s"
+		sql="select Entrada, Salida, id, TiempoTotal, TarifaPreferente, Importe, Placas from Entradas where id=%s"
 	   #sql="select descripcion, precio from articulos where codigo=%s"
 		cursor.execute(sql, datos)
 		cone.close()
@@ -403,8 +403,6 @@ class Operacion:
 		cone.close()    
 
 
-
-
 	def nombre_usuario_activo(self):
 		"""
 		Esta función realiza una consulta a la base de datos para obtener el nombre del usuario que esta activo.
@@ -468,8 +466,6 @@ class Operacion:
 		# Se devuelve la lista de tuplas con los resultados de la consulta.
 		return resultados
 
-
-
 	def cifrar_folio(self, folio):
 		"""
 		Cifra un número de folio utilizando una tabla de sustitución numérica.
@@ -491,8 +487,6 @@ class Operacion:
 		# Concatena el número de seguridad al número de folio.
 		folio = folio + numero_seguridad
 
-		# Imprime el número de folio cifrado (sólo para propósitos de depuración).
-		print(folio)
 
 		# Tabla de sustitución numérica.
 		tabla = {'0': '5', '1': '3', '2': '9', '3': '1', '4': '7', '5': '0', '6': '8', '7': '4', '8': '6', '9': '2'}
@@ -508,7 +502,6 @@ class Operacion:
 
 		# Devuelve el número de folio cifrado.
 		return cifrado
-
 
 	def descifrar_folio(self, folio_cifrado):
 		"""
@@ -561,7 +554,6 @@ class Operacion:
 			mb.showerror("Error", f"Ha ocurrido un error al descifrar el folio, intente nuevamente, si el error persiste contacte a un administrador y muestre el siguiente error:\n{error}")
 			return None
 
-
 	def generar_QR(self, QR_info: str, path: str = "reducida.png") -> None:
 		"""Genera un código QR a partir de la información dada y lo guarda en un archivo de imagen.
 
@@ -579,3 +571,28 @@ class Operacion:
 		img.save(path)
 
 
+
+	# def Boletos_perdidos_generados(self, dato):
+	# 	cone=self.abrir()
+	# 	cursor=cone.cursor()
+	# 	sql = "update MovsUsuarios set CierreCorte = 'No aplica' where  id_movs > %s;"
+	# 	cursor.execute(sql,dato)        
+	# 	cone.commit()
+	# 	cone.close() 
+
+	# def Boletos_perdidos_cobrados(self, dato):
+	# 	cone=self.abrir()
+	# 	cursor=cone.cursor()
+	# 	sql = "update MovsUsuarios set CierreCorte = 'No aplica' where  id_movs > %s;"
+	# 	cursor.execute(sql,dato)        
+	# 	cone.commit()
+	# 	cone.close() 
+
+"""
+SELECT COUNT(*) AS "BOLETOS PERDIDOS GENERADOS" FROM entradas WHERE `Placas` = "BoletoPerdido" AND CorteInc = 0;
+
+SELECT COUNT(*) AS "BOLETOS PERDIDOS COBRADOS" FROM entradas WHERE `Placas` = "BoletoPerdido" AND CorteInc = 0 AND TarifaPreferente IS NOT NULL;
+
+SELECT COUNT(*) AS "BOLETOS PERDIDOS NO COBRADOS" FROM entradas WHERE `Placas` = "BoletoPerdido" AND CorteInc = 0 AND TarifaPreferente IS NULL;
+
+"""
