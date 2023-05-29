@@ -348,10 +348,10 @@ class FormularioOperacion:
         p.text('Monterrey No. 75'+placa+'\n')
         p.text('Entrada (calle MTY)'+placa+'\n')
         p.set(align="left")
-        #p.image("LOGO1.jpg")
+
         p.image("reducida.png")
-        #p.image("AutoA.png")
-        #p.text("            Le Atiende:               \n")
+
+
         p.text("--------------------------------------\n")
         p.cut()
         

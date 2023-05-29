@@ -6,14 +6,6 @@ from tkinter import messagebox as mb
 class Operacion:
 
 	def abrir(self):
-#        conexion=mysql.connector.connect(host="localhost",
-#                                              user="root",
-##                                              passwd="RG980320",
- #                                             database="Parqueadero1")
-		#conexion = pymysql.connect(host="localhost",
-		#                   user="Aurelio",
-		#                   passwd="RG980320",
-		#                   database="Parqueadero1")
 		conexion = pymysql.connect(host="169.254.202.242",
 						   user="Aurelio",
 						   passwd="RG980320",

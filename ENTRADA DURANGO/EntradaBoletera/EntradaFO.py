@@ -257,40 +257,8 @@ class FormularioOperacion:
                    print ('no puede imprimir porque no tiene Auto')
                    #print(str(BanSenBoleto))
                    self.BotDet.config(text = "no puede imprimir no hay auto ",background="red")
-               #self.loopDet = ttk.Label(self.labelframe1, text="siente auto", width = 17, background = '#FD6')
-                #time.sleep (1)
-       #         tarjeta=str(self.entryNumTarjeta4.get(),)
-      ##          if len(tarjeta) > 1000:
-        #            #mb.showwarning("IMPORTANTE", "ENTRO")
-         #           self.Pensionados()
-          #      if io.input(boton):
-           #             self.BotDet.config(text = "Presione Boton",background="#CCC")
-            #            io.output(out2,1)
-             #   else:
-              #          io.output(out2,0)
-               #         self.BotDet.config(text = "Imprimiendo",background="red")
-                #        self.agregarRegistroRFID()
-                 #       self.BotDet.config(text = "Imprimio",background="green") 
-                  #      if io.input(in3):
-                   #         band=1
-                    #    else: 
-                     #       band=0        
-                        #i = 1
-                      #  while band == 0:
-                       #         if io.input(in3):
-                        #                band=1
-                         #       else: 
-                          #              band=0    
-                           #     print('es uno, esta dentro')
-      #                          print("siente boleto")
-       #                         io.output(out3,0)#con 0 se enciende el led
-        #                else:
-         #                       print("no es uno, se sale")
-          #                      io.output(out3,1)#con un "1" se apaga el led
-           #                     io.output(barrera,0)#con un "0" abre la barrera
-            #                    time.sleep (2)
-             #                   io.output(barrera,1)
-              #                  print("No siente boleto")
+
+
         now =datetime.now() 
         fecha1= now.strftime("%d-%b-%Y ")
         hora1= now.strftime("%H:%M:%S")    
@@ -346,10 +314,9 @@ class FormularioOperacion:
         p.text('Monterrey No. 75'+placa+'\n')
         p.text('Entrada (Durango)'+placa+'\n')
         p.set(align="left")
-        #p.image("LOGO1.jpg")
+
         p.image("reducida.png")
-        #p.image("AutoA.png")
-        #p.text("            Le Atiende:               \n")
+
         p.text("--------------------------------------\n")
         p.cut()
         
