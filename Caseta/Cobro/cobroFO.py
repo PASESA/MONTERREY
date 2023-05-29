@@ -324,6 +324,18 @@ class FormularioOperacion:
 
 
 	def BoletoPerdido_conFolio(self):
+		"""
+		Esta función se encarga de manejar el cobro de un boleto perdido con folio.
+
+		Verifica si se ha ingresado un número de folio para el boleto perdido y realiza las operaciones correspondientes.
+		Calcula la permanencia del vehículo y el importe a cobrar.
+		Establece el concepto del boleto como "Per" de perdido.
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
 		datos = self.PonerFOLIO.get()
 
 		if len(datos) == 0:
@@ -381,9 +393,6 @@ class FormularioOperacion:
 			# Realizar otras operaciones y configuraciones
 			self.PrTi.set("Per")
 
-
-
-			p.cut()
 			self.promo.set("")
 			self.PonerFOLIO.set("")
 		else:
@@ -394,6 +403,16 @@ class FormularioOperacion:
 
 
 	def BoletoPerdido_sinFolio(self):
+		"""
+		Esta función se encarga de imprimir un boleto perdido sin un número de folio especificado.
+
+		Verifica si se ha confirmado la impresión del boleto perdido.
+		Realiza las operaciones correspondientes para calcular la permanencia del vehículo y el importe a cobrar.
+		Establece el concepto del boleto como "Per" de perdido.
+		Agrega el registro del pago a la base de datos.
+
+		:return: None
+		"""
 		Boleto_perdido = mb.askokcancel("Advertencia", f"¿Esta seguro de imprimir un boleto perdido?")
 	
 		if Boleto_perdido:
@@ -405,12 +424,6 @@ class FormularioOperacion:
 			masuno = str(masuno)
 			self.MaxId.set(masuno)
 
-			folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
-			print(f"Folio cifrado: {folio_cifrado}")
-
-			#Generar QR
-			self.operacion1.generar_QR(folio_cifrado)
-
 			fechaEntro = datetime.today()
 			horaentrada = str(fechaEntro)
 			horaentrada=horaentrada[:19]
@@ -419,7 +432,7 @@ class FormularioOperacion:
 			datos=(fechaEntro, corteNum, placa)
 
 			#aqui lo imprimimos
-			
+
 			p.image("LOGO1.jpg")
 			p.text("--------------------------------------\n")
 			p.set(align = "center")
@@ -434,6 +447,8 @@ class FormularioOperacion:
 			p.text("B O L E T O  P E R D I D O\n")
 			p.text("--------------------------------------\n")
 			p.cut()
+
+			#Agregar registro del pago a la base de datos
 			self.operacion1.altaRegistroRFID(datos)
 			self.Placa.set('')
 
@@ -442,10 +457,17 @@ class FormularioOperacion:
 
 
 	def consultar(self, event):
+		# Vaciar campo de importe
 		self.IImporte.config(text="")
+
+		# Obtener folio
 		datos=str(self.folio.get())
+
+		# Si la caja de texto esta vacia no realiza ninguna operación
+		if len(datos) == 0:pass
+
 		#Verificar si lee el folio o la promocion
-		if len(datos) < 20:
+		elif len(datos) < 20:
 			folio = self.operacion1.descifrar_folio(folio_cifrado = datos)
 			self.folio.set(folio)
 			folio = self.folio.get()
@@ -456,9 +478,11 @@ class FormularioOperacion:
 				self.descripcion.set(respuesta[0][0])
 				self.precio.set(respuesta[0][1])
 				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
+
 			else:
 				self.descripcion.set('')
 				self.precio.set('')
+				self.folio.set("")
 				mb.showinfo("Información", "No existe un auto con dicho código")
 
 		else:
@@ -467,21 +491,40 @@ class FormularioOperacion:
 			self.entryfolio.focus()
 
 
-	def CalculaPermanencia(self):# funcion que  CALCULA LA PERMANENCIA DEL FOLIO SELECCIONADO
+	def CalculaPermanencia(self):
+		"""
+		Esta función calcula la permanencia del folio seleccionado.
+
+		Realiza diferentes cálculos basados en la información del boleto y actualiza los valores correspondientes.
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
 		self.IImporte.config(text="")
-		salida = str(self.precio.get(), )#deveria ser salida en lugar de precio pero asi estaba el base
-		if len(salida)>5:#None tiene 4 letras si es mayor a 5 es que tiene ya la fecha
+
+		# Obtiene el valor de salida (debería ser 'salida' en lugar de 'precio')
+		salida = str(self.precio.get())
+
+		if len(salida) > 5:
+			# Si el valor de salida tiene más de 5 caracteres, significa que ya tiene la fecha y ha sido cobrado
 			self.label15.configure(text=("Este Boleto ya Tiene cobro"))
 
-			respuesta=self.operacion1.consulta({self.folio.get()})
+			# Realiza una consulta con el folio seleccionado para obtener información adicional del boleto
+			respuesta = self.operacion1.consulta({self.folio.get()})
 
+			# Imprime en una caja de texto la información del boleto cuando ya ha sido cobrado
 			self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
 			for fila in respuesta:
-				self.scrol_datos_boleto_cobrado.insert(tk.END, f"Folio: {fila[2]}\nEntró: {fila[0]}\nSalió: {fila[1]}\nTiempo: {fila[3]}\nTarifa: {fila[4]}\nImporte: {fila[5]}")
+				self.scrol_datos_boleto_cobrado.insert(
+					tk.END,
+					f"Folio: {fila[2]}\nEntró: {fila[0]}\nSalió: {fila[1]}\nTiempo: {fila[3]}\nTarifa: {fila[4]}\nImporte: {fila[5]}"
+				)
 
+			# Reinicia los valores de varios atributos
 			self.elcambioes.set("")
 			self.elimportees.set("")
-			self.cuantopagasen.set("")
 			self.descripcion.set('')
 			self.precio.set(salida)
 			self.copia.set("")
@@ -491,66 +534,53 @@ class FormularioOperacion:
 			self.entryfolio.focus()
 
 		else:
+			# Si el valor de salida tiene menos de 5 caracteres, significa que no ha sido cobrado
 			self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
 			self.PrTi.set("Normal")
 			self.label15.configure(text="Lo puedes COBRAR")
+
+			# Obtiene la fecha actual
 			fecha = datetime.today()
-			fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
-			fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
+			fecha1 = fecha.strftime("%Y-%m-%d %H:%M:%S")
+			fechaActual = datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
 			self.copia.set(fechaActual)
-			date_time_str=str(self.descripcion.get())
-			date_time_obj= datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+
+			# Obtiene la fecha del boleto seleccionado y realiza las conversiones necesarias
+			date_time_str = str(self.descripcion.get())
+			date_time_obj = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
 			date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
 			date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
-			ffeecha = fechaActual - date_time_mod2
-			segundos_vividos = ffeecha.seconds
+			ffecha = fechaActual - date_time_mod2
+
+			# Calcula el tiempo en segundos vividos, horas dentro y minutos dentro
+			segundos_vividos = ffecha.seconds
 			horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
 			minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
-			#calcular la diferencia de segundos
-			seg1 = ffeecha.seconds
-			#print ("dif = seg1 = ", seg1)
-			seg2 = ffeecha.seconds/60
-			#print ("dif/60 = seg2 = ", seg2)
-			seg3 = int(seg2)
-			#print ("entero y redondear seg3 = ", seg3)
-			seg4 = seg2-seg3
-			#print ("seg2 - seg 3 = seg4 = ", seg4)
-			seg5 = seg4*60
-			#print ("seg5 =", seg5)
-			seg6 = round(seg5)
-			#print  ("segundos dentro ===> ", seg6)
-			self.ffeecha.set(ffeecha)
-			if minutos_dentro < 15 and minutos_dentro  >= 0:
+
+			self.ffeecha.set(ffecha)
+
+			if minutos_dentro < 15 and minutos_dentro >= 0:
 				minutos = 1
-			if minutos_dentro < 30 and minutos_dentro  >= 15:
+			elif minutos_dentro < 30 and minutos_dentro >= 15:
 				minutos = 2
-			if minutos_dentro < 45 and minutos_dentro  >= 30:
+			elif minutos_dentro < 45 and minutos_dentro >= 30:
 				minutos = 3
-			if minutos_dentro <= 59 and minutos_dentro  >= 45:
+			elif minutos_dentro <= 59 and minutos_dentro >= 45:
 				minutos = 4
-			if ffeecha.days == 0 and horas_dentro == 0:
+
+			if ffecha.days == 0 and horas_dentro == 0:
+				# Si la permanencia es menor a 1 hora, se aplica una tarifa fija de 28 unidades
 				importe = 28
 				self.importe.set(importe)
-				#self.elimportees.set(importe)
 				self.IImporte.config(text=importe)
 				self.entrypromo.focus()
 			else:
-				#if minutos <= 2:    
-						importe = ((ffeecha.days)*250 + (horas_dentro * 28)+(minutos)*7)
-						self.importe.set(importe)
-						self.IImporte.config(text=importe)
-						#self.calcular_cambio()
-						self.entrypromo.focus()
-			#    if minutos == 3:    
-			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+30)
-			#            self.importe.set(importe)
-			#            #self.calcular_cambio()
-			#            self.entrypromo.focus() 
-			#    if minutos > 3:    
-			#            importe = ((ffeecha.days)*864 + (horas_dentro * 36)+(minutos)*9)
-			#            self.importe.set(importe)
-			#            #self.calcular_cambio()
-			#            self.entrypromo.focus()    
+				# Si la permanencia es mayor a 1 hora, se calcula el importe según una fórmula específica
+				importe = ((ffecha.days) * 250 + (horas_dentro * 28) + (minutos) * 7)
+				self.importe.set(importe)
+				self.IImporte.config(text=importe)
+				self.entrypromo.focus()
+
 
 
 	def calcular_cambio(self):
@@ -572,77 +602,75 @@ class FormularioOperacion:
 		self.AbrirBarrera()
 
 	def Comprobante(self):
+		"""
+		Esta función genera un comprobante de pago para el boleto seleccionado.
+
+		Imprime un comprobante de pago con información relevante del boleto, como la placa del vehículo, la hora de entrada y salida,
+		el tiempo de permanencia, el importe y el tipo de cobro. Además, genera un código QR a partir de la información de entrada y salida.
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
+		# Obtiene el tipo de cobro
 		TipoCobro = self.PrTi.get()
 
 		if TipoCobro == "Per":
+			# Si el tipo de cobro es "Per" (perdido), se imprime un comprobante de pago para boletos perdidos
 			p.set(align="center")
 			p.text("Comprobante de pago\n")
 			p.text("BOLETO PERDIDO\n")
-			placa=str(self.Placa.get(), )
+			placa = str(self.Placa.get())
 
-			EntradaCompro = str(self.descripcion.get(),)
-			SalioCompro = str(self.copia.get(),)
+			EntradaCompro = str(self.descripcion.get())
+			SalioCompro = str(self.copia.get())
 
 			img = qrcode.make(EntradaCompro + SalioCompro)
-			# Obtener imagen con el tamaño indicado
 			reducida = img.resize((100, 75))
-			# Mostrar imagen reducida.show()
-			# Guardar imagen obtenida con el formato JPEG
 			reducida.save("reducida.png")
 			f = open("reducida.png", "wb")
 			img.save(f)
 			f.close()
 			p.image("LOGO1.jpg")
-			#Compro de comprobante
 			p.set(align="left")
-			p.text('Placas '+placa+'\n')
-			ImporteCompro=str(self.importe.get(),)
-			p.text("El importe es $"+ImporteCompro+"\n")
-			EntradaCompro = str(self.descripcion.get(),)
-			p.text('El auto entro: N/A')#'+EntradaCompro+'\n')
-			SalioCompro = str(self.copia.get(),)
-			p.text('El auto salio: N/A')#'+SalioCompro+'\n')
-			TiempoCompro = str(self.ffeecha.get(),)
-			p.text('El auto permanecio: N/A')#'+TiempoCompro+'\n')
-			folioactual=str(self.folio.get(), )
-			p.text('El folio del boleto es: '+folioactual+'\n')
-			promoTipo = str(self.PrTi.get(),)
-			p.text('TIPO DE COBRO: '+promoTipo+'\n')
+			p.text('Placas ' + placa + '\n')
+			ImporteCompro = str(self.importe.get())
+			p.text("El importe es $" + ImporteCompro + "\n")
+			p.text('El auto entro: N/A')  # '+EntradaCompro+'\n')
+			p.text('El auto salio: N/A')  # '+SalioCompro+'\n')
+			p.text('El auto permanecio: N/A')  # '+TiempoCompro+'\n')
+			folioactual = str(self.folio.get())
+			p.text('El folio del boleto es: ' + folioactual + '\n')
+			promoTipo = str(self.PrTi.get())
+			p.text('TIPO DE COBRO: ' + promoTipo + '\n')
 			p.cut()
 
 		else:
+			# Si el tipo de cobro es distinto de "Per", se imprime el comprobante de pago de manera normal
 			p.set(align="center")
 			p.text("Comprobante de pago\n")
-			placa=str(self.Placa.get(), )
-			# hacer la foto de codigo qr
-			#img = qrcode.make("2 de septiembre")
-			EntradaCompro = str(self.descripcion.get(),)
-			SalioCompro = str(self.copia.get(),)
-			#img = qrcode.make(fechaEntro)
+			placa = str(self.Placa.get())
+			EntradaCompro = str(self.descripcion.get())
+			SalioCompro = str(self.copia.get())
 			img = qrcode.make(EntradaCompro + SalioCompro)
-			# Obtener imagen con el tamaño indicado
 			reducida = img.resize((100, 75))
-			# Mostrar imagen reducida.show()
-			# Guardar imagen obtenida con el formato JPEG
 			reducida.save("reducida.png")
 			f = open("reducida.png", "wb")
 			img.save(f)
 			f.close()
 			p.image("LOGO1.jpg")
-			#Compro de comprobante
 			p.set(align="left")
-			ImporteCompro=str(self.importe.get(),)
-			p.text("El importe es $"+ImporteCompro+"\n")
-			EntradaCompro = str(self.descripcion.get(),)
-			p.text('El auto entro: '+EntradaCompro+'\n')
-			SalioCompro = str(self.copia.get(),)
-			p.text('El auto salio: '+SalioCompro+'\n')
-			TiempoCompro = str(self.ffeecha.get(),)
-			p.text('El auto permanecio: '+TiempoCompro+'\n')
-			folioactual=str(self.folio.get(), )
-			p.text('El folio del boleto es: '+folioactual+'\n')
-			promoTipo = str(self.PrTi.get(),)
-			p.text('TIPO DE COBRO: '+promoTipo+'\n')
+			ImporteCompro = str(self.importe.get())
+			p.text("El importe es $" + ImporteCompro + "\n")
+			p.text('El auto entro: ' + EntradaCompro + '\n')
+			p.text('El auto salio: ' + SalioCompro + '\n')
+			TiempoCompro = str(self.ffeecha.get())
+			p.text('El auto permanecio: ' + TiempoCompro + '\n')
+			folioactual = str(self.folio.get())
+			p.text('El folio del boleto es: ' + folioactual + '\n')
+			promoTipo = str(self.PrTi.get())
+			p.text('TIPO DE COBRO: ' + promoTipo + '\n')
 			p.cut()
 
 
@@ -1003,6 +1031,18 @@ class FormularioOperacion:
 
 
 	def BoletoCancelado(self):
+		"""
+		Esta función cancela un boleto específico.
+
+		Verifica si se ha ingresado un número de folio para cancelar y muestra una advertencia para confirmar la cancelación.
+		Si se confirma la cancelación, obtiene los datos del boleto cancelado y realiza las operaciones correspondientes.
+		Muestra información relevante del boleto cancelado y guarda el registro del cobro cancelado.
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
 		if len(self.FolioCancelado.get()) == 0:
 			mb.showerror("Error", "Ingrese un folio a cancelar")
 			return None
@@ -1010,60 +1050,61 @@ class FormularioOperacion:
 		cancelar = mb.askokcancel("Advertencia", f"¿Estas seguro de querer cancelar el boleto con folio: {self.FolioCancelado.get()}?")
 
 		if cancelar:
-			datos=self.FolioCancelado.get()
+			datos = self.FolioCancelado.get()
 			self.folio.set(datos)
 
-			datos=self.folio.get()
-			respuesta=self.operacion1.consulta(datos)
+			datos = self.folio.get()
+			respuesta = self.operacion1.consulta(datos)
 
-
-			if len(respuesta)>0:
+			if len(respuesta) > 0:
 				if respuesta[0][1] is not None:
+					self.FolioCancelado.set("")
+					self.folio.set("")
 					mb.showerror("Error", "No se puede cancelar un boleto ya cobrado")
 					return None
 
 				if respuesta[0][6] == "BoletoPerdido":
-					mb.showerror("Error", "No se puede cancelar un boleto perdido generado")
+					mb.showerror("Error", "No se puede cancelar un boleto perdido")
+					self.FolioCancelado.set("")
+					self.folio.set("")
 					return None
 
 				self.descripcion.set(respuesta[0][0])
 				self.precio.set(respuesta[0][1])
-				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
+				self.CalculaPermanencia()
 				fecha = datetime.today()
-				fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
-				fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
-				date_time_str=str(self.descripcion.get())
-				date_time_obj= datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+				fecha1 = fecha.strftime("%Y-%m-%d %H:%M:%S")
+				fechaActual = datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
+				date_time_str = str(self.descripcion.get())
+				date_time_obj = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
 				date_time_mod = datetime.strftime(date_time_obj, '%Y/%m/%d/%H/%M/%S')
 				date_time_mod2 = datetime.strptime(date_time_mod, '%Y/%m/%d/%H/%M/%S')
-				ffeecha = fechaActual - date_time_mod2
-				segundos_vividos = ffeecha.seconds
+				ffecha = fechaActual - date_time_mod2
+				segundos_vividos = ffecha.seconds
 				horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
 				minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
 				if horas_dentro <= 24:
 					importe = 0
-				if horas_dentro > 24 or ffeecha.days >= 1:
-					importe =0
+				if horas_dentro > 24 or ffecha.days >= 1:
+					importe = 0
 				self.importe.set(importe)
 				self.IImporte.config(text=importe)
 				self.PrTi.set("CDO")
 				self.promo.set("")
-				###p = Usb(0x04b8, 0x0202, 0)
-				#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
 				p.text('Boleto Cancelado\n')
-				FoliodelCancelado = str(self.FolioCancelado.get(),)
-				p.text('Folio boleto cancelado: '+FoliodelCancelado+'\n')
+				FoliodelCancelado = str(self.FolioCancelado.get())
+				p.text('Folio boleto cancelado: ' + FoliodelCancelado + '\n')
 				fecha = datetime.today()
 				fechaNota = datetime.today()
-				fechaNota= fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
+				fechaNota = fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
 				horaNota = str(fechaNota)
 				p.set(align="left")
 				p.set('Big line\n', font='b')
-				p.text('Fecha: '+horaNota+'\n')
-				EntradaCompro = str(self.descripcion.get(),)
-				p.text('El auto entro: '+EntradaCompro+'\n')
-				SalioCompro = str(self.copia.get(),)
-				p.text('El auto salio: '+SalioCompro+'\n')
+				p.text('Fecha: ' + horaNota + '\n')
+				EntradaCompro = str(self.descripcion.get())
+				p.text('El auto entro: ' + EntradaCompro + '\n')
+				SalioCompro = str(self.copia.get())
+				p.text('El auto salio: ' + SalioCompro + '\n')
 				self.GuardarCobro()
 				self.FolioCancelado.set("")
 				p.cut()
@@ -2359,19 +2400,35 @@ class FormularioOperacion:
 			mb.showwarning("Error", f"{e}")
 
 	def BoletoDañado(self):
-		datos=self.PonerFOLIO.get()
+		"""
+		Esta función se encarga de manejar el cobro de un boleto dañado.
+
+		Verifica si se ha ingresado un número de folio para el boleto dañado y realiza las operaciones correspondientes.
+		Muestra información relevante del boleto dañado y establece el tipo de pago como "Maltratado".
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
+		datos = self.PonerFOLIO.get()
 		self.folio.set(str(datos))
 		datos = self.folio.get()
 
 		if len(datos) > 0:
-			respuesta=self.operacion1.consulta(datos)
-
+			respuesta = self.operacion1.consulta(datos)
 			if len(respuesta) > 0:
-				self.descripcion.set(respuesta[0][0])
-				self.precio.set(respuesta[0][1])
-				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
+				if respuesta[0][6] == "BoletoPerdido":
+					mb.showerror("Error", "No se puede cobrar como maltratado un boleto perdido")
+					self.PonerFOLIO.set("")
+					self.folio.set("")
+					return None
 
-				self.PrTi.set("Maltratado")
+				else:
+					self.descripcion.set(respuesta[0][0])
+					self.precio.set(respuesta[0][1])
+					self.CalculaPermanencia()
+					self.PrTi.set("Maltratado")
 
 			else:
 				self.descripcion.set('')
@@ -2384,13 +2441,25 @@ class FormularioOperacion:
 			self.folio.set("")
 			self.entryfolio.focus()
 
+
 	def AbrirBarrera(self):
-		io.output(out1,0)
+		"""
+		Esta función se encarga de abrir la barrera.
+
+		Abre la barrera enviando una señal al dispositivo correspondiente y muestra un mensaje en la consola.
+
+		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
+
+		:return: None
+		"""
+
+		io.output(out1, 0)
 		time.sleep(1)
-		io.output(out1,1)
+		io.output(out1, 1)
 
 		print("Se abre barrera\n")
-		p.text('------------------------------\n')
+		print('------------------------------\n')
+
 
 
 #aplicacion1=FormularioOperacion()
