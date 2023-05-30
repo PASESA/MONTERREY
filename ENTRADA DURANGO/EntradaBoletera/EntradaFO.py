@@ -275,6 +275,8 @@ class FormularioOperacion:
     def agregarRegistroRFID(self):
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
         fechaEntro = datetime.today()
+        fechaEntro = fechaEntro - timedelta(minutes = 1, seconds = fechaEntro.second)
+
         fSTR=str(fechaEntro)
         corteNum = 0
         placa=str(self.Placa.get(), )                 
@@ -291,7 +293,7 @@ class FormularioOperacion:
         self.MaxId.set(masuno)
         horaentrada = str(fechaEntro)
         horaentrada=horaentrada[:16]
-        self.labelhr.configure(text=(horaentrada, "Entró"))
+        self.labelhr.configure(text=(horaentrada[:-3], "Entró"))
         fSTR=str(fechaEntro)
 
         folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
@@ -299,7 +301,7 @@ class FormularioOperacion:
 		#Generar QR
         self.operacion1.generar_QR(folio_cifrado)
         
-        print("horaentrada",horaentrada)
+        print("horaentrada",horaentrada[:-3])
 
         #p = Usb(0x04b8, 0x0202, 0)#0202
         p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
@@ -310,7 +312,7 @@ class FormularioOperacion:
         folioZZ=('FOLIO 000' + masuno)
         p.text(folioZZ+'\n')
         p.set("center")        
-        p.text('Entro: '+horaentrada+'\n')
+        p.text('Entro: '+horaentrada[:-3]+'\n')
         p.text('Monterrey No. 75'+placa+'\n')
         p.text('Entrada (Durango)'+placa+'\n')
         p.set(align="left")

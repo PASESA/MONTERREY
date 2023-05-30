@@ -308,6 +308,8 @@ class FormularioOperacion:
     def agregarRegistroRFID(self):
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
         fechaEntro = datetime.today()
+        fechaEntro = fechaEntro - timedelta(minutes = 1, seconds = fechaEntro.second)
+        
         fSTR=str(fechaEntro)
         corteNum = 0
         placa=str(self.Placa.get(), )                 
@@ -324,7 +326,7 @@ class FormularioOperacion:
         self.MaxId.set(masuno)
         #imgqr=(fSTR + masuno) 
         horaentrada = str(fechaEntro)
-        horaentrada=horaentrada[:16]
+        horaentrada=horaentrada[:19]
         self.labelhr.configure(text=(horaentrada, "Entró"))
         fSTR=str(fechaEntro)
         #imgqr=(fSTR + masuno)
@@ -344,7 +346,7 @@ class FormularioOperacion:
         folioZZ=('FOLIO 000' + masuno)
         p.text(folioZZ+'\n')
         p.set("center")        
-        p.text('Entro: '+horaentrada+'\n')
+        p.text('Entro: '+horaentrada[:-3]+'\n')
         p.text('Monterrey No. 75'+placa+'\n')
         p.text('Entrada (calle MTY)'+placa+'\n')
         p.set(align="left")
