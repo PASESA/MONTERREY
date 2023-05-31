@@ -533,11 +533,11 @@ class FormularioOperacion:
 
 			# Reinicia los valores de varios atributos
 			self.elcambioes.set("")
-			self.elimportees.set("")
+			#self.elimportees.set("")
 			self.descripcion.set('')
 			self.precio.set(salida)
 			self.copia.set("")
-			self.importe.set("")
+			#self.importe.set("")
 			self.ffeecha.set("")
 			self.ffeecha_auxiliar.set("")
 			self.folio.set("")
@@ -694,7 +694,7 @@ class FormularioOperacion:
 			self.descripcion.set('')
 			self.precio.set('')
 			self.copia.set("")
-			self.importe.set("")
+			#self.importe.set("")
 			self.ffeecha.set("")
 			self.ffeecha_auxiliar.set("")
 			self.folio.set("")
@@ -720,7 +720,7 @@ class FormularioOperacion:
 			self.precio.set('')
 			self.copia.set("")
 			self.label15.configure(text=(""))
-			self.importe.set("")
+			#self.importe.set("")
 			self.ffeecha.set("")
 			self.ffeecha_auxiliar.set("")
 			self.folio.set("")
@@ -1340,11 +1340,50 @@ class FormularioOperacion:
 			p.text(f"{BolCobrImpresion} Boletos         Suma total ${Im38}\n\n")    
 
 		p.text("----------------------------------\n")
-		respuesta = self.operacion1.total_pensionados_corte(Numcorte)
 
+
+		Boletos_perdidos_generados = self.operacion1.Boletos_perdidos_generados()
+		Boletos_perdidos_generados = Boletos_perdidos_generados[0][0]
+		Boletos_perdidos_generados_desglose = self.operacion1.Boletos_perdidos_generados_desglose()
+
+
+
+		Boletos_perdidos_cobrados = self.operacion1.Boletos_perdidos_cobrados(Numcorte)
+		Boletos_perdidos_cobrados = Boletos_perdidos_cobrados[0][0]
+		Boletos_perdidos_cobrados_desglose = self.operacion1.Boletos_perdidos_cobrados_desglose(Numcorte)
+
+		Boletos_perdidos_no_cobrados = self.operacion1.Boletos_perdidos_no_cobrados()
+		Boletos_perdidos_no_cobrados = Boletos_perdidos_no_cobrados[0][0]
+
+
+
+		if Boletos_perdidos_generados > 0 or Boletos_perdidos_cobrados > 0 or Boletos_perdidos_no_cobrados > 0:
+
+			p.text("BOLETOS PERDIDOS"+'\n\n')
+
+			p.text(f"Boletos perdidos generados: {Boletos_perdidos_generados + Boletos_perdidos_cobrados}"+'\n')
+			for boleto in Boletos_perdidos_cobrados_desglose:
+				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+			for boleto in Boletos_perdidos_generados_desglose:
+				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+
+			p.text("**********************************\n")
+
+			p.text(f"Boletos perdidos cobrados: {Boletos_perdidos_cobrados}"+'\n\n')
+			for boleto in Boletos_perdidos_cobrados_desglose:
+				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\nFecha salida:{boleto[2]}\n")
+			p.text("**********************************\n")
+
+			p.text(f"Boletos perdidos quedados: {Boletos_perdidos_no_cobrados}"+'\n\n')
+			for boleto in Boletos_perdidos_generados_desglose:
+				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+
+			p.text("----------------------------------\n")
+
+
+		respuesta = self.operacion1.total_pensionados_corte(Numcorte)
 		if len(respuesta) == 0:
 			p.cut()
-			self.Cerrar_Programa()
 
 		else:
 			p.text("Cantidad e Importes Pensiones"+'\n')
@@ -1355,7 +1394,10 @@ class FormularioOperacion:
 			else:
 				p.text("----------------------------------\n")
 				p.cut()
-				self.Cerrar_Programa()
+
+
+		p.text("----------------------------------\n")
+		self.Cerrar_Programa()
 
 
 	def Cerrar_Programa(self):
