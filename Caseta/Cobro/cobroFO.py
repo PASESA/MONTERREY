@@ -87,8 +87,7 @@ class FormularioOperacion:
 		self.Autdentro.grid(column=2, row=0, padx=4, pady=4)
 		self.boton2=tk.Button(self.pagina1, text="Salir del programa", command=quit, width=15, height=1, anchor="center", background="red")
 		self.boton2.grid(column=0, row=0, padx=4, pady=4)
-		#llamar a operacion y meter en Entrada la hora en el momento actual y un numero de corte 0
-		#panel.pack(side = "bottom", fill = "both", expand = "yes")
+
 	def Autdentro(self):
 		DDESEM=(datetime.today().weekday())
 
@@ -98,6 +97,7 @@ class FormularioOperacion:
 		self.scrolledtext.delete("1.0", tk.END)
 		for fila in respuesta:
 			self.scrolledtext.insert(tk.END, "Entrada num: "+str(fila[0])+"\nEntro: "+str(fila[1])[:-3]+"\n\n")
+
 	def agregarRegistroRFID(self):
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
 		MaxFolio=str(self.operacion1.MaxfolioEntrada())
@@ -109,7 +109,7 @@ class FormularioOperacion:
 		self.MaxId.set(masuno)
 
 		folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
-		print(f"Folio cifrado: {folio_cifrado}")
+		#print(f"Folio cifrado: {folio_cifrado}")
 
 		#Generar QR
 		self.operacion1.generar_QR(folio_cifrado)
@@ -956,13 +956,13 @@ class FormularioOperacion:
 		self.entryFOLIOCancelado.grid(column=1, row=1)
 		self.boton7=tk.Button(self.FrmCancelado, text="B./SIN cobro", command=self.BoletoDentro2, width=12, height=2, anchor="center")
 		self.boton7.grid(column=0, row=0, padx=1, pady=1)
-		#self.boton8=tk.Button(self.FrmCancelado, text="desglose", command=self.desglose_cobrados, width=15, height=3, anchor="center")
-		#self.boton8.grid(column=1, row=3, padx=1, pady=1)
 
 		self.btnCancelado=tk.Button(self.FrmCancelado, text="Cancelar Boleto ", command=self.BoletoCancelado, width=12, height=2, anchor="center")
 		self.btnCancelado.grid(column=0, row=2)
 		self.scrolledtxt2=st.ScrolledText(self.FrmCancelado, width=26, height=7)
 		self.scrolledtxt2.grid(column=1,row=0, padx=1, pady=1)
+
+
 		self.ImporteCorte=tk.StringVar()
 		self.entryImporteCorte=tk.Entry(self.labelframe2, width=20, textvariable=self.ImporteCorte, state= "readonly", borderwidth=5)
 		self.entryImporteCorte.grid(column=1, row=1)
@@ -1191,6 +1191,7 @@ class FormularioOperacion:
 
 	def Guardar_Corte(self):
 		self.Puertoycontar()
+
 		######Obtenemos los datos del Cajero en Turno
 		cajero=self.operacion1.CajeroenTurno()
 		for fila in cajero:
@@ -1234,13 +1235,10 @@ class FormularioOperacion:
 		vobo = "cor"#este es para que la instruccion no marque error
 		ActEntradas = (maxnum, vobo )
 		self.label4.configure(text=("Numero de corte",maxnum))
-		###p = Usb(0x04b8, 0x0202, 0)
-		#p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
+
 		p.image("LOGO1.jpg")
 		p.text(" Est Monterrey CORTE Num "+maxnum+"\n")
-		#p.text("CORTE Num "+maxnum+"\n")
 		p.text('IMPORTE: $ '+Im38+'\n')
-		#p.text('IMPORTE: $ '+ImpCorte2+'\n')
 		ultiCort1=str(self.FechUCORTE.get(),)
 		DDESEM=(datetime.today().weekday())
 
@@ -1268,7 +1266,6 @@ class FormularioOperacion:
 		p.text('\n')
 		valorFEsteCorte = str(self.FechaCorte.get(),)
 		fechaDECorte = datetime.strptime(valorFEsteCorte, '%Y-%m-%d %H:%M:%S' )
-		#fechaDECorte = datetime.strftime(fechaDECorte, '%A %d %m %Y a las %H:%M:%S' )
 		fechaDECorte = datetime.strftime(fechaDECorte, '%D a las %H:%M:%S' )
 		p.text('Final :')
 		p.text(str(DDESEM))
@@ -1285,21 +1282,17 @@ class FormularioOperacion:
 		p.text("Folio "+MaxFolio+" al final del turno\n") 
 		p.text("Cajero en Turno: "+nombre2+"\n")
 		p.text("Turno: "+str(turno1)+"\n")
-		#p.text("Inicio de Turno: "+inicio1+"\n")
-		#Imprime inicio de Sesión del Usuario
 		dato =(inicio1)
-		#dato =(usuario1,inicio1)
 		inicios = self.operacion1.IniciosdeTurno(dato)
 		for fila in inicios:
 			p.text("Sesion "+fila[1]+": "+str(fila[0])+"\n")
 										
 		BolCobrImpresion=str(self.BoletosCobrados.get(),)
 		p.text("Boletos Cobrados: "+BolCobrImpresion+"\n")
+
 		p.text('Boletos Expedidos: '+BEDespuesCorteImpre+'\n')
-		#EntradasSen = int(self.SensorEntrada.get(),)
 		BAnterioresImpr=str(self.BAnteriores.get(),)#######
 		p.text("Boletos Turno Anterior: "+BAnterioresImpr+"\n")
-		#BDentroImp = str(self.BDentro.get(),)
 		BDentroImp=(int(BAnterioresImpr)+int(BEDespuesCorteImpre)-int(BolCobrImpresion))
 				
 		p.text('Boletos Dejados: '+str(BDentroImp)+'\n')
@@ -1363,20 +1356,20 @@ class FormularioOperacion:
 
 			p.text(f"Boletos perdidos generados: {Boletos_perdidos_generados + Boletos_perdidos_cobrados}"+'\n')
 			for boleto in Boletos_perdidos_cobrados_desglose:
-				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+				p.text(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
 			for boleto in Boletos_perdidos_generados_desglose:
-				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+				p.text(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
 
 			p.text("**********************************\n")
 
 			p.text(f"Boletos perdidos cobrados: {Boletos_perdidos_cobrados}"+'\n\n')
 			for boleto in Boletos_perdidos_cobrados_desglose:
-				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\nFecha salida:{boleto[2]}\n")
+				p.text(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\nFecha salida:{boleto[2]}\n")
 			p.text("**********************************\n")
 
 			p.text(f"Boletos perdidos quedados: {Boletos_perdidos_no_cobrados}"+'\n\n')
 			for boleto in Boletos_perdidos_generados_desglose:
-				print(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
+				p.text(f"Folio:{boleto[0]}\nFecha entrada:{boleto[1]}\n")
 
 			p.text("----------------------------------\n")
 
@@ -1393,10 +1386,10 @@ class FormularioOperacion:
 
 			else:
 				p.text("----------------------------------\n")
-				p.cut()
 
 
 		p.text("----------------------------------\n")
+		p.cut()
 		self.Cerrar_Programa()
 
 
