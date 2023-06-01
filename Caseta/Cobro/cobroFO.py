@@ -355,6 +355,7 @@ class FormularioOperacion:
 			# Establecer la descripción y precio basados en la respuesta
 			self.descripcion.set(respuesta[0][0])
 			self.precio.set(respuesta[0][1])
+			self.Placa.set(respuesta[0][6])
 
 			# Calcular la permanencia
 			self.CalculaPermanencia()
@@ -486,6 +487,7 @@ class FormularioOperacion:
 			if len(respuesta)>0:
 				self.descripcion.set(respuesta[0][0])
 				self.precio.set(respuesta[0][1])
+				self.Placa.set(respuesta[0][6])
 				self.CalculaPermanencia()#nos vamos a la funcion de calcular permanencia
 
 			else:
@@ -624,10 +626,10 @@ class FormularioOperacion:
 		:return: None
 		"""
 
-		# Obtiene el tipo de cobro
-		TipoCobro = self.PrTi.get()
+		# Obtener la placa
+		placa = self.Placa.get()
 
-		if TipoCobro == "Per":
+		if placa == "BoletoPerdido":
 			# Si el tipo de cobro es "Per" (perdido), se imprime un comprobante de pago para boletos perdidos
 			p.set(align="center")
 			p.text("Comprobante de pago\n")
