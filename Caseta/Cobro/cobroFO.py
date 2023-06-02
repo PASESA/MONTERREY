@@ -202,7 +202,7 @@ class FormularioOperacion:
 		self.lbl3.grid(column=0, row=3, padx=4, pady=4)
 
 
-		self.IImporte = ttk.Label(self.labelframe3, text="0") #Creación del Label
+		self.IImporte = ttk.Label(self.labelframe3, text="") #Creación del Label
 		self.IImporte.config(width =4)
 		self.IImporte.config(background="white") #Cambiar color de fondo
 		self.IImporte.config(font=('Arial', 48)) #Cambiar tipo y tamaño de fuente
