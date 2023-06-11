@@ -21,9 +21,9 @@ import operacion
 import time
 import serial
 import RPi.GPIO as io           # Importa libreria de I/O (entradas / salidas)
-loop = 5                      #gpio5,pin29,entrada loop                    
-boton = 6                     #gpio6,pin31,entrada boton
-SenBoleto = 13                #gpio13,pin33,sensor boleto
+loop = 21                      #gpio5,pin29,entrada loop                    
+boton = 20                     #gpio6,pin31,entrada boton
+SenBBoleto = 16                #gpio13,pin33,sensor boleto
 barrera = 17                  #gpio17,pin11,Salida barrera
 out1 = 22                     #gpio22,pin15,Salida indicador loop
 out2 = 18                     #gpio18,pin12,Salida indicador boton
@@ -151,8 +151,8 @@ class FormularioOperacion:
         #self.botonPensinados=tk.Button(self.labelframe3, text="Entrada", command=self.Pensionados, width=10, height=1, anchor="center")
         #self.botonPensinados.grid(column=2, row=2, padx=4, pady=4)  
     def SenBoleto(self): #Detecta presencia de automovil
-        global BanSenBoleto
-        if io.input(SenBoleto):
+        global SenBBoleto
+        if io.input(SenBBoleto):
                  
                 io.output(out3,1)#con un "1" se apaga el led
                 #self.loopDet.config(text = "Inicio", background = '#CCC')                
@@ -195,11 +195,10 @@ class FormularioOperacion:
                         #self.BotDet.config(text = "Imprimiendo",background="red")
                         BanBoton = 0
                         #self.agregarRegistroRFID()
-    io.add_event_detect(5, io.BOTH, callback = Intloop)
- 
-    io.add_event_detect(6, io.BOTH, callback = IntBoton)
-    
-    io.add_event_detect(13, io.BOTH, callback = SenBoleto)
+
+    io.add_event_detect(loop, io.BOTH, callback = Intloop)
+    io.add_event_detect(boton, io.BOTH, callback = IntBoton)
+    io.add_event_detect(SenBBoleto, io.BOTH, callback = SenBoleto)
 
 
     def check_inputs(self):
@@ -292,7 +291,7 @@ class FormularioOperacion:
         masuno = str(masuno)
         self.MaxId.set(masuno)
         horaentrada = str(fechaEntro)
-        horaentrada=horaentrada[:16]
+        horaentrada=horaentrada[:19]
         self.labelhr.configure(text=(horaentrada[:-3], "Entró"))
         fSTR=str(fechaEntro)
 
@@ -301,7 +300,6 @@ class FormularioOperacion:
 		#Generar QR
         self.operacion1.generar_QR(folio_cifrado)
         
-        print("horaentrada",horaentrada[:-3])
 
         #p = Usb(0x04b8, 0x0202, 0)#0202
         p = Usb(0x04b8, 0x0e15, 0)#esta es la impresora con sus valores que se obtienen con lsusb
@@ -346,10 +344,15 @@ class FormularioOperacion:
                 VigAct=fila[0]
                 Estatus=fila[1]
                 Tolerancia = fila[3]
+                Tolerancia = int(Tolerancia)
+
+                # Obtener la fecha y hora actual en formato deseado
+                VigAct = VigAct.strftime("%Y-%m-%d %H:%M:%S")
+                # Convertir la cadena de caracteres en un objeto datetime
+                VigAct = datetime.strptime(VigAct, "%Y-%m-%d %H:%M:%S")
 
                 # Obtener la fecha y hora actual en formato deseado
                 hoy = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-
                 # Convertir la cadena de caracteres en un objeto datetime
                 hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
 
