@@ -115,7 +115,7 @@ class FormularioOperacion:
 		self.operacion1.generar_QR(folio_cifrado)
 
 		fechaEntro = datetime.today()
-		fechaEntro = fechaEntro - timedelta(minutes = 1, seconds = fechaEntro.second)
+		fechaEntro = fechaEntro - timedelta(seconds = fechaEntro.second)
 
 		horaentrada = str(fechaEntro)
 		horaentrada=horaentrada[:19]
@@ -555,6 +555,10 @@ class FormularioOperacion:
 			fecha = datetime.today()
 			fecha1 = fecha.strftime("%Y-%m-%d %H:%M:%S")
 			fechaActual = datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
+
+			fechaActual = fechaActual - timedelta(seconds = fechaActual.second)
+			fechaActual = fechaActual + timedelta(minutes = 1)
+
 			self.copia.set(fechaActual)
 
 			# Obtiene la fecha del boleto seleccionado y realiza las conversiones necesarias
