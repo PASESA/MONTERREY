@@ -32,7 +32,7 @@ io.setmode(io.BCM)              # modo in/out pin del micro
 io.setwarnings(False)           # no señala advertencias de pin ya usados
 io.setup(loop,io.IN)             # configura en el micro las entradas
 io.setup(boton,io.IN)             # configura en el micro las entradas
-io.setup(SenBoleto,io.IN)             # configura en el micro las entradas
+io.setup(SenBBoleto,io.IN)             # configura en el micro las entradas
 io.setup(barrera,io.OUT)           # configura en el micro las salidas
 io.setup(out1,io.OUT)           # configura en el micro las salidas
 io.setup(out2,io.OUT)
@@ -274,8 +274,8 @@ class FormularioOperacion:
     def agregarRegistroRFID(self):
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
         fechaEntro = datetime.today()
-        #fechaEntro = fechaEntro - timedelta(minutes = 1, seconds = fechaEntro.second)
-        fechaEntro = fechaEntro - timedelta(seconds = fechaEntro.second)
+
+
 
         fSTR=str(fechaEntro)
         corteNum = 0

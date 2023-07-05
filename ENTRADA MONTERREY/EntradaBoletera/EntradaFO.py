@@ -308,8 +308,8 @@ class FormularioOperacion:
     def agregarRegistroRFID(self):
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
         fechaEntro = datetime.today()
-        #fechaEntro = fechaEntro - timedelta(minutes = 1, seconds = fechaEntro.second)
-        fechaEntro = fechaEntro - timedelta(seconds = fechaEntro.second)
+
+
         
         fSTR=str(fechaEntro)
         corteNum = 0
