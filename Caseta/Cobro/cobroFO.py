@@ -86,7 +86,7 @@ class FormularioOperacion:
 		self.boton1.grid(column=1, row=4, padx=4, pady=4)
 		self.Autdentro=tk.Button(self.Adentroframe, text="Boletos sin Cobro", command=self.Autdentro, width=15, height=1, anchor="center")
 		self.Autdentro.grid(column=2, row=0, padx=4, pady=4)
-		self.boton2=tk.Button(self.pagina1, text="Salir del programa", command=quit, width=15, height=1, anchor="center", background="red")
+		self.boton2=tk.Button(self.pagina1, text="Salir del programa", command=self.Cerrar_Programa, width=15, height=1, anchor="center", background="red")
 		self.boton2.grid(column=0, row=0, padx=4, pady=4)
 
 	def Autdentro(self): 
