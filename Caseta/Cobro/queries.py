@@ -103,14 +103,68 @@ class usuarios:
 
 
     def actualizar_usuarios(self, datos, id):
+
+        if self.connection:
+            datos = tuple(datos)
+        
+            query = f"UPDATE Usuarios SET Usuario = '{datos[0]}', Contrasena = '{datos[1]}', Nom_usuario = '{datos[2]}',  Telefono1 = '{datos[3]}', TelefonoEmer = '{datos[4]}', Sucursal = '{datos[5]}' WHERE Id_usuario = '{id}';"
+
+            # Se ejecuta la consulta
+            self.execute_query(query)
+
+
+class pensionados(usuarios):
+
+
+    def agregar_pensionados(self, datos):
+
+        datos = tuple(datos)
+
+        if self.connection:
+
+            query = f"INSERT INTO Usuarios (Usuario, Contrasena, Nom_usuario, Fecha_alta, Telefono1, TelefonoEmer, Sucursal) VALUES {datos};"
+
+            # Se ejecuta la consulta
+            self.execute_query(query)
+
+    def consultar_pensioando(self, id):
+        if self.connection:
+
+            query = f"SELECT Usuario, Contrasena, Nom_usuario, Telefono1, TelefonoEmer, Sucursal FROM Usuarios WHERE Id_usuario = {id}"
+
+            # Se ejecuta la consulta y se obtiene el resultado.
+            resultado = self.execute_query(query)
+
+            return resultado
+
+    def ver_pensionados(self):
+
+        if self.connection:
+
+            query = f"SELECT Num_tarjeta, Cortesia, Nom_cliente, Estatus, Fecha_vigencia, Tolerancia FROM Pensionados"
+            
+
+            # Se ejecuta la consulta y se obtiene el resultado.
+            resultado = self.execute_query(query)
+
+            return resultado
+
+
+    def eliminar_pensinado(self, id):
+
+        if self.connection:
+
+            query = f"DELETE FROM Usuarios WHERE Id_usuario = {id}"
+
+            # Se ejecuta la consulta
+            self.execute_query(query)
+
+
+    def actualizar_pensionado(self, datos, id):
         datos = tuple(datos)
     
         query = f"UPDATE Usuarios SET Usuario = '{datos[0]}', Contrasena = '{datos[1]}', Nom_usuario = '{datos[2]}',  Telefono1 = '{datos[3]}', TelefonoEmer = '{datos[4]}', Sucursal = '{datos[5]}' WHERE Id_usuario = '{id}';"
 
         # Se ejecuta la consulta
         self.execute_query(query)
-
-
-
-
 
