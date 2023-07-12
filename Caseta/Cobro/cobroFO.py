@@ -39,6 +39,7 @@ penalizacion_con_importe = False
 from view_login import View_Login
 from queries import pensionados
 from view_agregar_pensionado import View_agregar_pensionados
+from view_modificar_pensionado import View_modificar_pensionados
 contraseña_pensionados = "P4s3"
 
 class FormularioOperacion:
@@ -1708,7 +1709,7 @@ class FormularioOperacion:
 		boton1=tk.Button(labelframe_pensionados_acciones, text="Agregar Pensionado", anchor="center", font=("Arial", 10), width=30, command=self.agregar_pensionado)
 		boton1.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
 	 
-		boton4=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", font=("Arial", 10), width=30)
+		boton4=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", command=self.modificar_pensionado, font=("Arial", 10), width=30)
 		boton4.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
 
 		labelframe_pensionados_acciones_contraseña = ttk.Frame(labelframe_pensionados_acciones)
@@ -1749,7 +1750,7 @@ class FormularioOperacion:
 		labelframe_tabla_pensionados.rowconfigure(0, weight=1)
 
 		# Obtiene los nombres de las columnas de la tabla que se va a mostrar
-		columnas = ['N° de tarjeta', 'Cortesia', 'Nombre', 'Estado', 'Vigencia', 'Tolerancia']
+		columnas = ['N° de tarjeta', 'Cortesia', 'Nombre', 'Estado', 'Vigencia', 'Tolerancia', 'ID']
 
 		# Crea un Treeview con una columna por cada campo de la tabla
 		self.tabla = ttk.Treeview(labelframe_tabla_pensionados, columns=columnas)
@@ -1769,7 +1770,8 @@ class FormularioOperacion:
 		self.tabla.column('#3', width=70, stretch=False)
 		self.tabla.column('#4', width=70, stretch=False)
 		self.tabla.column('#5', width=120, stretch=False)
-		self.tabla.column('#6', width=70, stretch=False)
+		self.tabla.column('#6', width=75, stretch=False)
+		self.tabla.column('#7', width=0, stretch=False)
 
 		# Crea un Scrollbar vertical y lo asocia con el Treeview
 		scrollbar_Y = ttk.Scrollbar(labelframe_tabla_pensionados, orient='vertical', command=self.tabla.yview)
@@ -1790,54 +1792,7 @@ class FormularioOperacion:
 		self.ver_pensionados()
 		self.PenAdentro()
 
-	def vaciar_tabla(self):
-		"""
-		Elimina todas las filas de la tabla.
 
-		:param None: 
-
-		:raises None: 
-
-		:return:
-			- None
-		"""
-		# Elimina todas las filas de la tabla
-		self.tabla.delete(*self.tabla.get_children())
-
-	def llenar_tabla(self, registros):
-		"""
-		Llena la tabla con los registros que cumplen con los criterios de búsqueda.
-
-		:param registros (list): Un conjunto de tuplas que representan los registros obtenidos de la base de datos.
-
-		:raises None: 
-
-		:return:
-			- None
-		"""
-		# Limpia la tabla antes de llenarla con nuevos registros
-		self.vaciar_tabla()
-
-		if self.registros:
-			for registro in registros:
-				# Pasa los valores del registro como tupla
-				self.tabla.insert('', 'end', values=registro)
-
-	def consultar_pensionado(self, id):
-		pass
-
-	def ver_pensionados(self):
-		self.registros = self.controlador_crud_pensionados.ver_pensionados()
-		self.llenar_tabla(self.registros)
-
-
-
-	def eliminar_pensionado(self):
-		pass
-
-	def modificar_pensionado(self):
-		pass
-		
 	
 	def ConsulPagoPen(self,event):
 		numtarjeta=str(self.variable_numero_tarjeta.get(), )
@@ -2292,6 +2247,47 @@ class FormularioOperacion:
 		self.folio_auxiliar = None
 		self.entryfolio.focus()
 
+
+	def vaciar_tabla(self):
+		"""
+		Elimina todas las filas de la tabla.
+
+		:param None: 
+
+		:raises None: 
+
+		:return:
+			- None
+		"""
+		# Elimina todas las filas de la tabla
+		self.tabla.delete(*self.tabla.get_children())
+
+	def llenar_tabla(self, registros):
+		"""
+		Llena la tabla con los registros que cumplen con los criterios de búsqueda.
+
+		:param registros (list): Un conjunto de tuplas que representan los registros obtenidos de la base de datos.
+
+		:raises None: 
+
+		:return:
+			- None
+		"""
+		# Limpia la tabla antes de llenarla con nuevos registros
+		self.vaciar_tabla()
+
+		if self.registros:
+			for registro in registros:
+				# Pasa los valores del registro como tupla
+				self.tabla.insert('', 'end', values=registro)
+
+	def ver_pensionados(self):
+		self.registros = self.controlador_crud_pensionados.ver_pensionados()
+		self.llenar_tabla(self.registros)
+
+	def eliminar_pensionado(self):
+		pass
+
 	def agregar_pensionado(self):
 		contraseña = self.variable_contraseña_pensionados.get()
 
@@ -2309,6 +2305,27 @@ class FormularioOperacion:
 
 		self.variable_contraseña_pensionados.set("")
 		View_agregar_pensionados()
+		self.ver_pensionados()
+
+	def modificar_pensionado(self):
+		contraseña = self.variable_contraseña_pensionados.get()
+
+		if len(contraseña) == 0:
+			mb.showwarning("Error", "Ingrese la contraseña para agregar un pensionado")
+			self.variable_contraseña_pensionados.set("")
+			self.campo_texto_contraseña_pensionados.focus()
+			return None
+		
+		if contraseña != contraseña_pensionados:
+			mb.showwarning("Error", "Contraseña incorrecta")
+			self.variable_contraseña_pensionados.set("")
+			self.campo_texto_contraseña_pensionados.focus()
+			return None
+
+		self.variable_contraseña_pensionados.set("")
+		View_modificar_pensionados()
+		self.ver_pensionados()
+
 
 
 

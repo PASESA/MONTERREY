@@ -43,6 +43,7 @@ class usuarios:
 
         except err.OperationalError as e:
             if "10054" in str(e):
+                print(e)
                 messagebox.showwarning("Error", "Se ha perdido la conexión con el servidor.\nEl programa se cerrará, posterior a eso inicie nuevamente sesión\n\nEn caso de que el error persista contacte a un administrador.")
 
         except err.ProgrammingError as error:
@@ -56,6 +57,7 @@ class usuarios:
                 return None
 
         except Exception as e:
+            print(e)
             messagebox.showwarning("Error", f"Error al realizar la consulta, por favor contacte con un administrador y muestre el siguiente error:\n Error: {str(e)} ")
             return None
 
@@ -91,7 +93,6 @@ class usuarios:
 
             return resultado
 
-
     def eliminar_usuario(self, id):
 
         if self.connection:
@@ -100,7 +101,6 @@ class usuarios:
 
             # Se ejecuta la consulta
             self.execute_query(query)
-
 
     def actualizar_usuarios(self, datos, id):
 
@@ -112,25 +112,21 @@ class usuarios:
             # Se ejecuta la consulta
             self.execute_query(query)
 
-
 class pensionados(usuarios):
 
-
     def agregar_pensionados(self, datos):
-
         datos = tuple(datos)
 
         if self.connection:
 
-            query = f"INSERT INTO Usuarios (Usuario, Contrasena, Nom_usuario, Fecha_alta, Telefono1, TelefonoEmer, Sucursal) VALUES {datos};"
+            query = f"INSERT INTO Pensionados (Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Fecha_alta, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia) VALUES {datos};"
 
             # Se ejecuta la consulta
             self.execute_query(query)
 
-    def consultar_pensioando(self, id):
+    def consultar_pensionado(self, Num_tarjeta):
         if self.connection:
-
-            query = f"SELECT Usuario, Contrasena, Nom_usuario, Telefono1, TelefonoEmer, Sucursal FROM Usuarios WHERE Id_usuario = {id}"
+            query = f"SELECT Nom_cliente, Apell1_cliente, Apell2_cliente, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Fecha_vigencia, Estatus, Vigencia, Monto, Cortesia, Tolerancia FROM Pensionados WHERE Num_tarjeta = {Num_tarjeta}"
 
             # Se ejecuta la consulta y se obtiene el resultado.
             resultado = self.execute_query(query)
@@ -138,27 +134,20 @@ class pensionados(usuarios):
             return resultado
 
     def ver_pensionados(self):
-
         if self.connection:
-
-            query = f"SELECT Num_tarjeta, Cortesia, Nom_cliente, Estatus, Fecha_vigencia, Tolerancia FROM Pensionados"
-            
+            query = f"SELECT Num_tarjeta, Cortesia, Nom_cliente, Estatus, Fecha_vigencia, Tolerancia, Id_cliente FROM Pensionados ORDER BY Id_cliente DESC"
 
             # Se ejecuta la consulta y se obtiene el resultado.
             resultado = self.execute_query(query)
 
             return resultado
 
-
     def eliminar_pensinado(self, id):
-
         if self.connection:
-
             query = f"DELETE FROM Usuarios WHERE Id_usuario = {id}"
 
             # Se ejecuta la consulta
             self.execute_query(query)
-
 
     def actualizar_pensionado(self, datos, id):
         datos = tuple(datos)
@@ -168,3 +157,34 @@ class pensionados(usuarios):
         # Se ejecuta la consulta
         self.execute_query(query)
 
+
+    def ValidarRFID(self, datos):
+        cone=self.abrir()
+        cursor=cone.cursor()
+        sql="SELECT id_cliente FROM Pensionados WHERE Num_tarjeta=%s"
+        cursor.execute(sql,datos)
+        cone.close()
+        return cursor.fetchall()       
+    def AltaPensionado(self, datos):
+        cone=self.abrir()
+        cursor=cone.cursor()
+        sql="INSERT INTO Pensionados(Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Fecha_alta, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #datos=(numtarjeta, Nombre, ApellidoPat, ApellidoMat, fechaAlta, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle, Placa, Modelo, Color, montoxmes, cortesia, tolerancia)
+        cursor.execute(sql, datos)
+        cone.commit()
+        cone.close()
+    def ConsultaPensionado(self, datos):
+        cone=self.abrir()
+        cursor=cone.cursor()
+        sql="SELECT Nom_cliente, Apell1_cliente, Apell2_cliente, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Fecha_vigencia, Estatus, Vigencia, Monto, Cortesia, Tolerancia FROM Pensionados where id_cliente=%s"
+        cursor.execute(sql,datos)
+        cone.close()
+        return cursor.fetchall()
+    def ModificarPensionado(self, datos):
+        cone=self.abrir()
+        cursor=cone.cursor()
+        sql="UPDATE Pensionados SET Num_tarjeta=%s, Nom_cliente=%s, Apell1_cliente=%s, Apell2_cliente=%s, Telefono1=%s, Telefono2=%s, Ciudad=%s, Colonia=%s, CP=%s, Calle_num=%s, Placas=%s, Modelo_auto=%s, Color_auto=%s, Monto=%s, Cortesia=%s, Tolerancia=%s, Ult_Cambio=%s WHERE id_cliente=%s"
+        #datos=(numtarjeta, Nombre, ApellidoPat, ApellidoMat, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle, Placa, Modelo,                    Color, montoxmes, cortesia, tolerancia, PensionadoOpen)
+        cursor.execute(sql, datos)
+        cone.commit()
+        cone.close()

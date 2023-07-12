@@ -6,6 +6,7 @@ from tkinter import StringVar, IntVar
 from datetime import datetime
 
 from queries import pensionados
+import traceback
 
 
 class View_agregar_pensionados:
@@ -84,7 +85,7 @@ class View_agregar_pensionados:
 			- None
 		"""
 		# Se crea un Label Frame principal para la sección superior
-		seccion_superior = ttk.LabelFrame(self.panel_crud, text='')
+		seccion_superior = tk.LabelFrame(self.panel_crud, text='')
 		seccion_superior.columnconfigure(1, weight=1)
 		seccion_superior.propagate(True)
 		seccion_superior.grid(row=0, column=0, sticky=tk.NSEW)
@@ -92,109 +93,208 @@ class View_agregar_pensionados:
 		##########################################################################################################
 
 		# Se crea un Label Frame para la sección de la conexión
-		etiqueta_user = ttk.Label(seccion_superior, text=f'Bienvenido/a')
-		etiqueta_user.grid(row=0, column=1, padx=5, pady=5)
+		etiqueta_user = tk.Label(seccion_superior, text=f'Bienvenido/a')
+		etiqueta_user.grid(row=0, column=0, padx=5, pady=5)
+
+		seccion_datos_pensionado = ttk.LabelFrame(seccion_superior, text="\t\t\tIngresa los datos del pensionado a registrar")
+		seccion_datos_pensionado.grid(row=1, column=0,padx=5, pady=5, sticky=tk.NW)
+
+		self.variable_numero_tarjeta = StringVar()
+		self.variable_nombre = StringVar()
+		self.variable_apellido_1 = StringVar()
+		self.variable_apellido_2 = StringVar()
+		self.variable_fecha_alta = StringVar()
+		self.variable_telefono_1 = StringVar()
+		self.variable_telefono_2 = StringVar()
+		self.variable_ciudad = StringVar()
+		self.variable_colonia = StringVar()
+		self.variable_cp = StringVar()
+		self.variable_numero_calle = StringVar()
+
+		self.variable_placas = StringVar()
+		self.variable_auto_modelo = StringVar()
+		self.variable_auto_color = StringVar()
+
+		self.variable_vigencia = StringVar()
+		self.variable_fecha_vigencia = StringVar()
+		self.variable_monto = StringVar()
+		self.variable_estatus = StringVar()
+		self.variable_cortesia = StringVar()
+		self.variable_tolerancia = StringVar()
+		self.variable_tolerancia.set("5")
 
 
-		seccion_datos_pensionado = ttk.LabelFrame(self.panel_crud, text="\tIngresa los datos del pensionado a registrar")
-		seccion_datos_pensionado.grid(row=1, column=0,padx=10, pady=10)
+
+
+		seccion_datos_personales_pensionado = tk.LabelFrame(seccion_datos_pensionado, text="Datos personales del pensionado")
+		seccion_datos_personales_pensionado.grid(row=2, column=0,padx=5, pady=5, sticky=tk.NW)
+
+
+		etiqueta_numero_tarjeta = ttk.Label(seccion_datos_personales_pensionado, text='Número de tarjeta: ')
+		etiqueta_numero_tarjeta.grid(row=0, column=0, padx=5, pady=5, sticky=tk.NW)
+		self.campo_numero_tarjeta = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_numero_tarjeta)
+		self.campo_numero_tarjeta.grid(row=0, column=1, padx=5, pady=5)
+
+		etiqueta_nombre_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Nombre: ')
+		etiqueta_nombre_pensionado.grid(row=1, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_nombre_pensinado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_nombre)
+		campo_nombre_pensinado.grid(row=1, column=1, padx=5, pady=5)
+
+		etiqueta_apellido_1_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Primer apellido: ')
+		etiqueta_apellido_1_pensionado.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_apellido_1_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_apellido_1)
+		campo_apellido_1_pensionado.grid(row=2, column=1, padx=5, pady=5)
+
+		etiqueta_apellido_2_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Segundo apellido: ')
+		etiqueta_apellido_2_pensionado.grid(row=3, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_apellido_2_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_apellido_2)
+		campo_apellido_2_pensionado.grid(row=3, column=1, padx=5, pady=5)
+
+		etiqueta_telefono_1_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Telefono 1: ')
+		etiqueta_telefono_1_pensionado.grid(row=4, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_telefono_1_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_telefono_1)
+		campo_telefono_1_pensionado.grid(row=4, column=1, padx=5, pady=5)
+
+		etiqueta_telefono_2_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Telefono 2: ')
+		etiqueta_telefono_2_pensionado.grid(row=5, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_telefono_2_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_telefono_2)
+		campo_telefono_2_pensionado.grid(row=5, column=1, padx=5, pady=5)
+
+		etiqueta_ciudad_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Ciudad: ')
+		etiqueta_ciudad_pensionado.grid(row=7, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_ciudad_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_ciudad)
+		campo_ciudad_pensionado.grid(row=7, column=1, padx=5, pady=5)
+
+		etiqueta_colonia_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Colonia: ')
+		etiqueta_colonia_pensionado.grid(row=8, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_colonia_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_colonia)
+		campo_colonia_pensionado.grid(row=8, column=1, padx=5, pady=5)
+
+		etiqueta_CP_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='CP: ')
+		etiqueta_CP_pensionado.grid(row=9, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_CP_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_cp)
+		campo_CP_pensionado.grid(row=9, column=1, padx=5, pady=5)
+
+		etiqueta_numero_calle_pensionado = ttk.Label(seccion_datos_personales_pensionado, text='Numero de calle: ')
+		etiqueta_numero_calle_pensionado.grid(row=10, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_numero_calle_pensionado = ttk.Entry(seccion_datos_personales_pensionado, textvariable=self.variable_numero_calle)
+		campo_numero_calle_pensionado.grid(row=10, column=1, padx=5, pady=5)
 
 
 
-		self.lbldatos0=ttk.Label(seccion_datos_pensionado, text="Num. Tarjeta:")
-		self.lbldatos0.grid(column=0, row=1, padx=4, pady=4)   
-    
-		self.lbldatos1=ttk.Label(seccion_datos_pensionado, text="Nombre Empresa:")
-		self.lbldatos1.grid(column=0, row=2, padx=4, pady=4)
-		self.lbldatos2=ttk.Label(seccion_datos_pensionado, text="Nombre Contacto:")
-		self.lbldatos2.grid(column=0, row=3, padx=4, pady=4)
-		self.lbldatos3=ttk.Label(seccion_datos_pensionado, text="Apellido Contacto:")
-		self.lbldatos3.grid(column=0, row=4, padx=4, pady=4)
-		self.lbldatos4=ttk.Label(seccion_datos_pensionado, text="Telefono:")
-		self.lbldatos4.grid(column=0, row=5, padx=4, pady=4)
-		self.lbldatos5=ttk.Label(seccion_datos_pensionado, text="Telefono Opcional:")
-		self.lbldatos5.grid(column=0, row=6, padx=4, pady=4)
 
-		
-		######Direccion del Pensionado
-		self.lbldatos6=ttk.Label(seccion_datos_pensionado, text="--Direccion del Pensionado--")
-		self.lbldatos6.grid(column=2, row=0, padx=8, pady=8)
-		self.lbldatos7=ttk.Label(seccion_datos_pensionado, text="Calle y Numero:")
-		self.lbldatos7.grid(column=2, row=1, padx=4, pady=4) 
-		self.lbldatos8=ttk.Label(seccion_datos_pensionado, text="Colonia:")
-		self.lbldatos8.grid(column=2, row=2, padx=4, pady=4)
-		self.lbldatos9=ttk.Label(seccion_datos_pensionado, text="Ciudad/Estado:")
-		self.lbldatos9.grid(column=2, row=3, padx=4, pady=4) 
-		self.lbldatos10=ttk.Label(seccion_datos_pensionado, text="C.P.:")
-		self.lbldatos10.grid(column=2, row=4, padx=4, pady=4) 
+		seccion_derecha = ttk.Frame(seccion_datos_pensionado)
+		seccion_derecha.grid(row=2, column=1,padx=5, pady=5, sticky=tk.NW)
 
-		
-		######Datos del Auto
-		self.lbldatos11=ttk.Label(seccion_datos_pensionado, text="--Datos del Auto--")
-		self.lbldatos11.grid(column=0, row=8, padx=8, pady=8)
-		self.lbldatos12=ttk.Label(seccion_datos_pensionado, text="Placas:")
-		self.lbldatos12.grid(column=0, row=9, padx=4, pady=4) 
-		self.lbldatos13=ttk.Label(seccion_datos_pensionado, text="Modelo:")
-		self.lbldatos13.grid(column=0, row=10, padx=4, pady=4)
-		self.lbldatos14=ttk.Label(seccion_datos_pensionado, text="Color:")
-		self.lbldatos14.grid(column=0, row=11, padx=4, pady=4)
+		seccion_datos_auto_pensionado = tk.LabelFrame(seccion_derecha, text="Datos del auto del pensionado")
+		seccion_datos_auto_pensionado.grid(row=0, column=0,padx=5, pady=5, sticky=tk.NW)
 
-		#####Datos del Cobro
-		self.lbldatos11=ttk.Label(seccion_datos_pensionado, text="--Datos del Cobro--")
-		self.lbldatos11.grid(column=2, row=8, padx=8, pady=8)
-		self.lbldatos12=ttk.Label(seccion_datos_pensionado, text="Monto x Mes:")
-		self.lbldatos12.grid(column=2, row=9, padx=4, pady=4) 
-		self.lbldatos13=ttk.Label(seccion_datos_pensionado, text="Cortesia:")
-		self.lbldatos13.grid(column=2, row=10, padx=4, pady=4)
-		self.lbldatos14=ttk.Label(seccion_datos_pensionado, text="Tolerancia:")
-		self.lbldatos14.grid(column=2, row=11, padx=4, pady=4)
-		
 
-		self.entryMontoxmes=ttk.Entry(seccion_datos_pensionado, width=15, textvariable=self.Montoxmes)
-		self.entryMontoxmes.grid(column=3, row=9)
-		self.comboCortesia = ttk.Combobox(seccion_datos_pensionado, width=5, justify=tk.LEFT, state="readonly")
-		self.comboCortesia["values"] = ["Si", "No"]
-		self.comboCortesia.current(1)
-		self.comboCortesia.grid(column=3, row=10, padx=1, pady=1)
+		etiqueta_placa_auto_pensionado = ttk.Label(seccion_datos_auto_pensionado, text='Placa: ')
+		etiqueta_placa_auto_pensionado.grid(row=0, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_placa_auto_pensionado = ttk.Entry(seccion_datos_auto_pensionado, textvariable=self.variable_placas)
+		campo_placa_auto_pensionado.grid(row=0, column=1, padx=5, pady=5)
 
-		self.entryTole=ttk.Entry(seccion_datos_pensionado, width=15, textvariable=self.Tole)
-		self.entryTole.grid(column=3, row=11)
+		etiqueta_modelo_auto_pensionado = ttk.Label(seccion_datos_auto_pensionado, text='Modelo: ')
+		etiqueta_modelo_auto_pensionado.grid(row=1, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_placa_modelo_pensionado = ttk.Entry(seccion_datos_auto_pensionado, textvariable=self.variable_auto_modelo)
+		campo_placa_modelo_pensionado.grid(row=1, column=1, padx=5, pady=5)
 
+		etiqueta_color_auto_pensionado = ttk.Label(seccion_datos_auto_pensionado, text='Color: ')
+		etiqueta_color_auto_pensionado.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_color_auto_pensionado = ttk.Entry(seccion_datos_auto_pensionado, textvariable=self.variable_auto_color)
+		campo_color_auto_pensionado.grid(row=2, column=1, padx=5, pady=5)
+
+
+
+		seccion_datos_pension = tk.LabelFrame(seccion_derecha, text="Datos de la pension")
+		seccion_datos_pension.grid(row=1, column=0,padx=5, pady=5, sticky=tk.NW)
+
+
+		etiqueta_monto_dato_pension = ttk.Label(seccion_datos_pension, text='Monto X Mes: ')
+		etiqueta_monto_dato_pension.grid(row=0, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_monto_dato_pension = ttk.Entry(seccion_datos_pension, textvariable=self.variable_monto)
+		campo_monto_dato_pension.grid(row=0, column=1, padx=5, pady=5)
+
+		etiqueta_cortesia_dato_pension = ttk.Label(seccion_datos_pension, text='Cortesia: ')
+		etiqueta_cortesia_dato_pension.grid(row=1, column=0, padx=5, pady=5, sticky=tk.NW)
+
+		campo_cortesia_dato_pension = ttk.Combobox(seccion_datos_pension, width=5, state="readonly", textvariable=self.variable_cortesia)
+		campo_cortesia_dato_pension["values"] = ["Si", "No"]
+		campo_cortesia_dato_pension.current(1)
+		campo_cortesia_dato_pension.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
+
+		etiqueta_color_auto_pensionado = ttk.Label(seccion_datos_pension, text='Tolerancia: ')
+		etiqueta_color_auto_pensionado.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NW)
+		campo_color_auto_pensionado = ttk.Entry(seccion_datos_pension, textvariable=self.variable_tolerancia)
+		campo_color_auto_pensionado.grid(row=2, column=1, padx=5, pady=5)
 
 
 
 
 		# Crea un botón y lo empaqueta en la seccion_botones_consulta
-		boton_agregar_pensionado = ttk.Button(self.panel_crud,  text='Agregar usuario', command = self.agregar_pensionado, width=16)
-		boton_agregar_pensionado.grid(row=2, column=0, padx=5, pady=5)
+		boton_agregar_pensionado = tk.Button(self.panel_crud,  text='Agregar usuario', command = self.agregar_pensionado, width=20, font=("Arial", 12), background="red")
+		boton_agregar_pensionado.grid(row=5, column=0, padx=5, pady=5)
 
-		self.campo_nombre_usuario.focus()
+		self.campo_numero_tarjeta.focus()
+
+
 
 	def agregar_pensionado(self):
 		try:
-			usuario_nombre = self.usuario_nombre.get()
-			usuario_contraseña = self.usuario_contraseña.get()
-			usuario_nombre_completo = self.usuario_nombre_completo.get()
-			usuario_fecha_alta =  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-			usuario_telefono = self.usuario_telefono.get()
-			usuario_telefono_emergencia = self.usuario_telefono_emergencia.get()
-			usuario_sucursal = self.usuario_sucursal.get()
+			pensionado_fecha_alta =  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+			variable_numero_tarjeta = self.variable_numero_tarjeta.get()
+			variable_nombre = self.variable_nombre.get()
+			variable_apellido_1 = self.variable_apellido_1.get()
+			variable_apellido_2 = self.variable_apellido_2.get()
+			variable_fecha_alta = pensionado_fecha_alta
+			variable_telefono_1 = self.variable_telefono_1.get()
+			variable_telefono_2 = self.variable_telefono_2.get()
+			variable_ciudad = self.variable_ciudad.get()
+			variable_colonia = self.variable_colonia.get()
+			variable_cp = self.variable_cp.get()
+			variable_numero_calle = self.variable_numero_calle.get()
 
-			if len(usuario_nombre) == 0 or len(usuario_contraseña) == 0 or len(usuario_nombre_completo) == 0 or len(usuario_fecha_alta) == 0 or len(usuario_telefono) == 0 or len(usuario_telefono_emergencia) == 0 or len(usuario_sucursal) == 0:raise IndexError("No dejar campos en blanco")
+			variable_placas = self.variable_placas.get()
+			variable_auto_modelo = self.variable_auto_modelo.get()
+			variable_auto_color = self.variable_auto_color.get()
 
-			datos_usuario = [usuario_nombre, usuario_contraseña,  usuario_nombre_completo, usuario_fecha_alta,  usuario_telefono,  usuario_telefono_emergencia,  usuario_sucursal]
+			variable_monto = self.variable_monto.get()
+			variable_cortesia = self.variable_cortesia.get()
+			variable_tolerancia = 5
 
-			self.query.agregar_pensionados(datos_usuario)
 
-			self.desconectar()
-		except Exception as e:
-			mb.showerror("Error", e)
+			if len(variable_numero_tarjeta) == 0 or len(variable_nombre) == 0 or len(variable_apellido_1) == 0 or len(variable_apellido_2) == 0 or len(variable_fecha_alta) == 0 or len(variable_telefono_1) == 0 or len(variable_telefono_2) == 0 or len(variable_ciudad) == 0 or len(variable_colonia) == 0 or len(variable_cp) == 0 or len(variable_numero_calle) == 0 or len(variable_placas) == 0 or len(variable_auto_modelo) == 0 or len(variable_auto_color) == 0 or len(variable_monto) == 0 or len(variable_cortesia) == 0 or len(str(variable_tolerancia)) == 0:
+				raise IndexError("No dejar campos en blanco")
+
+			if variable_cortesia == "No" and variable_monto == 0:raise IndexError("Ingrese el monto a pagar")
+			if variable_cortesia == "Si": variable_monto = 0
+
+
+
+			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia)
+
+			resultado = self.query.consultar_pensionado(variable_numero_tarjeta)
+
+			if len(resultado) == 0:
+				self.query.agregar_pensionados(datos_pensionado)
+				mb.showinfo("Información", "El pensionado fue añadido correctamente")
+				self.desconectar()
+			else:
+				self.variable_numero_tarjeta.set('')
+				self.campo_numero_tarjeta.focus()
+				raise ValueError("Ya existe un pensionado registrado con ese numero de tarjeta")
+
+
 		except IndexError as e:
+			traceback.print_exc()
 			mb.showerror("Error", e)
-
-
-
-
+		except ValueError as e:
+			traceback.print_exc()
+			mb.showerror("Error", e)
+		except Exception as e:
+			traceback.print_exc()
+			mb.showerror("Error", e)
 
 
 	def desconectar(self):
@@ -213,3 +313,5 @@ class View_agregar_pensionados:
 		# Destruye el panel principal
 		self.panel_crud.destroy()
 
+
+#View_agregar_pensionados()
