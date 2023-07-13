@@ -11,10 +11,6 @@ class Operacion:
 								 passwd="RG980320",
 								 database="Parqueadero1")
 
-		#conexion = pymysql.connect(host="192.168.1.91",
-		#                   user="Aurelio",
-		#                   passwd="RG980320",
-		#                   database="Parqueadero1")
 		return conexion
 
 

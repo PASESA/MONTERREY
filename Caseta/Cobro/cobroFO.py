@@ -1,6 +1,4 @@
-import traceback
 from datetime import datetime, date, time, timedelta
-from dateutil.relativedelta import relativedelta
 
 import qrcode
 from tkinter import messagebox as mb
@@ -36,11 +34,14 @@ TipoPromocion = 1
 ###-###
 p = Usb(0x04b8, 0x0202, 0)
 penalizacion_con_importe = False
+from dateutil.relativedelta import relativedelta
 from view_login import View_Login
 from queries import pensionados
 from view_agregar_pensionado import View_agregar_pensionados
 from view_modificar_pensionado import View_modificar_pensionados
 from queries import pensionados
+import traceback
+import math
 contraseña_pensionados = "P4s3"
 
 class FormularioOperacion:
@@ -102,7 +103,7 @@ class FormularioOperacion:
 			self.scrolledtext.insert(tk.END, "Entrada num: "+str(fila[0])+"\nEntro: "+str(fila[1])[:-3]+"\n\n")
 
 	def agregarRegistroRFID(self):
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
+		#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion    $$$$$$$$$$$$$$$$$$$
 		MaxFolio=str(self.operacion1.MaxfolioEntrada())
 		MaxFolio = MaxFolio.strip("[(,)]")
 		n1 = MaxFolio
@@ -849,6 +850,7 @@ class FormularioOperacion:
 
 		if len(numtarjeta) == 0:
 			mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
+			self.entryNumTarjeta2.focus()
 			return False
 		else:
 			tarjeta=int(numtarjeta)
@@ -1628,54 +1630,59 @@ class FormularioOperacion:
 		labelframe_pensionados = tk.LabelFrame(self.pagina4, text="Pensionados")
 		labelframe_pensionados.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
 
-		label_frame_datos_pago = tk.LabelFrame(labelframe_pensionados, text="")
+		label_frame_datos_pago = tk.Frame(labelframe_pensionados)
 		label_frame_datos_pago.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
 
 		######Pago, Vigencia y Numero de tarjeta
 		labelframe_pensionados_datos_pago=tk.LabelFrame(label_frame_datos_pago, text="Datos de pago")
-		labelframe_pensionados_datos_pago.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
+		labelframe_pensionados_datos_pago.grid(column=0, row=0, padx=5, sticky=tk.NW)
 
-		lbldatos20=ttk.Label(labelframe_pensionados_datos_pago, text="Num. Tarjeta:")
-		lbldatos20.grid(column=0, row=1, padx=4, pady=4)              
-		lbldatos16=ttk.Label(labelframe_pensionados_datos_pago, text="Monto Mensual:")#informativo
-		lbldatos16.grid(column=0, row=2, padx=4, pady=4)
-		lbldatos17=ttk.Label(labelframe_pensionados_datos_pago, text="Mensualidades a Pagar:")
-		lbldatos17.grid(column=0, row=3)
-		lbldatosTotal2=ttk.Label(labelframe_pensionados_datos_pago, text="")#Informativo
-		lbldatosTotal2.grid(column=0, row=4, padx=4, pady=4)           
-		lbldatosTotal=ttk.Label(labelframe_pensionados_datos_pago, text="")#Informativo
-		lbldatosTotal.grid(column=1, row=4, padx=4, pady=4)                         
-		lbldatosCortesia=ttk.Label(labelframe_pensionados_datos_pago, text="")#Informativo
-		lbldatosCortesia.grid(column=3, row=1, padx=4, pady=4)                 
-		lbldatos18=ttk.Label(labelframe_pensionados_datos_pago, text="Vigencia:")#Informativo
-		lbldatos18.grid(column=3, row=2, padx=4, pady=4)         
-		lbldatos19=ttk.Label(labelframe_pensionados_datos_pago, text="Estatus:")#informativo
-		lbldatos19.grid(column=3, row=3)  
+		labelframe_pensionados_datos_pago__=tk.Frame(labelframe_pensionados_datos_pago)
+		labelframe_pensionados_datos_pago__.grid(column=0, row=0)
 
-
-		
+		lbldatos20=ttk.Label(labelframe_pensionados_datos_pago__, text="Num. Tarjeta:")
+		lbldatos20.grid(column=0, row=0, padx=4, pady=4)
 		self.variable_numero_tarjeta=tk.StringVar()
-		self.caja_texto_numero_tarjeta=ttk.Entry(labelframe_pensionados_datos_pago, width=15, textvariable=self.variable_numero_tarjeta)#state="readonly"
-		self.caja_texto_numero_tarjeta.bind('<Return>',self.ConsulPagoPen)#con esto se lee automatico y se va a consultar
-		self.caja_texto_numero_tarjeta.grid(column=1, row=1) #ConsulPagoPen
-				
-		self.Monto=tk.StringVar()
-		entryMonto=ttk.Entry(labelframe_pensionados_datos_pago, width=10, textvariable=self.Monto, state="readonly")
-		entryMonto.grid(column=1, row=2)
-		self.comboMensual = ttk.Combobox(labelframe_pensionados_datos_pago, width=8, justify=tk.RIGHT, state="readonly")
-		self.comboMensual["values"] = ["1"]#, "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-		self.comboMensual.bind('<Return>',self.CalculaPagoPen)#Calcula el monto a pagar
-		self.comboMensual.current(0)
-		self.comboMensual.grid(column=1, row=3)
-		self.Vigencia=tk.StringVar()
-		entryVigencia=ttk.Entry(labelframe_pensionados_datos_pago, width=15, textvariable=self.Vigencia, state="readonly")
-		entryVigencia.grid(column=4, row=2, padx=5, pady=5)
-		self.Estatus=tk.StringVar()
-		entryEstatus=ttk.Entry(labelframe_pensionados_datos_pago, width=15, textvariable=self.Estatus, state="readonly")#Informativo
-		entryEstatus.grid(column=4, row=3)
-		#####Botones de Accion: Pagar
+		self.caja_texto_numero_tarjeta=ttk.Entry(labelframe_pensionados_datos_pago__, width=15, textvariable=self.variable_numero_tarjeta)
+		self.caja_texto_numero_tarjeta.grid(column=1, row=0, padx=4, pady=4)
 
-		
+		boton_consultar_pensionado=tk.Button(labelframe_pensionados_datos_pago__, text="Consultar", command=self.ConsulPagoPen, width=12, height=1, anchor="center",  font=("Arial", 10), background="red")
+		boton_consultar_pensionado.grid(column=4, row=0, padx=4, pady=4)     
+
+		lbldatos16=ttk.Label(labelframe_pensionados_datos_pago__, text="Monto Mensual:")#informativo
+		lbldatos16.grid(column=0, row=1, padx=4, pady=4)
+		self.Monto=tk.StringVar()
+		entryMonto=ttk.Entry(labelframe_pensionados_datos_pago__, width=10, textvariable=self.Monto, state="readonly")
+		entryMonto.grid(column=1, row=1)
+
+		etiqueta_vigencia=ttk.Label(labelframe_pensionados_datos_pago__, text="Vigencia:")
+		etiqueta_vigencia.grid(column=3, row=1, padx=4, pady=4)
+		self.Vigencia=tk.StringVar()
+		cata_texto_vigencia=ttk.Entry(labelframe_pensionados_datos_pago__, width=15, textvariable=self.Vigencia, state="readonly")
+		cata_texto_vigencia.grid(column=4, row=1, padx=4, pady=4)
+
+		lbldatos17=ttk.Label(labelframe_pensionados_datos_pago__, text="Mensualidades a Pagar:")
+		lbldatos17.grid(column=0, row=2, padx=4, pady=4)
+
+		self.meses_pago = tk.StringVar()
+		self.comboMensual = ttk.Combobox(labelframe_pensionados_datos_pago__, width=8, state="readonly", textvariable=self.meses_pago)
+		self.comboMensual["values"] = ["1"]#, "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+		self.comboMensual.current(0)
+		self.comboMensual.grid(column=1, row=2, padx=4, pady=4)
+
+		etiqueta_estatus=ttk.Label(labelframe_pensionados_datos_pago__, text="Estatus:")
+		etiqueta_estatus.grid(column=3, row=2, padx=4, pady=4)  
+		self.Estatus=tk.StringVar()
+		cata_texto_estatus=ttk.Entry(labelframe_pensionados_datos_pago__, width=15, textvariable=self.Estatus, state="readonly")
+		cata_texto_estatus.grid(column=4, row=2, padx=4, pady=4)
+
+		label_frame_informacion = tk.Frame(labelframe_pensionados_datos_pago)
+		label_frame_informacion.grid(column=0, row=2)
+
+		self.etiqueta_informacion = ttk.Label(label_frame_informacion, text="", font=("Arial", 11))
+		self.etiqueta_informacion.grid(column=0, row=0)
+
+
 
 		label_frame_tipo_pago = tk.LabelFrame(label_frame_datos_pago, text="Tipo de pago")
 		label_frame_tipo_pago.grid(column=1, row=0, padx=6, pady=5, sticky=tk.NW)
@@ -1699,18 +1706,18 @@ class FormularioOperacion:
 		boton2=tk.Button(label_frame_tipo_pago, text="Cobrar Pension", command=self.Cobro_Pensionado, width=12, height=1, anchor="center",  font=("Arial", 10), background="red")
 		boton2.grid(column=0, row=3, padx=4, pady=4)
 
-
+		self.etiqueta_informacion_pago = ttk.Label(label_frame_tipo_pago, text="", font=("Arial", 11))
+		self.etiqueta_informacion_pago.grid(column=0, row=4)    
 
 
 
 		labelframe_pensionados_acciones = tk.LabelFrame(labelframe_pensionados, text="Acciones")
 		labelframe_pensionados_acciones.grid(column=1, row=0, padx=5, pady=5, sticky=tk.NW)
 
-
-		self.boton_agregar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Agregar Pensionado", anchor="center", font=("Arial", 10), width=30, command=self.agregar_pensionado)
+		self.boton_agregar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Agregar Pensionado", anchor="center", font=("Arial", 12), width=27, command=self.agregar_pensionado)
 		self.boton_agregar_pensionado.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
 	 
-		self.boton_modificar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", command=self.modificar_pensionado, font=("Arial", 10), width=30)
+		self.boton_modificar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", command=self.modificar_pensionado, font=("Arial", 12), width=27)
 		self.boton_modificar_pensionado.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
 
 		labelframe_pensionados_acciones_contraseña = ttk.Frame(labelframe_pensionados_acciones)
@@ -1730,14 +1737,16 @@ class FormularioOperacion:
 		labelframe_pensionados_dentro = tk.LabelFrame(labelframe_pensionados, text="Pensionados Adentro")
 		labelframe_pensionados_dentro.grid(column=1, row=1, padx=5, pady=5)
 
+		self.lbldatosTotPen=ttk.Label(labelframe_pensionados_dentro, text="")
+		self.lbldatosTotPen.grid(column=0, row=0, padx=4, pady=4)        
+
+		boton5=tk.Button(labelframe_pensionados_dentro, text="Actualizar", command=self.PenAdentro, width=28, height=1, anchor="center", font=("Arial", 10), background="red")
+		boton5.grid(column=0, row=1, padx=4, pady=4)
+
 		self.scroll_pensionados_dentro = st.ScrolledText(labelframe_pensionados_dentro, width=28, height=18)
 		self.scroll_pensionados_dentro.grid(column=0,row=2, padx=10, pady=10)
 
-		self.lbldatosTotPen=ttk.Label(labelframe_pensionados_dentro, text="")
-		self.lbldatosTotPen.grid(column=0, row=4, padx=4, pady=4)        
 
-		boton5=tk.Button(labelframe_pensionados_dentro, text="Actualizar", command=self.PenAdentro, width=28, height=1, anchor="center", font=("Arial", 10))
-		boton5.grid(column=0, row=6, padx=4, pady=4)
 
 
 		#Tabla de Pensionados
@@ -1751,7 +1760,7 @@ class FormularioOperacion:
 		labelframe_tabla_pensionados.rowconfigure(0, weight=1)
 
 		# Obtiene los nombres de las columnas de la tabla que se va a mostrar
-		columnas = ['N° de tarjeta', 'Cortesia', 'Nombre', 'Estado', 'Vigencia', 'Tolerancia', 'ID']
+		columnas = ['N° de tarjeta', 'Cortesia', 'Nombre', 'Estado', 'Vigencia', 'Tolerancia', 'ID', 'Estatus']
 
 		# Crea un Treeview con una columna por cada campo de la tabla
 		self.tabla = ttk.Treeview(labelframe_tabla_pensionados, columns=columnas)
@@ -1766,13 +1775,14 @@ class FormularioOperacion:
 			i += 1
 
 		self.tabla.column('#0', width=0, stretch=False)
-		self.tabla.column('#1', width=100, stretch=False)
-		self.tabla.column('#2', width=70, stretch=False)
+		self.tabla.column('#1', width=85, stretch=False)
+		self.tabla.column('#2', width=60, stretch=False)
 		self.tabla.column('#3', width=70, stretch=False)
 		self.tabla.column('#4', width=70, stretch=False)
 		self.tabla.column('#5', width=120, stretch=False)
 		self.tabla.column('#6', width=75, stretch=False)
 		self.tabla.column('#7', width=0, stretch=False)
+		self.tabla.column('#8', width=50, stretch=False)
 
 		# Crea un Scrollbar vertical y lo asocia con el Treeview
 		scrollbar_Y = ttk.Scrollbar(labelframe_tabla_pensionados, orient='vertical', command=self.tabla.yview)
@@ -1787,206 +1797,143 @@ class FormularioOperacion:
 		# Empaqueta el Treeview en el labelframe
 		self.tabla.grid(row=0, column=0, sticky='NSEW', padx=5, pady=5)
 
-
-
-
 		self.ver_pensionados()
 		self.PenAdentro()
 
 
 	
-	def ConsulPagoPen(self,event):
-		numtarjeta=str(self.variable_numero_tarjeta.get(), )
+	def ConsulPagoPen(self):
+		numtarjeta = self.variable_numero_tarjeta.get()
 
-		if len(numtarjeta) == 0 :
+		if not numtarjeta:
 			mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
-		else :
-			tarjeta=int(numtarjeta)
+			self.limpiar_datos_pago()
+			return
 
-			Existe=self.operacion1.ValidarRFID(tarjeta)
-			if len(Existe) == 0 :
-				mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
-				self.variable_numero_tarjeta.set("")               
-				self.caja_texto_numero_tarjeta.focus()
-				return False
-			else:
-				respuesta=self.operacion1.ConsultaPensionado(Existe)
-				#Nom_cliente 0, Apell1_cliente 1, Apell2_cliente 2, Telefono1 3, Telefono2 4, Ciudad 5, Colonia 6,
-				#CP 7, Calle_num 8, Placas 9, Modelo_auto 10, Color_auto 11, Fecha_vigencia 12, Estatus 13,
-				#Vigencia 14, Monto 15, Cortesia 16, Tolerancia 17
-				for fila in respuesta:
+		numtarjeta = int(numtarjeta)
+		resultado = self.operacion1.ValidarRFID(numtarjeta)
 
-					self.comboMensual.current(0)
-					VigAct=fila[12]
-					Estatus=fila[14]
-					monto=fila[15]
-					cortesia=fila[16]
-					self.Vigencia.set(VigAct)
-					self.Estatus.set(Estatus)
+		if not resultado:
+			mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
+			self.limpiar_datos_pago()
+			return
 
-					if cortesia == "Si" : pass
+		respuesta = self.operacion1.ConsultaPensionado(resultado)
 
-					else : pass
+		if not respuesta:
+			mb.showwarning("IMPORTANTE", "No se encontró información para el cliente")
+			return
 
-					self.comboMensual.focus()
+		cliente = respuesta[0]
+		VigAct = cliente[12]
+		Estatus = cliente[14]
+		monto = cliente[15]
+		cortesia = cliente[16]
 
-	def CalculaPagoPen(self,event):
-		monto=str(self.Monto.get(), )
-		mes=int(self.comboMensual.get(), )
-		if len(monto) == 0:
-			mb.showwarning("IMPORTANTE", "El Pensionado cuenta con Cortesía")
+		self.Monto.set(monto)
+		self.Vigencia.set(VigAct)
+		self.Estatus.set(Estatus)
+		pago = 0
+		nummes = int(self.meses_pago.get())
+
+		self.etiqueta_informacion.configure(text="")
+		if cortesia == "Si":
+			self.etiqueta_informacion.configure(text="El Pensionado cuenta con Cortesía")
+		if Estatus == "Inactiva":
+			self.etiqueta_informacion.configure(text="Tarjeta desactivada")
+			mb.showwarning("IMPORTANTE", "La tarjeta esta desactivada, por lo que el pensionado solo paragá los dias faltantes del mes, posteriormente pagará la pension completa")
+			pago = self.calcular_pago_media_pension(monto)
+
+
 		else:
-			self.lbldatosCortesia.configure(text=" ")
-			self.lbldatosTotal.configure(text=" ")
-			self.lbldatosTotal2.configure(text=" ")
-			monto=int(monto)
-			pago=monto*mes #Calculando monto a pagar
+			pago = monto * nummes
 
-			self.lbldatosTotal.configure(text="TOTAL A PAGAR:   "+str(pago))
-			
+		self.etiqueta_informacion_pago.configure(text=f"${pago}")
+
 
 	def Cobro_Pensionado(self):
-		numtarjeta=str(self.variable_numero_tarjeta.get())#self.NumTarjeta=tk.StringVar()
-		#mb.showwarning("IMPORTANTE", numtarjeta)
+		numtarjeta = str(self.variable_numero_tarjeta.get())
+		nummes = int(self.meses_pago.get())
+
 		try:
-			if (self.variable_tipo_pago_transferencia.get() == False) and (self.variable_tipo_pago_efectivo.get() == False):raise TypeError("Selecciona una forma de pago")
+			usuario = self.operacion1.nombre_usuario_activo()
+			usuario = str(usuario[0][0])
+			#usuario = "prueba"
 
-			#usuario = self.operacion1.nombre_usuario_activo()
-			#usuario = str(usuario[0][0])
-			usuario = "prueba"
+			if not self.variable_tipo_pago_transferencia.get() and not self.variable_tipo_pago_efectivo.get():
+				raise TypeError("Selecciona una forma de pago")
 
-			#Generales
-			nummes=int(self.comboMensual.get(), )
-			fechaPago=datetime.now()
-			fechaPago = fechaPago.strftime("%Y-%m-%d %H:%M:%S")
-
-			if len(numtarjeta) == 0 :
+			if not numtarjeta:
 				mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
-         
-				return False
-			else :
+				self.caja_texto_numero_tarjeta.focus()
+				return
 
-				tarjeta=int(numtarjeta)
-				Existe=self.operacion1.ValidarRFID(tarjeta)
-				if len(Existe) == 0 :
-					mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
+			tarjeta = int(numtarjeta)
+			Existe = self.operacion1.ValidarRFID(tarjeta)
 
-					return False
-				else:
-					respuesta=self.operacion1.ConsultaPensionado(Existe)
-					#Nom_cliente 0, Apell1_cliente 1, Apell2_cliente 2, Telefono1 3, Telefono2 4, Ciudad 5, Colonia 6,
-					#CP 7, Calle_num 8, Placas 9, Modelo_auto 10, Color_auto 11, Fecha_vigencia 12, Estatus 13,
-					#Vigencia 14, Monto 15, Cortesia 16, Tolerancia 17
-					for fila in respuesta:
-						Nom_cliente = fila[0]
-						Apell1_cliente = fila[1]
-						Apell2_cliente = fila[2]
-						VigAct=fila[12] #Fecha de Vigencia Actual
-						#VigActShow= datetime.strptime(VigAct, '%Y-%m-%d')
-						Estatus=fila[14] #Activo/Inactiva
-						monto=fila[15]
-						cortesia=fila[16]
-						Tolerancia=int(fila[17])
-						self.Vigencia.set(VigAct)
-						self.Estatus.set(Estatus)
-						self.caja_texto_numero_tarjeta.focus()
-					#Calculando la Nueva Vigencia apartir del dia de Pago
-					#Calculo de Vigencia Pensionado Paga
-					mes = date.today().month
-					dia = date.today().day
-					if mes == 1: #Enero
-						dias = 31
-						sigue = 28
-					elif mes == 2: #Febrero
-						dias = 28
-						sigue = 31
-					elif mes == 3: #Marzo
-						dias = 31
-						sigue = 30
-					elif mes == 4: #Abril
-						dias = 30
-						sigue = 31
-					elif mes == 5: #Mayo
-						dias = 31
-						sigue = 30
-					elif mes == 6: #Junio
-						dias = 30
-						sigue = 31
-					elif mes == 7: #Julio
-						dias = 31
-						sigue = 31
-					elif mes == 8: #Agosto
-						dias = 31
-						sigue = 31
-					elif mes == 9: #Septiembre
-						dias = 30
-						sigue = 31
-					elif mes == 10: #Octubre
-						dias = 31
-						sigue = 30
-					elif mes == 11: #Noviembre
-						dias = 30
-						sigue = 31
-					elif mes == 12: #Diciembre
-						dias = 31
-						sigue = 30
+			if not Existe:
+				mb.showwarning("IMPORTANTE", "No existe Cliente para ese Num de Tarjeta")
+				self.caja_texto_numero_tarjeta.focus()
+				return
 
-					if Estatus == "Inactiva": #VigAct
-					##Si Pensionado paga por primera vez sólo paga los días faltantes al cierre de mes
-					##Esto se hizo así a petición de Alberto Ordaz
-						if (dias - dia) > 0:
-							pago = (monto/dias)*(dias-dia)
-							NvaVigencia = self.nueva_vigencia(VigAct)
-						elif (dias - dia) == 0:
-							pago = monto
-							NvaVigencia = self.nueva_vigencia(VigAct)
-					else:
-						pago = monto*nummes
-						NvaVigencia = self.nueva_vigencia(VigAct)
+			respuesta = self.operacion1.ConsultaPensionado(Existe)
 
-					NvaVigencia = datetime.strptime(NvaVigencia, "%Y-%m-%d %H:%M:%S")
-					NvaVigencia = NvaVigencia.strftime("%Y-%m-%d %H:%M:%S")
+			if not respuesta:
+				mb.showwarning("IMPORTANTE", "No se encontró información para el cliente")
+				return
 
-					datos=(Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
-					datos1=("Activo", NvaVigencia, Existe)
-					self.operacion1.CobrosPensionado(datos)
-					self.operacion1.UpdPensionado(datos1)
+			cliente = respuesta[0]
+			Nom_cliente = cliente[0]
+			Apell1_cliente = cliente[1]
+			Apell2_cliente = cliente[2]
+			VigAct = cliente[12]
+			Estatus = cliente[14]
+			monto = cliente[15]
+			cortesia = cliente[16]
+			Tolerancia = int(cliente[17])
 
+			fechaPago = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-					self.imprimir_comprobante_pago_pensionado(
-															 numero_tarjeta = tarjeta,
-															 Nom_cliente = Nom_cliente,
-															 Apell1_cliente = Apell1_cliente,
-															 Apell2_cliente = Apell2_cliente,
-															 fecha_pago = fechaPago,
-															 vigencia = NvaVigencia[:10],
-															 monto = pago,
-															 usuario = usuario,
-															 tipo_pago = self.tipo_pago_)
+			if Estatus == "Inactiva":
+				pago = self.calcular_pago_media_pension(monto)
 
-					mb.showinfo("IMPORTANTE", "PAGO realizado con éxito")
-					self.Monto.set("")
-					self.Vigencia.set("")
-					self.Estatus.set("")
-					self.comboMensual.current(0)
-					self.variable_numero_tarjeta.set("")
-					self.caja_texto_numero_tarjeta.focus()
-					self.vaciar_tipo_pago()
-					self.ver_pensionados()
+			else:
+				pago = monto * nummes
+
+			if cortesia == "Si":NvaVigencia = self.nueva_vigencia(VigAct, "Si")
+			else:NvaVigencia = self.nueva_vigencia(VigAct)
+
+			datos = (Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
+			datos1 = ("Activo", NvaVigencia, Existe)
+
+			self.operacion1.CobrosPensionado(datos)
+			self.operacion1.UpdPensionado(datos1)
+
+			self.imprimir_comprobante_pago_pensionado(
+				numero_tarjeta=tarjeta,
+				Nom_cliente=Nom_cliente,
+				Apell1_cliente=Apell1_cliente,
+				Apell2_cliente=Apell2_cliente,
+				fecha_pago=fechaPago,
+				vigencia=NvaVigencia[:10],
+				monto=pago,
+				usuario=usuario,
+				tipo_pago=self.tipo_pago_
+			)
+
+			mb.showinfo("IMPORTANTE", "PAGO realizado con éxito")
+			self.limpiar_datos_pago()
 
 		except TypeError as e:
-			mb.showwarning(f"IMPORTANTE", e)
+			print(e)
 			traceback.print_exc()
+			mb.showwarning("Error", e)
 
 		except Exception as e:
 			print(e)
-			mb.showwarning("IMPORTANTE", "Ha ocurrido un error: Revise los datos capturados")
-			self.Monto.set("")
-			self.comboMensual.current(0)
-			self.Vigencia.set("")
-			self.Estatus.set("")
-			self.variable_numero_tarjeta.set("")
-			self.caja_texto_numero_tarjeta.focus()
+			traceback.print_exc()
+			mb.showwarning("Error", "Ha ocurrido un error: Revise los datos capturados")
+
 
 	def PenAdentro(self):
 		self.scroll_pensionados_dentro.configure(state="normal")
@@ -2089,7 +2036,7 @@ class FormularioOperacion:
 		self.variable_tipo_pago_transferencia.set(False)
 		self.variable_tipo_pago_efectivo.set(False)
 
-	def nueva_vigencia(self, fecha):
+	def nueva_vigencia(self, fecha, cortesia = None):
 		"""
 		Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato '%Y-%m-%d %H:%M:%S'.
 
@@ -2101,6 +2048,7 @@ class FormularioOperacion:
 			- nueva_vigencia (str): Una cadena de texto en el formato '%Y-%m-%d %H:%M:%S' que representa la fecha del último día del mes siguiente a la fecha dada.
 		"""
 		try:
+			nueva_vigencia = ''
 			if fecha == None:
 				# Obtener la fecha y hora actual en formato deseado
 				fecha = datetime.today().strftime("%Y-%m-%d 23:59:59")
@@ -2115,28 +2063,38 @@ class FormularioOperacion:
 			# Verificar que la fecha sea de tipo str o datetime
 			elif not isinstance(fecha, (str, datetime)):
 				raise TypeError("La fecha debe ser una cadena de texto o un objeto datetime.")
-			
+
 			# Convertir la fecha dada en un objeto datetime si es de tipo str
 			elif isinstance(fecha, str):
 				fecha = datetime.strptime(fecha, '%Y-%m-%d 23:59:59')
 			
-			# Obtener la fecha del primer día del siguiente mes
-			mes_siguiente = fecha + relativedelta(months=1, day=1)
-			
-			# Obtener la fecha del último día del mes siguiente
-			ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
-			if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
-				ultimo_dia_mes_siguiente -= relativedelta(days=1)
-			
-			# convertir la fecha del último día del mes siguiente en formato de cadena
-			nueva_vigencia = ultimo_dia_mes_siguiente.strftime('%Y-%m-%d 23:59:59')
+			if cortesia == "Si":
+				nueva_vigencia = fecha + relativedelta(years=1)
+
+			else:
+				# Obtener la fecha del primer día del siguiente mes
+				mes_siguiente = fecha + relativedelta(months=1, day=1)
+				
+				# Obtener la fecha del último día del mes siguiente
+				ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
+				if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
+					ultimo_dia_mes_siguiente -= relativedelta(days=1)
+
+				nueva_vigencia = ultimo_dia_mes_siguiente
+
+			# convertir la fecha en formato de cadena
+			nueva_vigencia = nueva_vigencia.strftime('%Y-%m-%d 23:59:59')
 
 			# Devolver el valor
 			return nueva_vigencia
 		
 		except TypeError as e:
+			print(e)
+			traceback.print_exc()
 			mb.showwarning("Error", f"{e}")
 		except Exception as e:
+			print(e)
+			traceback.print_exc()
 			mb.showwarning("Error", f"{e}")
 
 	def BoletoDañado(self):
@@ -2319,9 +2277,9 @@ class FormularioOperacion:
 		self.variable_contraseña_pensionados.set("")
 		self.variable_numero_tarjeta.set("")
 		View_agregar_pensionados()
+		self.limpiar_datos_pago()
 		self.ver_pensionados()
 		self.activar_botones()
-
 
 	def modificar_pensionado(self):
 		self.desactivar_botones()
@@ -2355,18 +2313,40 @@ class FormularioOperacion:
 		if len(resultado) == 0:
 			mb.showerror("Error", "No esta registrado un pensionado con dicho numero de tarjeta")
 			self.variable_numero_tarjeta.set("")
-			self.caja_texto_numero_tarjeta.focus()
+			self.limpiar_datos_pago()
 			self.activar_botones()
 			return None
 
 		self.variable_contraseña_pensionados.set("")
 		self.variable_numero_tarjeta.set("")
 		View_modificar_pensionados(datos_pensionado = resultado)
+		self.limpiar_datos_pago()
 		self.ver_pensionados()
 		self.activar_botones()
 
+	def limpiar_datos_pago(self):
+		self.etiqueta_informacion.configure(text="")
+		self.etiqueta_informacion_pago.configure(text="")
+		self.variable_numero_tarjeta.set("")
+		self.variable_contraseña_pensionados.set("")
+		self.caja_texto_numero_tarjeta.focus()
+		self.Monto.set("")
+		self.Vigencia.set("")
+		self.Estatus.set("")
+		self.vaciar_tipo_pago()
+		self.ver_pensionados()
 
+	def calcular_pago_media_pension(self, monto):
+		mes_actual = date.today().month
+		año_actual = date.today().year
 
+		ultimo_dia_mes = date(año_actual, mes_actual, 1) + relativedelta(day=31)
+		dias_mes = ultimo_dia_mes.day
+
+		dias_faltantes = dias_mes - date.today().day
+		pago = math.ceil((monto / dias_mes) * dias_faltantes)
+
+		return pago
 
 #aplicacion1=FormularioOperacion()
 

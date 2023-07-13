@@ -84,6 +84,9 @@ class View_modificar_pensionados():
 		self.variable_vigencia = StringVar()
 		self.variable_vigencia.set(datos_pensionado[0][16])
 
+		self.variable_estatus = StringVar()
+		self.variable_estatus.set(datos_pensionado[0][17])
+
 		self.registros = None
 
 		# Llama a la función interface() que configura la interfaz gráfica
@@ -237,7 +240,7 @@ class View_modificar_pensionados():
 
 
 		# Crea un botón y lo empaqueta en la seccion_botones_consulta
-		boton_modificar_pensionado = tk.Button(seccion_inferior,  text='Activar/Desactivar tarjeta', command = self.activar_desacivar_tarjeta, width=20, font=("Arial", 12), background="red")
+		boton_modificar_pensionado = tk.Button(seccion_inferior,  text='Desactivar tarjeta', command = self.desacivar_tarjeta, width=20, font=("Arial", 12), background="red")
 		boton_modificar_pensionado.grid(row=0, column=0, padx=5, pady=5)
 
 		
@@ -247,17 +250,17 @@ class View_modificar_pensionados():
 
 		self.campo_numero_tarjeta.focus()
 
-	def activar_desacivar_tarjeta(self):
+	def desacivar_tarjeta(self):
 		vigencia = self.variable_vigencia.get()
 		if vigencia == 'None':vigencia = None
 
 		if vigencia:
 			self.variable_vigencia.set(None)
-			mb.showinfo("Alerta", "Se ha desactivado la tarjeta, guarde cambios para confirmar cambio")
+			self.variable_estatus.set("Inactiva")
+			mb.showinfo("Alerta", "Se ha desactivado la tarjeta")
+			self.modificar_pensionado()
 		else:
-			vigencia = self.nueva_vigencia(vigencia)
-			self.variable_vigencia.set(vigencia)
-			mb.showinfo("Alerta", "Se ha activado la tarjeta, guarde cambios para confirmar cambio")
+			mb.showinfo("Alerta", "La tarjeta ya esta desactivada, para reactivar la tarjeta es necesario realizar un pago de la pensión para asignar nueva fecha de vigencia")
 		
 
 
@@ -280,20 +283,21 @@ class View_modificar_pensionados():
 			variable_auto_modelo = self.variable_auto_modelo.get()
 			variable_auto_color = self.variable_auto_color.get()
 
-			variable_monto = self.variable_monto.get()
+			variable_monto = int(self.variable_monto.get())
 			variable_cortesia = self.variable_cortesia.get()
-			variable_tolerancia = 5
-			fecha_modificación_pensionado =  datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+			variable_tolerancia = self.variable_tolerancia.get()
+			fecha_modificación_pensionado = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 			vigencia = self.variable_vigencia.get()
 			if vigencia == "None":vigencia = None
+			estatus = self.variable_estatus.get()
 
 
-			if len(variable_numero_tarjeta) == 0 or len(variable_nombre) == 0 or len(variable_apellido_1) == 0 or len(variable_apellido_2) == 0 or len(variable_telefono_1) == 0 or len(variable_telefono_2) == 0 or len(variable_ciudad) == 0 or len(variable_colonia) == 0 or len(variable_cp) == 0 or len(variable_numero_calle) == 0 or len(variable_placas) == 0 or len(variable_auto_modelo) == 0 or len(variable_auto_color) == 0 or len(variable_monto) == 0 or len(variable_cortesia) == 0 or len(str(variable_tolerancia)) == 0:raise IndexError("No dejar campos en blanco")
+			if len(variable_numero_tarjeta) == 0 or len(variable_nombre) == 0 or len(variable_apellido_1) == 0 or len(variable_apellido_2) == 0 or len(variable_telefono_1) == 0 or len(variable_telefono_2) == 0 or len(variable_ciudad) == 0 or len(variable_colonia) == 0 or len(variable_cp) == 0 or len(variable_numero_calle) == 0 or len(variable_placas) == 0 or len(variable_auto_modelo) == 0 or len(variable_auto_color) == 0 or len(str(variable_monto)) == 0 or len(variable_cortesia) == 0 or variable_tolerancia == 0:raise IndexError("No dejar campos en blanco")
 
 			if variable_cortesia == "No" and variable_monto == 0:raise IndexError("Ingrese el monto a pagar")
 			if variable_cortesia == "Si":variable_monto = 0
 
-			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, fecha_modificación_pensionado, vigencia)
+			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, fecha_modificación_pensionado, vigencia, estatus)
 
 			self.query.actualizar_pensionado(datos_pensionado=datos_pensionado,Num_tarjeta = variable_numero_tarjeta)
 			mb.showinfo("Información", "El pensionado fue modificado correctamente")
@@ -328,54 +332,5 @@ class View_modificar_pensionados():
 		# Destruye el panel principal
 		self.panel_crud.destroy()
 
-	def nueva_vigencia(self, fecha):
-		"""
-		Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato '%Y-%m-%d %H:%M:%S'.
-
-		:param fecha (str or datetime): Fecha a partir de la cual se obtendrá la fecha del último día del mes siguiente.
-
-		:raises: TypeError si la fecha no es una cadena de texto ni un objeto datetime.
-
-		:return:
-			- nueva_vigencia (str): Una cadena de texto en el formato '%Y-%m-%d %H:%M:%S' que representa la fecha del último día del mes siguiente a la fecha dada.
-		"""
-		try:
-			if fecha == None:
-				# Obtener la fecha y hora actual en formato deseado
-				fecha = datetime.today().strftime("%Y-%m-%d 23:59:59")
-
-				# fecha = "2023-04-30 23:59:59"
-
-				# Convertir la cadena de caracteres en un objeto datetime
-				fecha = datetime.strptime(fecha, "%Y-%m-%d 23:59:59")
-
-				fecha = fecha - relativedelta(months=1)
-
-			# Verificar que la fecha sea de tipo str o datetime
-			elif not isinstance(fecha, (str, datetime)):
-				raise TypeError("La fecha debe ser una cadena de texto o un objeto datetime.")
-			
-			# Convertir la fecha dada en un objeto datetime si es de tipo str
-			elif isinstance(fecha, str):
-				fecha = datetime.strptime(fecha, '%Y-%m-%d 23:59:59')
-			
-			# Obtener la fecha del primer día del siguiente mes
-			mes_siguiente = fecha + relativedelta(months=1, day=1)
-			
-			# Obtener la fecha del último día del mes siguiente
-			ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
-			if ultimo_dia_mes_siguiente.month != mes_siguiente.month:
-				ultimo_dia_mes_siguiente -= relativedelta(days=1)
-			
-			# convertir la fecha del último día del mes siguiente en formato de cadena
-			nueva_vigencia = ultimo_dia_mes_siguiente.strftime('%Y-%m-%d 23:59:59')
-
-			# Devolver el valor
-			return nueva_vigencia
-		
-		except TypeError as e:
-			mb.showwarning("Error", f"{e}")
-		except Exception as e:
-			mb.showwarning("Error", f"{e}")
 
 #View_modificar_pensionados()

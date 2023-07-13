@@ -125,14 +125,14 @@ class pensionados(usuarios):
 
         if self.connection:
 
-            query = f"INSERT INTO Pensionados (Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Fecha_alta, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia) VALUES {datos};"
+            query = f"INSERT INTO Pensionados (Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Fecha_alta, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia, Vigencia) VALUES {datos};"
 
             # Se ejecuta la consulta
             self.execute_query(query)
 
     def consultar_pensionado(self, Num_tarjeta):
         if self.connection:
-            query = f"SELECT Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia, Fecha_vigencia FROM Pensionados WHERE Num_tarjeta = {Num_tarjeta}"
+            query = f"SELECT Num_tarjeta, Nom_cliente, Apell1_cliente, Apell2_cliente, Telefono1, Telefono2, Ciudad, Colonia, CP, Calle_num, Placas, Modelo_auto, Color_auto, Monto, Cortesia, Tolerancia, Fecha_vigencia, Vigencia FROM Pensionados WHERE Num_tarjeta = {Num_tarjeta}"
 
             # Se ejecuta la consulta y se obtiene el resultado.
             resultado = self.execute_query(query)
@@ -141,7 +141,7 @@ class pensionados(usuarios):
 
     def ver_pensionados(self):
         if self.connection:
-            query = f"SELECT Num_tarjeta, Cortesia, Nom_cliente, Estatus, Fecha_vigencia, Tolerancia, Id_cliente FROM Pensionados ORDER BY Id_cliente DESC"
+            query = f"SELECT Num_tarjeta, Cortesia, Nom_cliente, Estatus, Fecha_vigencia, Tolerancia, Id_cliente, Vigencia FROM Pensionados ORDER BY Id_cliente DESC"
 
             # Se ejecuta la consulta y se obtiene el resultado.
             resultado = self.execute_query(query)
@@ -162,7 +162,7 @@ class pensionados(usuarios):
         else: vigencia = f"""'{vigencia}'"""
 
 
-        query =f"""UPDATE Pensionados SET Num_tarjeta = '{datos_pensionado[0]}', Nom_cliente = '{datos_pensionado[1]}', Apell1_cliente = '{datos_pensionado[2]}', Apell2_cliente = '{datos_pensionado[3]}', Telefono1 = '{datos_pensionado[4]}', Telefono2 = '{datos_pensionado[5]}', Ciudad = '{datos_pensionado[6]}', Colonia = '{datos_pensionado[7]}', CP = '{datos_pensionado[8]}', Calle_num = '{datos_pensionado[9]}', Placas = '{datos_pensionado[10]}', Modelo_auto = '{datos_pensionado[11]}', Color_auto = '{datos_pensionado[12]}', Monto = '{datos_pensionado[13]}', Cortesia = '{datos_pensionado[14]}', Tolerancia = {datos_pensionado[15]}, Ult_Cambio = '{datos_pensionado[16]}', Fecha_vigencia = {vigencia} WHERE Num_tarjeta = '{Num_tarjeta}';"""
+        query =f"""UPDATE Pensionados SET Num_tarjeta = '{datos_pensionado[0]}', Nom_cliente = '{datos_pensionado[1]}', Apell1_cliente = '{datos_pensionado[2]}', Apell2_cliente = '{datos_pensionado[3]}', Telefono1 = '{datos_pensionado[4]}', Telefono2 = '{datos_pensionado[5]}', Ciudad = '{datos_pensionado[6]}', Colonia = '{datos_pensionado[7]}', CP = '{datos_pensionado[8]}', Calle_num = '{datos_pensionado[9]}', Placas = '{datos_pensionado[10]}', Modelo_auto = '{datos_pensionado[11]}', Color_auto = '{datos_pensionado[12]}', Monto = '{datos_pensionado[13]}', Cortesia = '{datos_pensionado[14]}', Tolerancia = {datos_pensionado[15]}, Ult_Cambio = '{datos_pensionado[16]}', Fecha_vigencia = {vigencia}, Vigencia = '{datos_pensionado[18]}' WHERE Num_tarjeta = '{Num_tarjeta}';"""
 
         # Se ejecuta la consulta
         self.execute_query(query)

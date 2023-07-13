@@ -391,7 +391,6 @@ class FormularioOperacion:
 
                 limite = VigAct + timedelta(days=Tolerancia)
 
-                print(limite)
 
                 if Estatus == 'Adentro' :
                     self.labelMensaje.config(text= "Ya está Adentro")

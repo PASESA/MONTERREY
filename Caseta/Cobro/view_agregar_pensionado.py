@@ -1,10 +1,8 @@
 from tkinter import messagebox as mb
 import tkinter as tk
 from tkinter import ttk
-from tkinter import StringVar, IntVar
-
+from tkinter import StringVar
 from datetime import datetime
-
 from queries import pensionados
 import traceback
 
@@ -232,6 +230,7 @@ class View_agregar_pensionados:
 			variable_monto = self.variable_monto.get()
 			variable_cortesia = self.variable_cortesia.get()
 			variable_tolerancia = 5
+			variable_estatus = "Inactiva"
 
 
 			if len(variable_numero_tarjeta) == 0 or len(variable_nombre) == 0 or len(variable_apellido_1) == 0 or len(variable_apellido_2) == 0 or len(variable_fecha_alta) == 0 or len(variable_telefono_1) == 0 or len(variable_telefono_2) == 0 or len(variable_ciudad) == 0 or len(variable_colonia) == 0 or len(variable_cp) == 0 or len(variable_numero_calle) == 0 or len(variable_placas) == 0 or len(variable_auto_modelo) == 0 or len(variable_auto_color) == 0 or len(variable_monto) == 0 or len(variable_cortesia) == 0 or len(str(variable_tolerancia)) == 0:
@@ -242,13 +241,13 @@ class View_agregar_pensionados:
 
 
 
-			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia)
+			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, variable_estatus)
 
 			resultado = self.query.consultar_pensionado(variable_numero_tarjeta)
 
 			if len(resultado) == 0:
 				self.query.agregar_pensionados(datos_pensionado)
-				mb.showinfo("Información", "El pensionado fue añadido correctamente")
+				mb.showinfo("Información", "El pensionado fue añadido correctamente, realice su pago de pensión para activar la tarjeta")
 				self.desconectar()
 			else:
 				self.variable_numero_tarjeta.set('')
