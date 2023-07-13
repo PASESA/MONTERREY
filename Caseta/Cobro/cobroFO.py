@@ -40,6 +40,7 @@ from view_login import View_Login
 from queries import pensionados
 from view_agregar_pensionado import View_agregar_pensionados
 from view_modificar_pensionado import View_modificar_pensionados
+from queries import pensionados
 contraseña_pensionados = "P4s3"
 
 class FormularioOperacion:
@@ -1706,11 +1707,11 @@ class FormularioOperacion:
 		labelframe_pensionados_acciones.grid(column=1, row=0, padx=5, pady=5, sticky=tk.NW)
 
 
-		boton1=tk.Button(labelframe_pensionados_acciones, text="Agregar Pensionado", anchor="center", font=("Arial", 10), width=30, command=self.agregar_pensionado)
-		boton1.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
+		self.boton_agregar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Agregar Pensionado", anchor="center", font=("Arial", 10), width=30, command=self.agregar_pensionado)
+		self.boton_agregar_pensionado.grid(column=0, row=0, padx=5, pady=5, sticky=tk.NW)
 	 
-		boton4=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", command=self.modificar_pensionado, font=("Arial", 10), width=30)
-		boton4.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
+		self.boton_modificar_pensionado=tk.Button(labelframe_pensionados_acciones, text="Modificar info Pensionado", anchor="center", command=self.modificar_pensionado, font=("Arial", 10), width=30)
+		self.boton_modificar_pensionado.grid(column=0, row=1, padx=5, pady=5, sticky=tk.NW)
 
 		labelframe_pensionados_acciones_contraseña = ttk.Frame(labelframe_pensionados_acciones)
 		labelframe_pensionados_acciones_contraseña.grid(column=0, row=2)
@@ -1823,7 +1824,7 @@ class FormularioOperacion:
 					self.Vigencia.set(VigAct)
 					self.Estatus.set(Estatus)
 
-					if cortesia == "Si" :pass
+					if cortesia == "Si" : pass
 
 					else : pass
 
@@ -2226,6 +2227,16 @@ class FormularioOperacion:
 		"""
 		self.ventana1.deiconify()
 
+
+
+	def desactivar_botones(self):
+		self.boton_agregar_pensionado.configure(state = 'disabled')
+		self.boton_modificar_pensionado.configure(state = 'disabled')
+
+	def activar_botones(self):
+		self.boton_agregar_pensionado.configure(state = 'normal')
+		self.boton_modificar_pensionado.configure(state = 'normal')
+
 	def limpiar_campos(self):
 		# Reinicia los valores de varios atributos
 		#self.elcambioes.set("")
@@ -2246,7 +2257,6 @@ class FormularioOperacion:
 		self.BoletoDentro()
 		self.folio_auxiliar = None
 		self.entryfolio.focus()
-
 
 	def vaciar_tabla(self):
 		"""
@@ -2289,42 +2299,71 @@ class FormularioOperacion:
 		pass
 
 	def agregar_pensionado(self):
+		self.desactivar_botones()
 		contraseña = self.variable_contraseña_pensionados.get()
 
 		if len(contraseña) == 0:
 			mb.showwarning("Error", "Ingrese la contraseña para agregar un pensionado")
 			self.variable_contraseña_pensionados.set("")
 			self.campo_texto_contraseña_pensionados.focus()
+			self.activar_botones()
 			return None
 		
 		if contraseña != contraseña_pensionados:
 			mb.showwarning("Error", "Contraseña incorrecta")
 			self.variable_contraseña_pensionados.set("")
 			self.campo_texto_contraseña_pensionados.focus()
+			self.activar_botones()
 			return None
 
 		self.variable_contraseña_pensionados.set("")
+		self.variable_numero_tarjeta.set("")
 		View_agregar_pensionados()
 		self.ver_pensionados()
+		self.activar_botones()
+
 
 	def modificar_pensionado(self):
+		self.desactivar_botones()
 		contraseña = self.variable_contraseña_pensionados.get()
+		numero_tarjeta = self.variable_numero_tarjeta.get()
+
+		if len(numero_tarjeta) == 0 :
+			mb.showwarning("Error", "Ingrese el numero de tarjeta del pensionado a modificar")
+			self.variable_numero_tarjeta.set("")
+			self.caja_texto_numero_tarjeta.focus()
+			self.activar_botones()
+			return None
 
 		if len(contraseña) == 0:
 			mb.showwarning("Error", "Ingrese la contraseña para agregar un pensionado")
 			self.variable_contraseña_pensionados.set("")
 			self.campo_texto_contraseña_pensionados.focus()
+			self.activar_botones()
 			return None
 		
 		if contraseña != contraseña_pensionados:
 			mb.showwarning("Error", "Contraseña incorrecta")
 			self.variable_contraseña_pensionados.set("")
 			self.campo_texto_contraseña_pensionados.focus()
+			self.activar_botones()
+			return None
+
+
+		resultado = self.controlador_crud_pensionados.consultar_pensionado(numero_tarjeta)
+
+		if len(resultado) == 0:
+			mb.showerror("Error", "No esta registrado un pensionado con dicho numero de tarjeta")
+			self.variable_numero_tarjeta.set("")
+			self.caja_texto_numero_tarjeta.focus()
+			self.activar_botones()
 			return None
 
 		self.variable_contraseña_pensionados.set("")
-		View_modificar_pensionados()
+		self.variable_numero_tarjeta.set("")
+		View_modificar_pensionados(datos_pensionado = resultado)
 		self.ver_pensionados()
+		self.activar_botones()
 
 
 

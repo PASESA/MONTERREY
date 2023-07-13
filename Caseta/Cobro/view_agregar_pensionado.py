@@ -29,31 +29,28 @@ class View_agregar_pensionados:
 		self.panel_crud.columnconfigure(0, weight=1)
 
 		self.variable_numero_tarjeta = StringVar()
-
 		self.variable_nombre = StringVar()
-
 		self.variable_apellido_1 = StringVar()
 		self.variable_apellido_2 = StringVar()
 		self.variable_fecha_alta = StringVar()
-		self.telefono_1 = StringVar()
-		self.telefono_2 = StringVar()
+		self.variable_telefono_1 = StringVar()
+		self.variable_telefono_2 = StringVar()
+		self.variable_ciudad = StringVar()
+		self.variable_colonia = StringVar()
+		self.variable_cp = StringVar()
+		self.variable_numero_calle = StringVar()
 
-		self.ciudad = StringVar()
-		self.colonia = StringVar()
-		self.cp = StringVar()
-		self.numero_calle = StringVar()
+		self.variable_placas = StringVar()
+		self.variable_auto_modelo = StringVar()
+		self.variable_auto_color = StringVar()
 
-		self.placas = StringVar()
-		self.auto_modelo = StringVar()
-		self.auto_color = StringVar()
-
-		self.vigencia = StringVar()
-		self.fecha_vigencia = StringVar()
-		self.monto = IntVar()
-		self.estatus = StringVar()
-		self.cortesia = StringVar()
-		self.tolerancia = IntVar()
-
+		self.variable_vigencia = StringVar()
+		self.variable_fecha_vigencia = StringVar()
+		self.variable_monto = StringVar()
+		self.variable_estatus = StringVar()
+		self.variable_cortesia = StringVar()
+		self.variable_tolerancia = StringVar()
+		self.variable_tolerancia.set("5")
 
 
 		self.registros = None
@@ -98,33 +95,6 @@ class View_agregar_pensionados:
 
 		seccion_datos_pensionado = ttk.LabelFrame(seccion_superior, text="\t\t\tIngresa los datos del pensionado a registrar")
 		seccion_datos_pensionado.grid(row=1, column=0,padx=5, pady=5, sticky=tk.NW)
-
-		self.variable_numero_tarjeta = StringVar()
-		self.variable_nombre = StringVar()
-		self.variable_apellido_1 = StringVar()
-		self.variable_apellido_2 = StringVar()
-		self.variable_fecha_alta = StringVar()
-		self.variable_telefono_1 = StringVar()
-		self.variable_telefono_2 = StringVar()
-		self.variable_ciudad = StringVar()
-		self.variable_colonia = StringVar()
-		self.variable_cp = StringVar()
-		self.variable_numero_calle = StringVar()
-
-		self.variable_placas = StringVar()
-		self.variable_auto_modelo = StringVar()
-		self.variable_auto_color = StringVar()
-
-		self.variable_vigencia = StringVar()
-		self.variable_fecha_vigencia = StringVar()
-		self.variable_monto = StringVar()
-		self.variable_estatus = StringVar()
-		self.variable_cortesia = StringVar()
-		self.variable_tolerancia = StringVar()
-		self.variable_tolerancia.set("5")
-
-
-
 
 		seccion_datos_personales_pensionado = tk.LabelFrame(seccion_datos_pensionado, text="Datos personales del pensionado")
 		seccion_datos_personales_pensionado.grid(row=2, column=0,padx=5, pady=5, sticky=tk.NW)
