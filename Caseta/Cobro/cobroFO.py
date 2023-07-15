@@ -29,7 +29,7 @@ io.setmode(io.BCM)              # modo in/out pin del micro
 io.setwarnings(False)           # no señala advertencias de pin ya usados
 io.setup(out1,io.OUT)           # configura en el micro las salidas
 io.output(out1,1)
-TipoPromocion = 1
+
 
 ###-###
 p = Usb(0x04b8, 0x0202, 0)
@@ -48,7 +48,10 @@ class FormularioOperacion:
 	def __init__(self):
 		self.controlador_crud_pensionados = pensionados()
 		self.folio_auxiliar = None
-		#creamos un objeto que esta en el archivo operacion dentro la clase Operacion
+
+		self.valor_tarjeta = 116
+		self.valor_reposiion_tarjeta = 232
+
 		self.operacion1=operacion.Operacion()
 		self.ventana1=tk.Tk()
 		self.ventana1.title("MONTERREY COBRO")
@@ -61,7 +64,7 @@ class FormularioOperacion:
 		self.interface_pensionados()
 		self.cuaderno1.grid(column=0, row=0, padx=5, pady=5)
 		self.ventana1.mainloop()
-###########################Inicia Pagina1##########################
+		###########################Inicia Pagina1##########################
 
 	def ExpedirRfid(self):
 		self.pagina1 = ttk.Frame(self.cuaderno1)
@@ -113,7 +116,7 @@ class FormularioOperacion:
 		self.MaxId.set(masuno)
 
 		folio_cifrado = self.operacion1.cifrar_folio(folio = masuno)
-		#print(f"Folio cifrado: {folio_cifrado}")
+		#print(f"QR entrada: {folio_cifrado}")
 
 		#Generar QR
 		self.operacion1.generar_QR(folio_cifrado)
@@ -141,11 +144,13 @@ class FormularioOperacion:
 
 
 		p.text("--------------------------------------\n")
-		p.cut()
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$impresion fin$$$$$$$$$$$$$$$$
+		p.set()
+
 		self.operacion1.altaRegistroRFID(datos)
 		self.Placa.set('')
-#########################fin de pagina1 inicio pagina2#########################
+
+
+	#########################fin de pagina1 inicio pagina2#########################
 	def consulta_por_folio(self):
 		self.pagina2 = ttk.Frame(self.cuaderno1)
 		self.cuaderno1.add(self.pagina2, text=" Módulo de Cobro")
@@ -308,6 +313,7 @@ class FormularioOperacion:
 
 		#creamos un objeto para obtener la lectura de la PROMOCION
 		self.promo=tk.StringVar()
+		self.promo_auxiliar=tk.StringVar()
 		self.entrypromo=tk.Entry(self.labelpromo, textvariable=self.promo)
 		self.entrypromo.bind('<Return>',self.CalculaPromocion)#con esto se lee automatico
 		self.entrypromo.grid(column=1, row=0, padx=4, pady=4)           
@@ -328,7 +334,6 @@ class FormularioOperacion:
 		self.scrolledtxt.delete("1.0", tk.END)
 		for fila in respuesta:
 			self.scrolledtxt.insert(tk.END, "Folio num: "+str(fila[0])+"\nEntro: "+str(fila[1])[:-3]+"\nPlacas: "+str(fila[2])+"\n\n")
-
 
 	def BoletoPerdido_conFolio(self):
 		"""
@@ -414,7 +419,6 @@ class FormularioOperacion:
 			# Limpiar campos y mostrar mensaje de error
 			self.limpiar_campos()
 			mb.showinfo("Información", "No existe un auto con dicho código")
-
 
 	def BoletoPerdido_sinFolio(self):
 		"""
@@ -504,7 +508,6 @@ class FormularioOperacion:
 			self.limpiar_campos()
 			self.entryfolio.focus()
 
-
 	def CalculaPermanencia(self):
 		"""
 		Esta función calcula la permanencia del folio seleccionado.
@@ -587,8 +590,6 @@ class FormularioOperacion:
 				self.IImporte.config(text=importe)
 				self.entrypromo.focus()
 
-
-
 	def calcular_cambio(self):
 		folio = self.folio.get()
 		if len(folio) == 0:
@@ -618,9 +619,6 @@ class FormularioOperacion:
 
 		self.GuardarCobro()#manda a llamar guardar cobro para cobrarlo y guardar registro
 		self.Comprobante()#manda a llamar el comprobante y lo imprime
-		self.PonerFOLIO.set('')
-		self.IImporte.config(text="")
-
 
 
 	def Comprobante(self):
@@ -698,68 +696,81 @@ class FormularioOperacion:
 		self.limpiar_campos()
 		self.AbrirBarrera()
 
-
 	def GuardarCobro(self):
 		salida = str(self.precio.get(), )#deveria ser salida en lugar de precio pero asi estaba el base
+		TipoPromocion = self.promo_auxiliar.get()
+		if TipoPromocion == '': TipoPromocion = None
+
 
 		if len(salida)>5:
 			self.limpiar_campos()
 			self.label15.configure(text=("con salida, INMODIFICABLE"))
 			mb.showinfo("Información", "Ya Tiene Salida")
+			return 
 
-		else:
 
-			# Realiza una consulta con el folio seleccionado para obtener información adicional del boleto
-			respuesta = self.operacion1.consulta({self.folio.get()})
+		# Realiza una consulta con el folio seleccionado para obtener información adicional del boleto
+		respuesta = self.operacion1.consulta({self.folio.get()})
 
-			if len(respuesta) == 0:			
-				mb.showerror("Error", f"Ha ocurrido un error al realizar el cobro, escanee nuevamente el QR")
+		if len(respuesta) == 0:			
+			mb.showerror("Error", f"Ha ocurrido un error al realizar el cobro, escanee nuevamente el QR")
+			return
 
-				return	None
+		salida = respuesta[0][1]
 
-			if respuesta[0][1] is not None:
+		if salida is not None:
 
-				# Imprime en una caja de texto la información del boleto cuando ya ha sido cobrado
-				self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
-				for fila in respuesta:
-					self.scrol_datos_boleto_cobrado.insert(
-						tk.END,
-						f"Folio: {fila[2]}\nEntró: {str(fila[0])[:-3]}\nSalió: {str(fila[1])[:-3]}\nTiempo: {str(fila[3])[:-3]}\nTarifa: {fila[4]}\nImporte: {fila[5]}"
-					)
+			# Imprime en una caja de texto la información del boleto cuando ya ha sido cobrado
+			self.scrol_datos_boleto_cobrado.delete("1.0", tk.END)
+			for fila in respuesta:
+				self.scrol_datos_boleto_cobrado.insert(
+					tk.END,
+					f"Folio: {fila[2]}\nEntró: {str(fila[0])[:-3]}\nSalió: {str(fila[1])[:-3]}\nTiempo: {str(fila[3])[:-3]}\nTarifa: {fila[4]}\nImporte: {fila[5]}"
+				)
 
-				# Reinicia los valores de varios atributos
-				self.limpiar_campos()
+			# Reinicia los valores de varios atributos
+			self.limpiar_campos()
 
-				self.label15.configure(text=("Este Boleto ya Tiene cobro"))
-				return	None
+			self.label15.configure(text=("Este Boleto ya Tiene cobro"))
+			return	None
 
-			self.label15.configure(text=(salida, "SI se debe modificar"))
-			importe1 =str(self.importe.get(),)
-			#mb.showinfo("impte1", importe1)
-			folio1= str(self.folio.get(),)
-			valorhoy = str(self.copia.get(),)
-			fechaActual1 = datetime.strptime(valorhoy, '%Y-%m-%d %H:%M:%S' )
-			fechaActual= datetime.strftime(fechaActual1,'%Y-%m-%d %H:%M:%S' )
-			ffeecha1= str(self.ffeecha.get(),)
-			valor=str(self.descripcion.get(),)
-			fechaOrigen = datetime.strptime(valor, '%Y-%m-%d %H:%M:%S')
-			promoTipo = str(self.PrTi.get(),)
-			vobo = "lmf"#este
-			datos=(vobo, importe1, ffeecha1, fechaOrigen, fechaActual, promoTipo, TipoPromocion, folio1)
-			self.operacion1.guardacobro(datos)
+		self.label15.configure(text=(salida, "SI se debe modificar"))
+		importe1 =str(self.importe.get(),)
+		#mb.showinfo("impte1", importe1)
+		folio1= str(self.folio.get(),)
+		valorhoy = str(self.copia.get(),)
+		fechaActual1 = datetime.strptime(valorhoy, '%Y-%m-%d %H:%M:%S' )
+		fechaActual= datetime.strftime(fechaActual1,'%Y-%m-%d %H:%M:%S' )
+		ffeecha1= str(self.ffeecha.get(),)
+		valor=str(self.descripcion.get(),)
+		fechaOrigen = datetime.strptime(valor, '%Y-%m-%d %H:%M:%S')
+		promoTipo = str(self.PrTi.get(),)
+		vobo = "lmf"#este
+		datos=(vobo, importe1, ffeecha1, fechaOrigen, fechaActual, promoTipo, TipoPromocion, folio1)
+		self.operacion1.guardacobro(datos)
 
 
 
 	def CalculaPromocion(self, event):
+		valida_promo = self.PrTi.get()
+
+		if valida_promo == "Per":
+			mb.showerror("Error", "A los boletos cobrados como perdidos no se pueden aplicar promociones")
+			self.promo.set('')
+			self.promo_auxiliar.set('')
+			return
+
+		if valida_promo == "Danado" or valida_promo == "Normal" or valida_promo == "":
 			########## Promocion ofice        
-			global TipoPromocion
-			TipoPromocion = str(self.promo.get(), )#se recibe el codigo
+			TipoPromocion = self.promo.get()
+			self.promo_auxiliar.set(TipoPromocion)
 			respuesta=self.operacion1.ValidaPromo(TipoPromocion)
 
 			if respuesta:
 				mb.showwarning("IMPORTANTE", "LA PROMOCION YA FUE APLICADA")
-			else:   
-					
+				self.promo.set('')
+				self.promo_auxiliar.set('')
+			else:
 				TipoProIni=TipoPromocion[:8]  
 
 				if TipoProIni==("OM OFFIC") or TipoProIni==("om offic"):
@@ -789,10 +800,15 @@ class FormularioOperacion:
 						#importe = ((ffeecha.days)*720 + (horas_dentro * 30)+(minutos_dentro)*1)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.PrTi.set("OMax")
-					#mb.showinfo("liverpool",importe)
+
+					text_promo = "OMax"
+
+					if valida_promo == "Danado":text_promo = text_promo + valida_promo
+
+					self.PrTi.set(text_promo)
 					self.promo.set("")
-				if TipoProIni==("OF OFFIC") or TipoProIni==("of offic"):                        
+
+				elif TipoProIni==("OF OFFIC") or TipoProIni==("of offic"):                        
 					fecha = datetime.today()
 					fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
 					fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
@@ -810,10 +826,15 @@ class FormularioOperacion:
 					importe = int(importe)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.PrTi.set("s/co")
-					self.promo.set("")                       
-				#if TipoProIni==("NW NETWO"):
-				if TipoProIni==("NW NETWO") or TipoProIni==("nw netwo"):                        
+
+					text_promo = "s/co"
+
+					if valida_promo == "Danado":text_promo = text_promo + valida_promo
+
+					self.PrTi.set(text_promo)
+					self.promo.set("")                
+
+				elif TipoProIni==("NW NETWO") or TipoProIni==("nw netwo"):                        
 					fecha = datetime.today()
 					fecha1= fecha.strftime("%Y-%m-%d %H:%M:%S")
 					fechaActual= datetime.strptime(fecha1, '%Y-%m-%d %H:%M:%S')
@@ -840,9 +861,24 @@ class FormularioOperacion:
 						#importe = ((ffeecha.days)*720 + (horas_dentro * 30)+(minutos_dentro)*1)
 					self.importe.set(importe)
 					self.IImporte.config(text=importe)
-					self.PrTi.set("Netw")
-					#mb.showinfo("liverpool",importe)
-					self.promo.set("")                        
+
+					text_promo = "Netw"
+
+					if valida_promo == "Danado":text_promo = text_promo + valida_promo
+
+					self.PrTi.set(text_promo)
+					self.promo.set("")    
+
+				else:
+					mb.showwarning("IMPORTANTE", "Promoción desconocida, escanee nuevaente el QR de promoción")
+					self.promo.set('')
+					self.promo_auxiliar.set('')
+
+		else: 
+			mb.showerror("Error", "Este boleto ya cuenta con una promoción aplicada")
+			self.promo.set('')
+			return
+
 
 	###PENSIONADOS
 	def PensionadosSalida(self):
@@ -895,7 +931,7 @@ class FormularioOperacion:
 						self.AbrirBarrera()
 
 
-###################### Fin de Pagina2 Inicio Pagina3 ###############################
+	###################### Fin de Pagina2 Inicio Pagina3 ###############################
 	def listado_completo(self):
 		self.pagina3 = ttk.Frame(self.cuaderno1)
 		self.cuaderno1.add(self.pagina3, text="Módulo de Corte")
@@ -1046,7 +1082,6 @@ class FormularioOperacion:
 		for fila in respuesta:
 			self.scrolledtxt2.insert(tk.END, "Folio num: "+str(fila[0])+"\nEntro: "+str(fila[1])[:-3]+"\nPlacas: "+str(fila[2])+"\n\n")
 
-
 	def desglose_cobrados(self):
 		Numcorte=str(self.CortesAnteri.get(), )
 		Numcorte=int(Numcorte)
@@ -1072,7 +1107,6 @@ class FormularioOperacion:
 			p.text('\n')
 		else:
 			p.cut()
-
 
 	def BoletoCancelado(self):
 		"""
@@ -1135,8 +1169,11 @@ class FormularioOperacion:
 
 				self.importe.set(importe)
 				self.IImporte.config(text=importe)
+
 				self.PrTi.set("CDO")
 				self.promo.set("")
+				self.promo_auxiliar.set('')
+
 				p.text('Boleto Cancelado\n')
 				FoliodelCancelado = str(self.FolioCancelado.get())
 				p.text('Folio boleto cancelado: ' + FoliodelCancelado + '\n')
@@ -1163,14 +1200,13 @@ class FormularioOperacion:
 				mb.showinfo("Información", "No existe un auto con dicho código")
 		else:
 			self.FolioCancelado.set("")
-
+		self.BoletoDentro2()
 
 	def listar(self):
 		respuesta=self.operacion1.recuperar_todos()
 		self.scrolledtext1.delete("1.0", tk.END)
 		for fila in respuesta:
 			self.scrolledtext1.insert(tk.END, "Entrada num: "+str(fila[0])+"\nEntro: "+str(fila[1])[:-3]+"\nSalio: "+str(fila[2])[:-3]+"\n\n")
-
 
 	def listar1(self):
 		respuesta=self.operacion1.recuperar_sincobro()
@@ -1580,7 +1616,7 @@ class FormularioOperacion:
 			else:
 				mb.showwarning("ERROR", 'Contrasena Incorrecta')
 
- #############################       
+
 		
 	def Puertoycontar(self):
 		
@@ -1839,16 +1875,24 @@ class FormularioOperacion:
 		self.etiqueta_informacion.configure(text="")
 		if cortesia == "Si":
 			self.etiqueta_informacion.configure(text="El Pensionado cuenta con Cortesía")
+
 		if Estatus == "Inactiva":
-			self.etiqueta_informacion.configure(text="Tarjeta desactivada")
-			mb.showwarning("IMPORTANTE", "La tarjeta esta desactivada, por lo que el pensionado solo paragá los dias faltantes del mes, posteriormente pagará la pension completa")
 			pago = self.calcular_pago_media_pension(monto)
+			total = pago + self.valor_tarjeta
+			self.etiqueta_informacion.configure(text="Tarjeta desactivada")
+			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada, por lo que el pensionado solo pagará los dias faltantes del mes junto al precio de la tarjeta, posteriormente solo pagará el valor registrado de la pension.\n\nPago pension: {pago}\nPago tarjeta:    {self.valor_tarjeta}\nPago total:        {total}")
+			pago = total
+
+		elif Estatus == "Reposicion":
+			self.etiqueta_informacion.configure(text="Tarjeta de reposición")
+			mb.showwarning("IMPORTANTE", "La tarjeta es de reposición por lo que el pensionado solo pagará dicho valor")
+			pago = self.valor_reposiion_tarjeta
 
 
 		else:
 			pago = monto * nummes
 
-		self.etiqueta_informacion_pago.configure(text=f"${pago}")
+		self.etiqueta_informacion_pago.configure(text=f"${pago}.00")
 
 
 	def Cobro_Pensionado(self):
@@ -1858,7 +1902,7 @@ class FormularioOperacion:
 		try:
 			usuario = self.operacion1.nombre_usuario_activo()
 			usuario = str(usuario[0][0])
-			#usuario = "prueba"
+			# usuario = "prueba"
 
 			if not self.variable_tipo_pago_transferencia.get() and not self.variable_tipo_pago_efectivo.get():
 				raise TypeError("Selecciona una forma de pago")
@@ -1896,9 +1940,12 @@ class FormularioOperacion:
 
 			if Estatus == "Inactiva":
 				pago = self.calcular_pago_media_pension(monto)
+				total = pago + self.valor_tarjeta
+				pago = total
 
-			else:
-				pago = monto * nummes
+			elif Estatus == "Reposicion":pago = self.valor_reposiion_tarjeta
+
+			else:pago = monto * nummes
 
 			if cortesia == "Si":NvaVigencia = self.nueva_vigencia(VigAct, "Si")
 			else:NvaVigencia = self.nueva_vigencia(VigAct)
@@ -1943,8 +1990,6 @@ class FormularioOperacion:
 		for fila in respuesta:
 			self.scroll_pensionados_dentro.insert(tk.END,
 			f"{cont+1}) {fila[0]}: \n   {fila[1]} {fila[2]}\n   {fila[3]} - {fila[4]}\n\n")
-
-
 			cont=cont+1
 		self.lbldatosTotPen.configure(text="PENSIONADOS ADENTRO: "+str(cont))
 		self.scroll_pensionados_dentro.configure(state="disabled")
@@ -2067,7 +2112,7 @@ class FormularioOperacion:
 			# Convertir la fecha dada en un objeto datetime si es de tipo str
 			elif isinstance(fecha, str):
 				fecha = datetime.strptime(fecha, '%Y-%m-%d 23:59:59')
-			
+
 			if cortesia == "Si":
 				nueva_vigencia = fecha + relativedelta(years=1)
 
@@ -2102,7 +2147,7 @@ class FormularioOperacion:
 		Esta función se encarga de manejar el cobro de un boleto dañado.
 
 		Verifica si se ha ingresado un número de folio para el boleto dañado y realiza las operaciones correspondientes.
-		Muestra información relevante del boleto dañado y establece el tipo de pago como "Maltratado".
+		Muestra información relevante del boleto dañado y establece el tipo de pago como "Danado".
 
 		:param self: Objeto de la clase que contiene los atributos y métodos necesarios.
 
@@ -2118,7 +2163,7 @@ class FormularioOperacion:
 			respuesta = self.operacion1.consulta(datos)
 			if len(respuesta) > 0:
 				if respuesta[0][6] == "BoletoPerdido":
-					mb.showerror("Error", "No se puede cobrar como maltratado un boleto perdido")
+					mb.showerror("Error", "No se puede cobrar como Danado un boleto perdido")
 					self.limpiar_campos()
 					return None
 
@@ -2126,16 +2171,13 @@ class FormularioOperacion:
 					self.descripcion.set(respuesta[0][0])
 					self.precio.set(respuesta[0][1])
 					self.CalculaPermanencia()
-					self.PrTi.set("Maltratado")
+					self.PrTi.set("Danado")
 					self.PonerFOLIO.set('')
 
 			else:
-				self.descripcion.set('')
-				self.precio.set('')
-				self.PonerFOLIO.set('')
 				self.limpiar_campos()
-
 				mb.showinfo("Información", "No existe un auto con dicho código")
+
 		else:
 			mb.showinfo("Error", "Ingrese el folio del boleto dañado")
 			self.limpiar_campos()
@@ -2208,6 +2250,7 @@ class FormularioOperacion:
 		self.ffeecha.set("")
 		self.ffeecha_auxiliar.set("")
 		self.promo.set("")
+		self.promo_auxiliar.set('')
 		self.PonerFOLIO.set("")
 		self.label15.configure(text="")
 		self.PrTi.set("")
@@ -2253,8 +2296,7 @@ class FormularioOperacion:
 		self.registros = self.controlador_crud_pensionados.ver_pensionados()
 		self.llenar_tabla(self.registros)
 
-	def eliminar_pensionado(self):
-		pass
+	def eliminar_pensionado(self): pass
 
 	def agregar_pensionado(self):
 		self.desactivar_botones()
@@ -2277,6 +2319,7 @@ class FormularioOperacion:
 		self.variable_contraseña_pensionados.set("")
 		self.variable_numero_tarjeta.set("")
 		View_agregar_pensionados()
+
 		self.limpiar_datos_pago()
 		self.ver_pensionados()
 		self.activar_botones()

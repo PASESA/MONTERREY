@@ -51,6 +51,9 @@ class View_agregar_pensionados:
 		self.variable_tolerancia.set("5")
 
 
+		self.__variable_es_reposicion = StringVar()
+
+
 		self.registros = None
 
 		# Llama a la función interface() que configura la interfaz gráfica
@@ -91,8 +94,25 @@ class View_agregar_pensionados:
 		etiqueta_user = tk.Label(seccion_superior, text=f'Bienvenido/a')
 		etiqueta_user.grid(row=0, column=0, padx=5, pady=5)
 
+
+		seccion_tarjeta_reposicon = tk.Frame(seccion_superior)
+		seccion_tarjeta_reposicon.grid(row=1, column=0)
+
+
+		etiqueta_reposicion_info = ttk.Label(seccion_tarjeta_reposicon, text='¿La tarjeta a registrar es de reposición?: ')
+		etiqueta_reposicion_info.grid(row=0, column=0, padx=5, pady=5)
+
+		campo_reposicion = ttk.Combobox(seccion_tarjeta_reposicon, width=5, state="readonly", textvariable=self.__variable_es_reposicion)
+		campo_reposicion["values"] = ["Si", "No"]
+		campo_reposicion.current(1)
+		campo_reposicion.grid(row=0, column=1, padx=5, pady=5)
+
+
+
 		seccion_datos_pensionado = ttk.LabelFrame(seccion_superior, text="\t\t\tIngresa los datos del pensionado a registrar")
-		seccion_datos_pensionado.grid(row=1, column=0,padx=5, pady=5, sticky=tk.NW)
+		seccion_datos_pensionado.grid(row=2, column=0,padx=5, pady=5, sticky=tk.NW)
+
+
 
 		seccion_datos_personales_pensionado = tk.LabelFrame(seccion_datos_pensionado, text="Datos personales del pensionado")
 		seccion_datos_personales_pensionado.grid(row=2, column=0,padx=5, pady=5, sticky=tk.NW)
@@ -232,6 +252,11 @@ class View_agregar_pensionados:
 			variable_tolerancia = 5
 			variable_estatus = "Inactiva"
 
+			if self.__variable_es_reposicion.get() == "Si":
+				respuesta = mb.askyesno("Advertencia", "¿Estas seguro de que la tarjeta registrada es de reposición?")
+				variable_estatus = "Reposicion"
+				if respuesta is False:return
+
 
 			if len(variable_numero_tarjeta) == 0 or len(variable_nombre) == 0 or len(variable_apellido_1) == 0 or len(variable_apellido_2) == 0 or len(variable_fecha_alta) == 0 or len(variable_telefono_1) == 0 or len(variable_telefono_2) == 0 or len(variable_ciudad) == 0 or len(variable_colonia) == 0 or len(variable_cp) == 0 or len(variable_numero_calle) == 0 or len(variable_placas) == 0 or len(variable_auto_modelo) == 0 or len(variable_auto_color) == 0 or len(variable_monto) == 0 or len(variable_cortesia) == 0 or len(str(variable_tolerancia)) == 0:
 				raise IndexError("No dejar campos en blanco")
@@ -239,7 +264,7 @@ class View_agregar_pensionados:
 			if variable_cortesia == "No" and variable_monto == 0:raise IndexError("Ingrese el monto a pagar")
 			if variable_cortesia == "Si": variable_monto = 0
 
-
+			if not isinstance(variable_monto, int):raise TypeError("Ingrese un monto valido")
 
 			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, variable_estatus)
 
@@ -254,7 +279,9 @@ class View_agregar_pensionados:
 				self.campo_numero_tarjeta.focus()
 				raise ValueError("Ya existe un pensionado registrado con ese numero de tarjeta")
 
-
+		except TypeError as e:
+			traceback.print_exc()
+			mb.showerror("Error", e)
 		except IndexError as e:
 			traceback.print_exc()
 			mb.showerror("Error", e)
@@ -281,6 +308,7 @@ class View_agregar_pensionados:
 		self.panel_crud.quit()
 		# Destruye el panel principal
 		self.panel_crud.destroy()
+
 
 
 #View_agregar_pensionados()
