@@ -253,7 +253,7 @@ class View_agregar_pensionados:
 			variable_estatus = "Inactiva"
 
 			if self.__variable_es_reposicion.get() == "Si":
-				respuesta = mb.askyesno("Advertencia", "¿Estas seguro de que la tarjeta registrada es de reposición?")
+				respuesta = mb.askyesno("Advertencia", "¿Estas seguro de que la tarjeta registrada es de reposición? De ser asi no olvides desactivar la antigua tarjeta")
 				variable_estatus = "Reposicion"
 				if respuesta is False:return
 
@@ -264,8 +264,8 @@ class View_agregar_pensionados:
 			if variable_cortesia == "No" and variable_monto == 0:raise IndexError("Ingrese el monto a pagar")
 			if variable_cortesia == "Si": variable_monto = 0
 
-			if not isinstance(variable_monto, int):raise TypeError("Ingrese un monto valido")
-
+			variable_monto = int(variable_monto)
+			
 			datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, variable_estatus)
 
 			resultado = self.query.consultar_pensionado(variable_numero_tarjeta)
@@ -277,15 +277,16 @@ class View_agregar_pensionados:
 			else:
 				self.variable_numero_tarjeta.set('')
 				self.campo_numero_tarjeta.focus()
-				raise ValueError("Ya existe un pensionado registrado con ese numero de tarjeta")
+				mb.showerror("Error", "Ya existe un pensionado registrado con ese numero de tarjeta")
+				return
 
+		except ValueError as e:
+			traceback.print_exc()
+			mb.showerror("Error", "Ingrese un valor valido para el monto de la pensión")
 		except TypeError as e:
 			traceback.print_exc()
 			mb.showerror("Error", e)
 		except IndexError as e:
-			traceback.print_exc()
-			mb.showerror("Error", e)
-		except ValueError as e:
 			traceback.print_exc()
 			mb.showerror("Error", e)
 		except Exception as e:

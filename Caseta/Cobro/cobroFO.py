@@ -1,9 +1,7 @@
 from datetime import datetime, date, time, timedelta
 
-import qrcode
 from tkinter import messagebox as mb
 
-formato = "%H:%M:%S"
 PensionadoOpen=1
 
 from escpos.printer import *
@@ -44,13 +42,18 @@ import traceback
 import math
 contraseña_pensionados = "P4s3"
 
+valor_tarjeta = 116
+valor_reposiion_tarjeta = 232
+
+logo_1 = "LOGO1.jpg"
+qr_imagen = "reducida.png"
+
 class FormularioOperacion:
 	def __init__(self):
 		self.controlador_crud_pensionados = pensionados()
 		self.folio_auxiliar = None
 
-		self.valor_tarjeta = 116
-		self.valor_reposiion_tarjeta = 232
+
 
 		self.operacion1=operacion.Operacion()
 		self.ventana1=tk.Tk()
@@ -130,7 +133,7 @@ class FormularioOperacion:
 		placa=str(self.Placa.get(), )
 		datos=(fechaEntro, corteNum, placa)
 
-		p.image("LOGO1.jpg")
+		p.image(logo_1)
 		p.text("--------------------------------------\n")
 		p.set(align="center")
 		p.text("BOLETO DE ENTRADA\n")
@@ -140,11 +143,10 @@ class FormularioOperacion:
 		p.text(folioZZ+'\n')
 
 		p.set(align = "center")
-		p.image("reducida.png")
-
+		p.image(qr_imagen)
 
 		p.text("--------------------------------------\n")
-		p.set()
+		p.cut()
 
 		self.operacion1.altaRegistroRFID(datos)
 		self.Placa.set('')
@@ -450,7 +452,7 @@ class FormularioOperacion:
 
 			#aqui lo imprimimos
 
-			p.image("LOGO1.jpg")
+			p.image(logo_1)
 			p.text("--------------------------------------\n")
 			p.set(align = "center")
 			p.text("B O L E T O  P E R D I D O\n")
@@ -646,13 +648,13 @@ class FormularioOperacion:
 			EntradaCompro = str(self.descripcion.get())
 			SalioCompro = str(self.copia.get())
 
-			img = qrcode.make(EntradaCompro + SalioCompro)
-			reducida = img.resize((100, 75))
-			reducida.save("reducida.png")
-			f = open("reducida.png", "wb")
-			img.save(f)
-			f.close()
-			p.image("LOGO1.jpg")
+			p.image(logo_1)
+
+
+
+
+
+
 			p.set(align="left")
 			p.text('Placas: ' + placa + '\n')
 			ImporteCompro = str(self.importe.get())
@@ -673,13 +675,13 @@ class FormularioOperacion:
 			placa = str(self.Placa.get())
 			EntradaCompro = str(self.descripcion.get())
 			SalioCompro = str(self.copia.get())
-			img = qrcode.make(EntradaCompro + SalioCompro)
-			reducida = img.resize((100, 75))
-			reducida.save("reducida.png")
-			f = open("reducida.png", "wb")
-			img.save(f)
-			f.close()
-			p.image("LOGO1.jpg")
+
+			p.image(logo_1)
+
+
+
+
+
 			p.set(align="left")
 			ImporteCompro = str(self.importe.get())
 			p.text("El importe es: $" + ImporteCompro + "\n")
@@ -1304,7 +1306,8 @@ class FormularioOperacion:
 		ActEntradas = (maxnum, vobo )
 		self.label4.configure(text=("Numero de corte",maxnum))
 
-		p.image("LOGO1.jpg")
+		p.image(logo_1)
+
 		p.text(" Est Monterrey CORTE Num "+maxnum+"\n")
 		p.text('IMPORTE: $ '+Im38+'\n')
 		ultiCort1=str(self.FechUCORTE.get(),)
@@ -1367,9 +1370,9 @@ class FormularioOperacion:
 		AutosEnEstacImpre = str(self.AutosEnEstacionamiento.get(),)
 		p.text('------------------------------')
 		p.text('\n')
-		#Bandera = o
+
 		self.ImporteCorte.set("")
-		#p.cut()
+
 		self.operacion1.ActualizarEntradasConcorte(ActEntradas)
 		vobo='ant'
 		self.operacion1.NocobradosAnt(vobo)
@@ -1380,10 +1383,7 @@ class FormularioOperacion:
 		Numcorte=str(self.CortesAnteri.get(), )
 		Numcorte=int(Numcorte)
 		Numcorte=str(Numcorte)
-		#mb.showinfo("segundo", Numcorte)
-		# io.output(out1,0)
-		# time.sleep(1)
-		# io.output(out1,1) 
+
 		respuesta=self.operacion1.desglose_cobrados(Numcorte)
 		self.scrolledtxt2.delete("1.0", tk.END)
 
@@ -1878,15 +1878,15 @@ class FormularioOperacion:
 
 		if Estatus == "Inactiva":
 			pago = self.calcular_pago_media_pension(monto)
-			total = pago + self.valor_tarjeta
+			total = pago + valor_tarjeta
 			self.etiqueta_informacion.configure(text="Tarjeta desactivada")
-			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada, por lo que el pensionado solo pagará los dias faltantes del mes junto al precio de la tarjeta, posteriormente solo pagará el valor registrado de la pension.\n\nPago pension: {pago}\nPago tarjeta:    {self.valor_tarjeta}\nPago total:        {total}")
+			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada, por lo que el pensionado solo pagará los dias faltantes del mes junto al precio de la tarjeta, posteriormente solo pagará el valor registrado de la pension.\n\nPago pension: {pago}\nPago tarjeta:    {valor_tarjeta}\nPago total:        {total}")
 			pago = total
 
 		elif Estatus == "Reposicion":
 			self.etiqueta_informacion.configure(text="Tarjeta de reposición")
 			mb.showwarning("IMPORTANTE", "La tarjeta es de reposición por lo que el pensionado solo pagará dicho valor")
-			pago = self.valor_reposiion_tarjeta
+			pago = valor_reposiion_tarjeta
 
 
 		else:
@@ -1940,10 +1940,10 @@ class FormularioOperacion:
 
 			if Estatus == "Inactiva":
 				pago = self.calcular_pago_media_pension(monto)
-				total = pago + self.valor_tarjeta
+				total = pago + valor_tarjeta
 				pago = total
 
-			elif Estatus == "Reposicion":pago = self.valor_reposiion_tarjeta
+			elif Estatus == "Reposicion":pago = valor_reposiion_tarjeta
 
 			else:pago = monto * nummes
 
@@ -1979,7 +1979,7 @@ class FormularioOperacion:
 		except Exception as e:
 			print(e)
 			traceback.print_exc()
-			mb.showwarning("Error", "Ha ocurrido un error: Revise los datos capturados")
+			mb.showwarning("Error", e)
 
 
 	def PenAdentro(self):
@@ -2029,7 +2029,7 @@ class FormularioOperacion:
 		p.set(align="left")
 
 		# Agrega información sobre el pago al comprobante
-		p.image("LOGO1.jpg")
+		p.image(logo_1)
 		p.text(f"Numero de tarjeta: {numero_tarjeta}\n")
 		p.text(f"Nombre: {Nom_cliente}\n")
 		p.text(f"Apellido 1: {Apell1_cliente}\n")
