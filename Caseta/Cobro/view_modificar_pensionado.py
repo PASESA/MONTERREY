@@ -229,10 +229,10 @@ class View_modificar_pensionados():
 
 		campo_cortesia_dato_pension.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
 
-		etiqueta_color_auto_pensionado = ttk.Label(seccion_datos_pension, text='Tolerancia: ')
-		etiqueta_color_auto_pensionado.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NW)
-		campo_color_auto_pensionado = ttk.Entry(seccion_datos_pension, textvariable=self.variable_tolerancia)
-		campo_color_auto_pensionado.grid(row=2, column=1, padx=5, pady=5)
+		etiqueta_tolerancia = ttk.Label(seccion_datos_pension, text='Tolerancia: ')
+		etiqueta_tolerancia.grid(row=2, column=0, padx=5, pady=5, sticky=tk.NW)
+		self.campo_tolerancia = ttk.Entry(seccion_datos_pension, textvariable=self.variable_tolerancia)
+		self.campo_tolerancia.grid(row=2, column=1, padx=5, pady=5)
 
 
 		seccion_inferior = tk.LabelFrame(self.panel_crud, text='')
@@ -248,19 +248,38 @@ class View_modificar_pensionados():
 		boton_modificar_pensionado = tk.Button(seccion_inferior,  text='Guardar Cambios', command = self.modificar_pensionado, width=20, font=("Arial", 12), background="red")
 		boton_modificar_pensionado.grid(row=0, column=1, padx=5, pady=5)
 
-		self.campo_numero_tarjeta.focus()
 
 	def desacivar_tarjeta(self):
+		mensaje = ""
+		respuesta = mb.askyesno("Advertencia", "¿Estas seguro de querer desactivar esta tarjeta?")
+		if respuesta:pass
+		else:
+			self.campo_tolerancia.focus()
+			return
+
 		vigencia = self.variable_vigencia.get()
 		if vigencia == 'None':vigencia = None
 
+		if vigencia == None:
+			mb.showinfo("Alerta", "La tarjeta ya esta desactivada, para reactivar la tarjeta es necesario realizar un pago de la pensión para asignar nueva fecha de vigencia")
+			self.campo_tolerancia.focus()
+			return
+
+		respuesta = mb.askyesno("Advertencia", "¿La desactivación es temporal?")
+
+		if respuesta:
+			self.variable_estatus.set("InactivaTemp")
+			mensaje = "temporalmente"
+
+		else:
+			self.variable_estatus.set("InactivaPerm")
+			mensaje = "permanentemente"
+
 		if vigencia:
 			self.variable_vigencia.set(None)
-			self.variable_estatus.set("Inactiva")
-			mb.showinfo("Alerta", "Se ha desactivado la tarjeta")
+			mb.showinfo("Alerta", f"Se ha desactivado {mensaje} la tarjeta")
 			self.modificar_pensionado()
-		else:
-			mb.showinfo("Alerta", "La tarjeta ya esta desactivada, para reactivar la tarjeta es necesario realizar un pago de la pensión para asignar nueva fecha de vigencia")
+
 		
 
 

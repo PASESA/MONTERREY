@@ -1835,7 +1835,7 @@ class FormularioOperacion:
 		self.tabla.column('#5', width=120, stretch=False)
 		self.tabla.column('#6', width=75, stretch=False)
 		self.tabla.column('#7', width=0, stretch=False)
-		self.tabla.column('#8', width=50, stretch=False)
+		self.tabla.column('#8', width=100, stretch=False)
 
 		# Crea un Scrollbar vertical y lo asocia con el Treeview
 		scrollbar_Y = ttk.Scrollbar(labelframe_tabla_pensionados, orient='vertical', command=self.tabla.yview)
@@ -1900,6 +1900,14 @@ class FormularioOperacion:
 			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada, por lo que el pensionado solo pagará los dias faltantes del mes junto al precio de la tarjeta, posteriormente solo pagará el valor registrado de la pension.\n\nPago pension: {pago}\nPago tarjeta:    {valor_tarjeta}\nPago total:        {total}")
 			pago = total
 
+		elif Estatus == "InactivaPerm":
+			pago_mensualidad = monto * nummes
+			total = pago_mensualidad + valor_tarjeta
+			
+			self.etiqueta_informacion.configure(text="Tarjeta desactivada de forma permanente")
+			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada de forma permanente, por lo que el pensionado pagará una penalización correspondiente al precio de la tarjeta ademas de su respectiva mensualidad.\n\nPago pension: {pago_mensualidad}\nPenalización:    {valor_tarjeta}\nPago total:        {total}")
+			pago = total
+
 		elif Estatus == "Reposicion":
 			self.etiqueta_informacion.configure(text="Tarjeta de reposición")
 			mb.showwarning("IMPORTANTE", "La tarjeta es de reposición por lo que el pensionado solo pagará dicho valor")
@@ -1957,6 +1965,11 @@ class FormularioOperacion:
 
 			if Estatus == "Inactiva":
 				pago = self.calcular_pago_media_pension(monto)
+				total = pago + valor_tarjeta
+				pago = total
+
+			if Estatus == "InactivaPerm":
+				pago = monto * nummes
 				total = pago + valor_tarjeta
 				pago = total
 
