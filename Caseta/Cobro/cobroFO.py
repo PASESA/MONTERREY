@@ -1851,6 +1851,7 @@ class FormularioOperacion:
 		# Empaqueta el Treeview en el labelframe
 		self.tabla.grid(row=0, column=0, sticky='NSEW', padx=5, pady=5)
 
+		self.tarjetas_expiradas()
 		self.ver_pensionados()
 		self.PenAdentro()
 
@@ -1910,6 +1911,13 @@ class FormularioOperacion:
 			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada de forma permanente, por lo que el pensionado pagará una penalización correspondiente al precio de la tarjeta ademas de su respectiva mensualidad.\n\nPago pension: {pago_mensualidad}\nPenalización:    {valor_tarjeta}\nPago total:        {total}")
 			pago = total
 
+		elif Estatus == "InactivaTemp":
+			pago_mensualidad = monto * nummes
+
+			self.etiqueta_informacion.configure(text="Tarjeta desactivada de forma temporal")
+			mb.showwarning("IMPORTANTE", f"La tarjeta esta desactivada de forma temporal, por lo que el pensionado solo pagará su respectiva mensualidad.")
+			pago = pago_mensualidad
+
 		elif Estatus == "Reposicion":
 			self.etiqueta_informacion.configure(text="Tarjeta de reposición")
 			mb.showwarning("IMPORTANTE", "La tarjeta es de reposición por lo que el pensionado solo pagará dicho valor")
@@ -1938,9 +1946,9 @@ class FormularioOperacion:
 					fecha_limite=limite)
 
 				mb.showwarning("IMPORTANTE", f"Vigencia Vencida por {dias_atrasados} días, se aplicará una penalización de ${penalizacion_pension}.00 sumado a su pago de pensión.")
-				self.caja_texto_numero_tarjeta.focus() 
+				self.caja_texto_numero_tarjeta.focus()
 
-		pago = (monto * nummes) + penalizacion_pension
+			pago = (monto * nummes) + penalizacion_pension
 
 		self.etiqueta_informacion_pago.configure(text=f"${pago}.00")
 
@@ -1993,10 +2001,14 @@ class FormularioOperacion:
 				total = pago + valor_tarjeta
 				pago = total
 
-			if Estatus == "InactivaPerm":
+			elif Estatus == "InactivaPerm":
 				pago = monto * nummes
 				total = pago + valor_tarjeta
 				pago = total
+
+			elif Estatus == "InactivaTemp":
+				pago_mensualidad = monto * nummes
+				pago = pago_mensualidad
 
 			elif Estatus == "Reposicion":pago = valor_reposiion_tarjeta
 
@@ -2503,6 +2515,101 @@ class FormularioOperacion:
 		penalizacion = dias_atrasados * penalizacion_diaria
 
 		return penalizacion, dias_atrasados
+
+	def tarjetas_expiradas(self):
+		tarjetas_expiradas = self.controlador_crud_pensionados.ver_tarjetas_expiradas()
+
+		if len(tarjetas_expiradas) == 0: return
+
+		self.mostrar_tabla_tarjetas_expiradas(tarjetas_expiradas)
+
+
+	def mostrar_tabla_tarjetas_expiradas(self, datos):
+		ventana = tk.Toplevel()
+		ventana.title("Tarjetas vencidas")
+
+		# Se elimina la funcionalidad del botón de cerrar
+		ventana.protocol("WM_DELETE_WINDOW", lambda: cerrar_ventana())
+
+		# Deshabilita los botones de minimizar y maximizar
+		ventana.attributes('-toolwindow', True)
+
+
+		# Crear un Frame para contener la tabla y la etiqueta
+		frame_tabla = tk.Frame(ventana)
+		frame_tabla.pack(padx=10, pady=10)
+
+		# Agregar etiqueta "Lista de tarjetas vencidas"
+		etiqueta_titulo = tk.Label(frame_tabla, text="Lista de tarjetas vencidas", font=("Arial", 14))
+		etiqueta_titulo.pack(side=tk.TOP, pady=10)
+
+		# Crear el scroll de lado izquierdo
+		scroll_y = tk.Scrollbar(frame_tabla, orient=tk.VERTICAL)
+
+
+		# Crear la tabla utilizando el widget Treeview de ttk
+		tabla = ttk.Treeview(frame_tabla, yscrollcommand=scroll_y.set)
+		tabla["columns"] = ("Num_tarjeta", "Fecha_vigencia")
+
+		# Configurar las columnas
+		tabla.column("#0", width=0, stretch=tk.NO)  # Columna invisible para los índices
+		tabla.column("Num_tarjeta", anchor=tk.CENTER, width=110)
+		tabla.column("Fecha_vigencia", anchor=tk.CENTER, width=120)
+
+		# Configurar los encabezados de las columnas
+		tabla.heading("#0", text="", anchor=tk.W)
+		tabla.heading("Num_tarjeta", text="Número de Tarjeta", anchor=tk.CENTER)
+		tabla.heading("Fecha_vigencia", text="Fecha de Vigencia", anchor=tk.CENTER)
+
+		# Insertar datos en la tabla
+		for tarjeta, fecha in datos:
+			tabla.insert("", "end", values=(tarjeta, fecha))
+
+		# Configurar el scrollbar vertical para que controle la tabla
+		scroll_y.config(command=tabla.yview)
+
+		# Empacar el scrollbar vertical en el marco
+		scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+
+		tabla.pack(padx=10, pady=10)
+
+		def cerrar_ventana():
+			# Obtener la fecha y hora actual en formato deseado
+			hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+			# hoy = '2023-07-30 11:59:59' 
+			hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+			self.controlador_crud_pensionados.desactivar_tarjetas_expiradas(hoy)
+			self.ver_pensionados()
+			ventana.destroy()
+
+		# Agregar botón "Aceptar" en color rojo centrado debajo de la tabla
+		btn_aceptar = tk.Button(ventana, text="Aceptar", bg="red", command=cerrar_ventana, font=("Arial", 14))
+		btn_aceptar.pack(side=tk.BOTTOM, pady=10)
+
+		# Obtener las dimensiones de la ventana principal
+		self.ventana1.update_idletasks()
+		ancho_ventana_principal = self.ventana1.winfo_width()
+		alto_ventana_principal = self.ventana1.winfo_height()
+
+		# Obtener las dimensiones de la pantalla
+		ancho_pantalla = ventana.winfo_screenwidth()
+		alto_pantalla = ventana.winfo_screenheight()
+
+		# Calcular la posición de la ventana secundaria para que quede en el centro de la pantalla
+		x = self.ventana1.winfo_x() + (ancho_ventana_principal - ventana.winfo_width()) // 2
+		y = self.ventana1.winfo_y() + (alto_ventana_principal - ventana.winfo_height()) // 2
+
+		# Verificar que la ventana secundaria no quede fuera de la pantalla
+		x = max(0, min(x, ancho_pantalla - ventana.winfo_width()))
+		y = max(0, min(y, alto_pantalla - ventana.winfo_height()))
+
+		# Posicionar la ventana secundaria en el centro de la pantalla
+		ventana.geometry(f"+{x}+{y}")
+
+		# Elevar la ventana secundaria al frente de todas las otras ventanas
+		ventana.lift()
+
 
 
 #aplicacion1=FormularioOperacion()

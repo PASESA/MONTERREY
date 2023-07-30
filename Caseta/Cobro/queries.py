@@ -166,3 +166,19 @@ class pensionados(usuarios):
 
         # Se ejecuta la consulta
         self.execute_query(query)
+
+
+    def desactivar_tarjetas_expiradas(self, hoy):
+        query =f"""UPDATE Pensionados SET Vigencia = 'InactivaPerm', Fecha_vigencia = NULL, Estatus = 'Afuera', Ult_Cambio = '{hoy}' WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH);"""
+
+        # Se ejecuta la consulta
+        self.execute_query(query)
+
+    def ver_tarjetas_expiradas(self):
+        query =f"""SELECT Num_tarjeta, Fecha_vigencia FROM Pensionados WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH) ORDER BY Id_cliente DESC;"""
+
+        # Se ejecuta la consulta y se obtiene el resultado.
+        resultado = self.execute_query(query)
+
+        return resultado
+
