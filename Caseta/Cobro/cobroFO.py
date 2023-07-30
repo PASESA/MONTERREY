@@ -44,6 +44,7 @@ contraseña_pensionados = "P4s3"
 
 valor_tarjeta = 116
 valor_reposiion_tarjeta = 232
+penalizacion_diaria_pension = 10
 
 logo_1 = "LOGO1.jpg"
 qr_imagen = "reducida.png"
@@ -1719,7 +1720,7 @@ class FormularioOperacion:
 
 		self.meses_pago = tk.StringVar()
 		self.comboMensual = ttk.Combobox(labelframe_pensionados_datos_pago__, width=8, state="readonly", textvariable=self.meses_pago)
-		self.comboMensual["values"] = ["1"]#, "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+		self.comboMensual["values"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 		self.comboMensual.current(0)
 		self.comboMensual.grid(column=1, row=2, padx=4, pady=4)
 
@@ -1882,6 +1883,7 @@ class FormularioOperacion:
 		Estatus = cliente[14]
 		monto = cliente[15]
 		cortesia = cliente[16]
+		tolerancia = int(cliente[17])
 
 		self.Monto.set(monto)
 		self.Vigencia.set(VigAct)
@@ -1913,9 +1915,32 @@ class FormularioOperacion:
 			mb.showwarning("IMPORTANTE", "La tarjeta es de reposición por lo que el pensionado solo pagará dicho valor")
 			pago = valor_reposiion_tarjeta
 
+		elif VigAct != None:
 
-		else:
-			pago = monto * nummes
+			# Obtener la fecha y hora actual en formato deseado
+			VigAct = VigAct.strftime("%Y-%m-%d %H:%M:%S")
+			# Convertir la cadena de caracteres en un objeto datetime
+			VigAct = datetime.strptime(VigAct, "%Y-%m-%d %H:%M:%S")
+
+			# Obtener la fecha y hora actual en formato deseado
+			hoy = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+			# Convertir la cadena de caracteres en un objeto datetime
+			hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+			limite = VigAct + timedelta(days=tolerancia)
+			print(f"limite: {limite}")
+
+			penalizacion_pension = 0
+
+			if hoy > limite:
+				penalizacion_pension, dias_atrasados = self.calcular_penalizacion_diaria(
+					penalizacion_diaria=penalizacion_diaria_pension,
+					fecha_limite=limite)
+
+				mb.showwarning("IMPORTANTE", f"Vigencia Vencida por {dias_atrasados} días, se aplicará una penalización de ${penalizacion_pension}.00 sumado a su pago de pensión.")
+				self.caja_texto_numero_tarjeta.focus() 
+
+		pago = (monto * nummes) + penalizacion_pension
 
 		self.etiqueta_informacion_pago.configure(text=f"${pago}.00")
 
@@ -1975,10 +2000,36 @@ class FormularioOperacion:
 
 			elif Estatus == "Reposicion":pago = valor_reposiion_tarjeta
 
-			else:pago = monto * nummes
+			elif VigAct != None:
 
-			if cortesia == "Si":NvaVigencia = self.nueva_vigencia(VigAct, "Si")
-			else:NvaVigencia = self.nueva_vigencia(VigAct)
+				# Obtener la fecha y hora actual en formato deseado
+				VigAct = VigAct.strftime("%Y-%m-%d %H:%M:%S")
+				# Convertir la cadena de caracteres en un objeto datetime
+				VigAct = datetime.strptime(VigAct, "%Y-%m-%d %H:%M:%S")
+
+				# Obtener la fecha y hora actual en formato deseado
+				hoy = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+				# Convertir la cadena de caracteres en un objeto datetime
+				hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+				limite = VigAct + timedelta(days=Tolerancia)
+				print(limite)
+
+				penalizacion_pension = 0
+
+				if hoy > limite:
+					penalizacion_pension, dias_atrasados = self.calcular_penalizacion_diaria(
+						penalizacion_diaria=penalizacion_diaria_pension,
+						fecha_limite=limite)
+
+				pago = (monto * nummes) + penalizacion_pension
+
+			if cortesia == "Si":NvaVigencia = self.nueva_vigencia(
+																	fecha= VigAct,
+																	cortesia="Si")
+			else:NvaVigencia = self.nueva_vigencia(
+													fecha= VigAct,
+													meses=nummes)
 
 			datos = (Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
 			datos1 = ("Activo", NvaVigencia, Existe)
@@ -2111,7 +2162,7 @@ class FormularioOperacion:
 		self.variable_tipo_pago_transferencia.set(False)
 		self.variable_tipo_pago_efectivo.set(False)
 
-	def nueva_vigencia(self, fecha, cortesia = None):
+	def nueva_vigencia(self, fecha, meses = 1, cortesia = None):
 		"""
 		Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato '%Y-%m-%d %H:%M:%S'.
 
@@ -2126,12 +2177,12 @@ class FormularioOperacion:
 			nueva_vigencia = ''
 			if fecha == None:
 				# Obtener la fecha y hora actual en formato deseado
-				fecha = datetime.today().strftime("%Y-%m-%d 23:59:59")
+				fecha = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
 				# fecha = "2023-04-30 23:59:59"
 
 				# Convertir la cadena de caracteres en un objeto datetime
-				fecha = datetime.strptime(fecha, "%Y-%m-%d 23:59:59")
+				fecha = datetime.strptime(fecha, "%Y-%m-%d %H:%M:%S")
 
 				fecha = fecha - relativedelta(months=1)
 
@@ -2148,7 +2199,7 @@ class FormularioOperacion:
 
 			else:
 				# Obtener la fecha del primer día del siguiente mes
-				mes_siguiente = fecha + relativedelta(months=1, day=1)
+				mes_siguiente = fecha + relativedelta(months=meses, day=1)
 				
 				# Obtener la fecha del último día del mes siguiente
 				ultimo_dia_mes_siguiente = mes_siguiente + relativedelta(day=31)
@@ -2404,6 +2455,7 @@ class FormularioOperacion:
 		self.variable_contraseña_pensionados.set("")
 		self.caja_texto_numero_tarjeta.focus()
 		self.Monto.set("")
+		self.comboMensual.current(0)
 		self.Vigencia.set("")
 		self.Estatus.set("")
 		self.vaciar_tipo_pago()
@@ -2420,6 +2472,38 @@ class FormularioOperacion:
 		pago = math.ceil((monto / dias_mes) * dias_faltantes)
 
 		return pago
+
+
+	def calcular_penalizacion_diaria(self, penalizacion_diaria, fecha_limite):
+		"""
+		Calcula la penalización diaria basada en la diferencia de días entre la fecha límite y la fecha actual.
+
+		:param penalizacion_diaria: (float) La cantidad de penalización por cada día de atraso.
+		:param fecha_limite: (str or datetime) La fecha límite en formato "%Y-%m-%d %H:%M:%S".
+
+		:return: (int) La penalización total a pagar por los días de atraso.
+		"""
+
+		# Obtener la fecha y hora actual en formato deseado
+		hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+		# hoy = '2023-07-30 11:59:59' 
+		hoy = datetime.strptime(hoy, "%Y-%m-%d %H:%M:%S")
+
+		# Convertir la fecha límite en un objeto datetime si es de tipo str
+		if isinstance(fecha_limite, str):
+			fecha_limite = datetime.strptime(fecha_limite, "%Y-%m-%d %H:%M:%S")
+
+		# Calcular la cantidad de días de atraso
+		fecha_atrasada = hoy - fecha_limite
+		print(f"fecha atrasada: {fecha_atrasada}")
+		dias_atrasados = fecha_atrasada.days + 1 # se uma 1 dia para corregir fecha
+		#if dias_atrasados == 0:dias_atrasados = 1
+
+		# Calcular la penalización total
+		penalizacion = dias_atrasados * penalizacion_diaria
+
+		return penalizacion, dias_atrasados
+
 
 #aplicacion1=FormularioOperacion()
 
