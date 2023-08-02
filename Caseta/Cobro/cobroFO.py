@@ -1068,16 +1068,10 @@ class FormularioOperacion:
 
 		p.text("El Numero de corte es "+Numcorte+'\n')
 		for fila in respuesta:
-			self.scrolledtxt2.insert(tk.END, "cobro: "+str(fila[0])+"\nImporte: $"+str(fila[1])+"\nCuantos: "+str(fila[2])+"\n\n")
-			p.text('Tipo de cobro :')
-			p.text(str(fila[0]))
-			p.text('\n')
-			p.text('Importe :')
-			p.text(str(fila[1]))
-			p.text('\n')
-			p.text('Cuantos ')
-			p.text(str(fila[2]))
-			p.text('\n')
+			self.scrolledtxt2.insert(tk.END, str(fila[0])+" Boletos con tarifa "+str(fila[1])+"\n"+"valor c/u $"+str(fila[2])+" Total $"+str(fila[3])+"\n\n")
+
+			p.text(f"  {str(fila[0])}  -  {str(fila[1])}  -  ${str(fila[2])}   -  ${str(fila[3])}\n")
+
 		else:
 			p.cut()
 
@@ -1101,65 +1095,68 @@ class FormularioOperacion:
 
 		cancelar = mb.askokcancel("Advertencia", f"¿Estas seguro de querer cancelar el boleto con folio: {self.FolioCancelado.get()}?")
 
-		if cancelar:
-			datos = self.FolioCancelado.get()
-			self.folio.set(datos)
-
-			datos = self.folio.get()
-			respuesta = self.operacion1.consulta(datos)
-
-			if len(respuesta) > 0:
-				if respuesta[0][1] is not None:
-					self.FolioCancelado.set("")
-					self.folio.set("")
-					mb.showerror("Error", "No se puede cancelar un boleto ya cobrado")
-					return
-
-				if respuesta[0][6] == "BoletoPerdido":
-					mb.showerror("Error", "El folio ingresado corresponde a una reposición de un boleto perdido, no se puede cancelar.")
-					self.FolioCancelado.set("")
-					self.folio.set("")
-					return
-
-				self.descripcion.set(respuesta[0][0])
-				self.precio.set(respuesta[0][1])
-				self.CalculaPermanencia()
-
-				importe = 0
-
-				# Establecer el importe y mostrarlo
-				self.mostrar_importe(importe)
-
-				self.PrTi.set("CDO")
-				self.promo.set("")
-				self.promo_auxiliar.set('')
-
-				p.text('Boleto Cancelado\n')
-				FoliodelCancelado = str(self.FolioCancelado.get())
-				p.text('Folio boleto cancelado: ' + FoliodelCancelado + '\n')
-				fecha = datetime.today()
-				fechaNota = datetime.today()
-				fechaNota = fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
-				horaNota = str(fechaNota)
-				p.set(align="left")
-				p.set('Big line\n', font='b')
-				p.text('Fecha: ' + horaNota[:-3] + '\n')
-				EntradaCompro = str(self.descripcion.get())
-				p.text('El auto entro: ' + EntradaCompro[:-3] + '\n')
-				SalioCompro = str(self.copia.get())
-				p.text('El auto salio: ' + SalioCompro[:-3] + '\n')
-				self.GuardarCobro()
-				self.FolioCancelado.set("")
-				p.cut()
-				self.limpiar_campos()
-				self.AbrirBarrera()
-
-			else:
-				self.descripcion.set('')
-				self.precio.set('')
-				mb.showinfo("Información", "No existe un auto con dicho código")
-		else:
+		if cancelar == False:
 			self.FolioCancelado.set("")
+			self.entryFOLIOCancelado.focus()
+			return
+
+		datos = self.FolioCancelado.get()
+		self.folio.set(datos)
+
+		datos = self.folio.get()
+		respuesta = self.operacion1.consulta(datos)
+
+		if len(respuesta) == 0:
+			self.descripcion.set('')
+			self.precio.set('')
+			mb.showinfo("Información", "No existe un auto con dicho código")
+
+		if respuesta[0][1] is not None:
+			self.FolioCancelado.set("")
+			self.folio.set("")
+			mb.showerror("Error", "No se puede cancelar un boleto ya cobrado")
+			return
+
+		if respuesta[0][6] == "BoletoPerdido":
+			mb.showerror("Error", "El folio ingresado corresponde a una reposición de un boleto perdido, no se puede cancelar.")
+			self.FolioCancelado.set("")
+			self.folio.set("")
+			return
+
+		self.descripcion.set(respuesta[0][0])
+		self.precio.set(respuesta[0][1])
+		self.CalculaPermanencia()
+
+		importe = 0
+
+		# Establecer el importe y mostrarlo
+		self.mostrar_importe(importe)
+
+		self.PrTi.set("CDO")
+		self.promo.set("")
+		self.promo_auxiliar.set('')
+
+		p.text('Boleto Cancelado\n')
+		FoliodelCancelado = str(self.FolioCancelado.get())
+		p.text('Folio boleto cancelado: ' + FoliodelCancelado + '\n')
+		fecha = datetime.today()
+		fechaNota = datetime.today()
+		fechaNota = fechaNota.strftime("%b-%d-%A-%Y %H:%M:%S")
+		horaNota = str(fechaNota)
+		p.set(align="left")
+		p.set('Big line\n', font='b')
+		p.text('Fecha: ' + horaNota[:-3] + '\n')
+		EntradaCompro = str(self.descripcion.get())
+		p.text('El auto entro: ' + EntradaCompro[:-3] + '\n')
+		SalioCompro = str(self.copia.get())
+		p.text('El auto salio: ' + SalioCompro[:-3] + '\n')
+		self.GuardarCobro()
+		self.FolioCancelado.set("")
+
+		p.cut()
+
+		self.limpiar_campos()
+		self.AbrirBarrera()
 		self.BoletoDentro2()
 
 	def listar(self):
