@@ -43,11 +43,11 @@ contraseña_pensionados = "P4s3"
 
 valor_tarjeta = 116
 valor_reposiion_tarjeta = 232
-penalizacion_diaria_pension = 10
+penalizacion_diaria_pension = 0
 
 logo_1 = "LOGO1.jpg"
 qr_imagen = "reducida.png"
-PROMOCIONES = ('OM OFFIC', 'OF OFFIC') #, 'NW NETWO')
+PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 
 class FormularioOperacion:
 	def __init__(self):
@@ -790,9 +790,9 @@ class FormularioOperacion:
 
 		# Aplica diferentes descuentos según el tipo de promoción
 		if TipoProIni == "OM OFFIC" or TipoProIni == "om offic":
-			if self.horas_dentro <= 1:
+			if self.horas_dentro < 1:
 				importe = 5
-			elif self.horas_dentro > 1:
+			elif self.horas_dentro >= 1:
 				importe = importe - 23
 			text_promo = "OMax"
 
