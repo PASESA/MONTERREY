@@ -37,6 +37,7 @@ import math
 from controller_email import SendEmail
 import subprocess
 import os
+from os import path
 
 contraseña_pensionados = "P4s3"
 
@@ -50,8 +51,9 @@ PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
 #datos
-username = 'sistemas@pasesa.com.mx'
-password = '@System2023'
+username = 'monterrey75@pasesa.com.mx'
+password = '#Monterrey75'
+EMAIL = "enviocorreospasesa@outlook.com"
 
 class FormularioOperacion:
 	def __init__(self):
@@ -1226,9 +1228,6 @@ class FormularioOperacion:
 
 
 	def Guardar_Corte(self):
-		db_file = self.get_DB()
-		# db_file = 'C:/Users/brink/Music/#Z/WORKSPACE/MONTERREY/Parqueadero1.sql'
-
 		self.Puertoycontar()
 
 		######Obtenemos los datos del Cajero en Turno
@@ -1431,10 +1430,12 @@ class FormularioOperacion:
 			# Si no hay pensionados en el corte, se imprime un separador
 			p.text("----------------------------------\n")
 
+		db_file = self.get_DB('C:/Users/brink/Music/#Z/WORKSPACE/MONTERREY/Caseta/Cobro/db.sql')
+
 		if db_file:
 			hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 			subject = f"[{nombre_estacionamiento}][{hora}] Envio de Base de datos, Corte N° {Numcorte}"
-			self.send_db(db_file, username, subject)
+			self.send_db(db_file, EMAIL, subject)
 
 		# Imprime un separador final
 		p.text("----------------------------------\n")
@@ -2519,7 +2520,9 @@ class FormularioOperacion:
 
 		# Calcular la cantidad de días de atraso
 		fecha_atrasada = hoy - fecha_limite
-		print(f"fecha atrasada: {fecha_atrasada}")
+
+		# print(f"fecha atrasada: {fecha_atrasada}")
+
 		dias_atrasados = fecha_atrasada.days + 1  # Se suma 1 día para corregir fecha
 		#if dias_atrasados == 0:dias_atrasados = 1
 
@@ -2664,23 +2667,28 @@ class FormularioOperacion:
 		password = self.DB.password
 		database = self.DB.database
 
-		# Comando mysqldump
+		# Comando mysqldump -> Windows
+		# command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+
+		# Comando mysqldump -> Linux
 		command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
 
+
 		try:
-			subprocess.run(command, shell=True, check=True)
+			subprocess.run(command, shell=True)
 
 			# Verifica si el archivo de respaldo existe
 			if os.path.exists(backup_path):
 				print("Archivo creado exitosamente.")
+				backup_path = path.abspath(backup_path)
 				return backup_path
 			else:
 				print("El archivo de respaldo no se creó correctamente.")
-				return None
+				return
 
 		except subprocess.CalledProcessError:
 			print("Error al crear el respaldo.")
-			return None
+			return
 
 
 	def send_db(self, db_file: str or None, to_email: str, subject: str) -> None:
@@ -2698,7 +2706,7 @@ class FormularioOperacion:
 		"""
 		if db_file is None:
 			p.set(align="center")
-			p.text("Error al generar archivo DB\n")
+			p.text("Error al generar archivo de base de datos\n")
 			return
 
 		success_email = self.email.send_mail(
@@ -2709,7 +2717,7 @@ class FormularioOperacion:
 
 		if not success_email:
 			p.set(align="center")
-			p.text("Error al enviar DB\n")
+			p.text("Error al enviar base de datos\n")
 			return
 
 		p.set(align="center")
