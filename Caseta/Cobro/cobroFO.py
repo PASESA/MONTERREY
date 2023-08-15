@@ -1430,7 +1430,9 @@ class FormularioOperacion:
 			# Si no hay pensionados en el corte, se imprime un separador
 			p.text("----------------------------------\n")
 
-		db_file = self.get_DB('C:/Users/brink/Music/#Z/WORKSPACE/MONTERREY/Caseta/Cobro/db.sql')
+		path_db = os.getcwd()+ f'\db_{nombre_estacionamiento}.sql'
+		print(path_db)
+		db_file = self.get_DB(path_db)
 
 		if db_file:
 			hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
