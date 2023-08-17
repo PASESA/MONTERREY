@@ -34,10 +34,7 @@ from view_agregar_pensionado import View_agregar_pensionados
 from view_modificar_pensionado import View_modificar_pensionados
 import traceback
 import math
-from controller_email import SendEmail
-import subprocess
-import os
-from os import path
+
 
 contraseña_pensionados = "P4s3"
 
@@ -50,17 +47,8 @@ qr_imagen = "reducida.png"
 PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
-#datos
-username = 'monterrey75@pasesa.com.mx'
-password = '#Monterrey75'
-EMAIL = "enviocorreospasesa@outlook.com"
-
 class FormularioOperacion:
 	def __init__(self):
-		self.email = SendEmail(
-			username = username,
-			password=password,
-			estacionamiento=nombre_estacionamiento)
 
 		self.controlador_crud_pensionados = Pensionados()
 		self.folio_auxiliar = None
@@ -1430,15 +1418,6 @@ class FormularioOperacion:
 			# Si no hay pensionados en el corte, se imprime un separador
 			p.text("----------------------------------\n")
 
-		path_db = os.getcwd()+ f'\db_{nombre_estacionamiento}.sql'
-		print(path_db)
-		db_file = self.get_DB(path_db)
-
-		if db_file:
-			hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-			subject = f"[{nombre_estacionamiento}][{hora}] Envio de Base de datos, Corte N° {Numcorte}"
-			self.send_db(db_file, EMAIL, subject)
-
 		# Imprime un separador final
 		p.text("----------------------------------\n")
 
@@ -2652,78 +2631,6 @@ class FormularioOperacion:
 		self.IImporte.config(text=self.importe.get())
 
 
-	def get_DB(self, backup_path: str = '/ruta/de/respaldo/Parqueadero1.sql') -> str or None:
-		"""
-		Genera un respaldo de la base de datos utilizando el comando mysqldump.
-
-		Args:
-			backup_path (str, optional): La ruta donde se guardará el archivo de respaldo. Por defecto es '/ruta/de/respaldo/Parqueadero1.sql'.
-
-		Returns:
-			str or None: La ruta del archivo de respaldo si se crea exitosamente, None si ocurre un error.
-
-		"""
-		# Configuración de la base de datos
-		host = self.DB.host
-		user = self.DB.user
-		password = self.DB.password
-		database = self.DB.database
-
-		# Comando mysqldump -> Windows
-		# command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
-
-		# Comando mysqldump -> Linux
-		command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
-
-
-		try:
-			subprocess.run(command, shell=True)
-
-			# Verifica si el archivo de respaldo existe
-			if os.path.exists(backup_path):
-				print("Archivo creado exitosamente.")
-				backup_path = path.abspath(backup_path)
-				return backup_path
-			else:
-				print("El archivo de respaldo no se creó correctamente.")
-				return
-
-		except subprocess.CalledProcessError:
-			print("Error al crear el respaldo.")
-			return
-
-
-	def send_db(self, db_file: str or None, to_email: str, subject: str) -> None:
-		"""
-		Envía el archivo de base de datos por correo electrónico.
-
-		Args:
-			db_file (str or None): La ruta del archivo de base de datos o None si ocurrió un error al generar el archivo.
-			to_email (str): La dirección de correo electrónico del destinatario.
-			subject (str): El asunto del correo electrónico.
-
-		Returns:
-			None
-
-		"""
-		if db_file is None:
-			p.set(align="center")
-			p.text("Error al generar archivo de base de datos\n")
-			return
-
-		success_email = self.email.send_mail(
-			to_email=to_email,
-			subject=subject,
-			message=f"Base de datos de {nombre_estacionamiento}",
-			file=db_file)
-
-		if not success_email:
-			p.set(align="center")
-			p.text("Error al enviar base de datos\n")
-			return
-
-		p.set(align="center")
-		p.text("Se envió la base de datos\n")
 
 
 # aplicacion1=FormularioOperacion()
