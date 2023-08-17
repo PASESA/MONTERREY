@@ -156,9 +156,9 @@ class SendEmail:
                 if zip_file:
                     try:
                         remove(file)
-                        print("Archivo eliminado exitosamente.")
+                        print("Archivo .sql eliminado exitosamente.")
                     except Exception as e:
-                        print(f"No se pudo eliminar el archivo: {e}")
+                        print(f"No se pudo eliminar el archivo .sql: {e}")
 
                 # Adjuntar el archivo al correo
                 with open(zip_file, 'rb') as f:
@@ -178,6 +178,11 @@ class SendEmail:
                     server.quit()
 
                 print('Correo enviado exitosamente.')
+                try:
+                    remove(zip_file)
+                    print("Archivo .zip eliminado exitosamente.")
+                except Exception as e:
+                    print(f"No se pudo eliminar el archivo .zip: {e}")
                 return True
 
             except Exception as e:
