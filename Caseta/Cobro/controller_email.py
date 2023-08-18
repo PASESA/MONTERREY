@@ -85,8 +85,8 @@ class ToolsEmail:
             database = self.DB.database
 
             # Comando mysqldump (dependiendo del sistema operativo)
-            command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
-            # command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+            # command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+            command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
 
             subprocess.run(command, shell=True)
 
@@ -101,7 +101,6 @@ class ToolsEmail:
         except subprocess.CalledProcessError:
             print("Error al crear el respaldo.")
             return None
-
 
 class SendEmail:
     """Clase que permite enviar correos electrónicos con archivos adjuntos."""
@@ -189,57 +188,67 @@ class SendEmail:
                 print(e)
                 return False
 
-
-
-def main() -> str:
-    """Función principal para enviar la base de datos por correo electrónico.
+def send_mail() -> str:
+    """
+    Envía la base de datos por correo electrónico.
 
     Returns:
         str: Mensaje informativo sobre el resultado del envío del correo.
     """
+    # Nombre del estacionamiento
     nombre_estacionamiento = 'Monterrey'
-    # Datos de acceso
+
+    # Datos de acceso a la cuenta de correo
     username = 'monterrey75@pasesa.com.mx'
     password = '#Monterrey75'
     EMAIL = "enviocorreospasesa@outlook.com"
 
-    # Inicializar herramientas y envío de correo
+    # Inicializar herramientas de correo electrónico y envío
     tools = ToolsEmail()
     email = SendEmail(username=username, password=password, estacionamiento=nombre_estacionamiento)
 
-    # Generar ruta y obtener archivo de base de datos
+    # Generar ruta y obtener el archivo de respaldo de la base de datos
     path_db = getcwd() + f'/db_{nombre_estacionamiento}.sql'
     db_file = tools.get_DB(path_db)
 
     if db_file is None:
-        return "Error al generar respaldo de base de datos\n"
+        return "Error: No se pudo generar el respaldo de la base de datos\n"
 
     # Crear el asunto y mensaje del correo
     hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     subject = f"[{nombre_estacionamiento}][{hora}] Envio de Base de datos"
-    message = f"Base de datos de {nombre_estacionamiento}"
+    message = f"Se adjunta la base de datos del estacionamiento {nombre_estacionamiento}."
 
     # Enviar el correo y manejar el resultado
     if email.send_mail(to_email=EMAIL, subject=subject, message=message, file=db_file):
-        return "Base de datos enviada\n"
+        return "Base de datos enviada exitosamente.\n"
     else:
-        return "Error al enviar base de datos\n"
+        return "Error: No se pudo enviar la base de datos por correo electrónico.\n"
 
 
-if __name__ == "__main__":
+def main() -> None:
     """
-    Punto de entrada principal del programa.
-
-    Ejecuta la función principal y muestra el resultado en la consola.
+    Función principal del programa para enviar la base de datos por correo electrónico y mostrar el resultado.
     """
+    # Ejecutar la función para enviar el correo electrónico
+    message_info = send_mail()
+
     # Instanciar el objeto Usb para imprimir el resultado
     printer = Usb(0x04b8, 0x0202, 0)
-
-    # Ejecutar la función principal
-    message_info = main()
 
     # Imprimir separadores y mensaje de resultado en la consola
     printer.text("-" * 30 + "\n")
     printer.text(f"{message_info}\n")
     printer.text("-" * 30 + "\n")
+
+    # Imprimir el mensaje en la consola
+    print(message_info)
+
+
+if __name__ == "__main__":
+    """
+    Punto de entrada principal del programa.
+    """
+    # Ejecutar la función principal
+    main()
 
