@@ -35,6 +35,9 @@ from view_modificar_pensionado import View_modificar_pensionados
 import traceback
 import math
 
+from subprocess import run, Popen, call
+from os import path
+import atexit
 
 contraseña_pensionados = "P4s3"
 
@@ -47,8 +50,37 @@ qr_imagen = "reducida.png"
 PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
+from controller_email import main
+
+def send_db():
+	"""
+	Envía la base de datos utilizando un archivo shell.
+
+	Esta función ejecuta el archivo shell "send_email.sh" proporcionando la ruta absoluta
+	del script Python "controller_email.py" como argumento.
+
+	Returns:
+		None
+	"""
+	try:
+		# Obtén la ruta absoluta del directorio actual
+		current_directory = path.dirname(path.abspath(__file__))
+
+		# Nombre del archivo de script Python
+		python_filename = "controller_email.py"
+
+		# Combina el directorio actual con el nombre del archivo para obtener la ruta absoluta del script Python
+		python_script_path = path.join(current_directory, python_filename)
+
+		# Ejecutar el archivo shell proporcionando la ruta al script Python como argumento
+		Popen(["python", python_script_path], shell=True)
+
+	except Exception as e:
+		print(f"Error al enviar la base de datos: {e}")
+
 class FormularioOperacion:
 	def __init__(self):
+		atexit.register(send_db)
 
 		self.controlador_crud_pensionados = Pensionados()
 		self.folio_auxiliar = None
@@ -700,8 +732,6 @@ class FormularioOperacion:
 				p.set(align="center")
 				p.image(qr_imagen)
 				print("Imprime QR salida")
-
-			p.text("----------------------------\n")
 
 		p.cut()
 
@@ -1414,9 +1444,8 @@ class FormularioOperacion:
 			p.text("Cuantos - Concepto - ImporteTotal " + '\n')
 			for fila in respuesta:
 				p.text(f"   {str(fila[0])}   -  {str(fila[1])}   -   ${str(fila[2])}\n")
-		else:
-			# Si no hay pensionados en el corte, se imprime un separador
-			p.text("----------------------------------\n")
+			else:
+				p.text("----------------------------------\n")
 
 		# Imprime un separador final
 		p.text("----------------------------------\n")
@@ -2010,11 +2039,11 @@ class FormularioOperacion:
 				pago = (monto * nummes) + penalizacion_pension
 
 			if cortesia == "Si":NvaVigencia = self.nueva_vigencia(
-																	fecha= VigAct,
-																	cortesia="Si")
+					fecha= VigAct,
+					cortesia="Si")
 			else:NvaVigencia = self.nueva_vigencia(
-													fecha= VigAct,
-													meses=nummes)
+					fecha= VigAct,
+					meses=nummes)
 
 			datos = (Existe, tarjeta, fechaPago, NvaVigencia, nummes, pago, self.tipo_pago_)
 			datos1 = ("Activo", NvaVigencia, Existe)
@@ -2091,6 +2120,8 @@ class FormularioOperacion:
 		Raises:
 			None
 		"""
+		# Establece la alineación del texto al centro
+		p.set(align="center")
 
 		p.text("----------------------------------\n")
 		# Agrega un encabezado al comprobante
@@ -2264,9 +2295,9 @@ class FormularioOperacion:
 		io.output(out1, 0)
 		time.sleep(1)
 		io.output(out1, 1)
-		print('------------------------------\n')
-		print("Se abre barrera\n")
-		print('------------------------------\n')
+		print('------------------------------')
+		print("Se abre barrera")
+		print('------------------------------')
 
 	def desactivar(self):
 		"""Desactiva los botones de la interface"""
@@ -2629,9 +2660,6 @@ class FormularioOperacion:
 		"""
 		self.importe.set(text_importe)
 		self.IImporte.config(text=self.importe.get())
-
-
-
 
 # aplicacion1=FormularioOperacion()
 

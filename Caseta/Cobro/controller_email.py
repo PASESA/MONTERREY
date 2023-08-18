@@ -4,14 +4,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from escpos.printer import Usb
-
 from zipfile import ZipFile, ZIP_DEFLATED
-import subprocess
+from subprocess import run, CalledProcessError
 from os import path, getcwd, remove
 import requests
 from requests.exceptions import RequestException
-
 from operacion import Operacion
+
+from sys import exit
 
 
 class ToolsEmail:
@@ -85,10 +85,10 @@ class ToolsEmail:
             database = self.DB.database
 
             # Comando mysqldump (dependiendo del sistema operativo)
-            # command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
-            command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+            command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+            # command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
 
-            subprocess.run(command, shell=True)
+            run(command, shell=True)
 
             if path.exists(backup_path):
                 print("Base de datos respaldada exitosamente.")
@@ -98,7 +98,7 @@ class ToolsEmail:
                 print("El archivo de respaldo no se creó correctamente.")
                 return None
 
-        except subprocess.CalledProcessError:
+        except CalledProcessError:
             print("Error al crear el respaldo.")
             return None
 
@@ -188,7 +188,7 @@ class SendEmail:
                 print(e)
                 return False
 
-def send_mail() -> str:
+def call_process() -> str:
     """
     Envía la base de datos por correo electrónico.
 
@@ -205,7 +205,10 @@ def send_mail() -> str:
 
     # Inicializar herramientas de correo electrónico y envío
     tools = ToolsEmail()
-    email = SendEmail(username=username, password=password, estacionamiento=nombre_estacionamiento)
+    email = SendEmail(
+        username=username, 
+        password=password, 
+        estacionamiento=nombre_estacionamiento)
 
     # Generar ruta y obtener el archivo de respaldo de la base de datos
     path_db = getcwd() + f'/db_{nombre_estacionamiento}.sql'
@@ -217,7 +220,7 @@ def send_mail() -> str:
     # Crear el asunto y mensaje del correo
     hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     subject = f"[{nombre_estacionamiento}][{hora}] Envio de Base de datos"
-    message = f"Se adjunta la base de datos del estacionamiento {nombre_estacionamiento}."
+    message = f"Base de datos del estacionamiento {nombre_estacionamiento}."
 
     # Enviar el correo y manejar el resultado
     if email.send_mail(to_email=EMAIL, subject=subject, message=message, file=db_file):
@@ -231,7 +234,7 @@ def main() -> None:
     Función principal del programa para enviar la base de datos por correo electrónico y mostrar el resultado.
     """
     # Ejecutar la función para enviar el correo electrónico
-    message_info = send_mail()
+    message_info = call_process()
 
     # Instanciar el objeto Usb para imprimir el resultado
     printer = Usb(0x04b8, 0x0202, 0)
@@ -240,6 +243,7 @@ def main() -> None:
     printer.text("-" * 30 + "\n")
     printer.text(f"{message_info}\n")
     printer.text("-" * 30 + "\n")
+    printer.cut()
 
     # Imprimir el mensaje en la consola
     print(message_info)
@@ -251,4 +255,5 @@ if __name__ == "__main__":
     """
     # Ejecutar la función principal
     main()
+    exit()
 
