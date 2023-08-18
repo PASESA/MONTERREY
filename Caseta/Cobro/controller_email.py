@@ -21,7 +21,7 @@ class ToolsEmail:
         """Constructor de la clase"""
         self.DB = Operacion()
 
-    def check_internet_connection(self, url: str = "http://www.google.com", timeout: int = 5) -> bool:
+    def check_internet_connection(self, url: str = "http://www.google.com", timeout: int = 10) -> bool:
         """Comprueba si hay una conexión activa a Internet mediante una petición HTTP a la URL dada.
 
         Args:
@@ -233,20 +233,26 @@ def main() -> None:
     """
     Función principal del programa para enviar la base de datos por correo electrónico y mostrar el resultado.
     """
-    # Ejecutar la función para enviar el correo electrónico
-    message_info = call_process()
+    try: 
+        # Ejecutar la función para enviar el correo electrónico
+        message_info = call_process()
 
-    # Instanciar el objeto Usb para imprimir el resultado
-    printer = Usb(0x04b8, 0x0202, 0)
+        # Instanciar el objeto Usb para imprimir el resultado
+        printer = Usb(0x04b8, 0x0202, 0)
 
-    # Imprimir separadores y mensaje de resultado en la consola
-    printer.text("-" * 30 + "\n")
-    printer.text(f"{message_info}\n")
-    printer.text("-" * 30 + "\n")
-    printer.cut()
+        # Imprimir separadores y mensaje de resultado en la consola
+        printer.text("-" * 30 + "\n")
+        printer.text(f"{message_info}\n")
+        printer.text("-" * 30 + "\n")
+        printer.cut()
+        printer.close()
 
-    # Imprimir el mensaje en la consola
-    print(message_info)
+        # Imprimir el mensaje en la consola
+        print(message_info)
+    except Exception as e:
+        print(e)
+
+    exit()
 
 
 if __name__ == "__main__":
@@ -255,5 +261,4 @@ if __name__ == "__main__":
     """
     # Ejecutar la función principal
     main()
-    exit()
 

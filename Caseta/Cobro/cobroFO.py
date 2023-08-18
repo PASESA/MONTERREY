@@ -72,15 +72,21 @@ def send_db():
 		# Combina el directorio actual con el nombre del archivo para obtener la ruta absoluta del script Python
 		python_script_path = path.join(current_directory, python_filename)
 
+		# Nombre del archivo de script Python
+		bash_filename = "send_email.sh"
+
+		# Combina el directorio actual con el nombre del archivo para obtener la ruta absoluta del script Python
+		bash_script_path = path.join(current_directory, bash_filename)
+
 		# Ejecutar el archivo shell proporcionando la ruta al script Python como argumento
-		Popen(["python", python_script_path], shell=True)
+		Popen(["bash", bash_script_path, python_script_path])
 
 	except Exception as e:
 		print(f"Error al enviar la base de datos: {e}")
 
 class FormularioOperacion:
 	def __init__(self):
-		atexit.register(send_db)
+		atexit.register(main)
 
 		self.controlador_crud_pensionados = Pensionados()
 		self.folio_auxiliar = None
@@ -1452,13 +1458,14 @@ class FormularioOperacion:
 
 		# Corta el papel
 		p.cut()
+		p.close()
 
 		# Cierra el programa al final del reporte
 		self.Cerrar_Programa()
 
 
 	def Cerrar_Programa(self):
-		self.ventana1.destroy()  
+		self.ventana1.destroy()
 
 
 
