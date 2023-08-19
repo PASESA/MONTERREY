@@ -8,7 +8,7 @@ class Operacion:
 		self.host = "localhost"
 		self.user = "Aurelio"
 		self.password = "RG980320"
-		self.database = "db_monterrey"
+		self.database = "Parqueadero1"
 
 	def abrir(self):
 		conexion=pymysql.connect(host=self.host,

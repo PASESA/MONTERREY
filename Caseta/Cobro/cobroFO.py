@@ -35,8 +35,6 @@ from view_modificar_pensionado import View_modificar_pensionados
 import traceback
 import math
 
-from subprocess import run, Popen, call
-from os import path
 import atexit
 
 contraseña_pensionados = "P4s3"
@@ -51,38 +49,6 @@ PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
 from controller_email import main
-
-def send_db():
-	"""
-	Envía la base de datos utilizando un archivo shell.
-
-	Esta función ejecuta el archivo shell "send_email.sh" proporcionando la ruta absoluta
-	del script Python "controller_email.py" como argumento.
-
-	Returns:
-		None
-	"""
-	try:
-		# Obtén la ruta absoluta del directorio actual
-		current_directory = path.dirname(path.abspath(__file__))
-
-		# Nombre del archivo de script Python
-		python_filename = "controller_email.py"
-
-		# Combina el directorio actual con el nombre del archivo para obtener la ruta absoluta del script Python
-		python_script_path = path.join(current_directory, python_filename)
-
-		# Nombre del archivo de script Python
-		bash_filename = "send_email.sh"
-
-		# Combina el directorio actual con el nombre del archivo para obtener la ruta absoluta del script Python
-		bash_script_path = path.join(current_directory, bash_filename)
-
-		# Ejecutar el archivo shell proporcionando la ruta al script Python como argumento
-		Popen(["bash", bash_script_path, python_script_path])
-
-	except Exception as e:
-		print(f"Error al enviar la base de datos: {e}")
 
 class FormularioOperacion:
 	def __init__(self):
