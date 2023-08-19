@@ -2,9 +2,3 @@ python-escpos
 XlsxWriter
 pymysql
 
-CREATE DATABASE db_monterrey;
-CREATE DATABASE db_pinosuarez;
-CREATE DATABASE db_durango;
-CREATE DATABASE db_tenayuca;
-CREATE DATABASE db_amores;
-
