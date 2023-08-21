@@ -11,8 +11,6 @@ from requests import get
 from requests.exceptions import RequestException
 from operacion import Operacion
 
-from sys import exit
-
 
 class ToolsEmail:
     """Clase que proporciona herramientas relacionadas con el correo electrónico y archivos."""
@@ -190,11 +188,10 @@ class SendEmail:
                 msg.attach(MIMEText(message, 'plain'))
 
                 zip_file = self.tools.compress_file_to_zip(file)
+                self.tools.remove_file(file)
 
                 if zip_file is None:
                     return False
-
-                self.tools.remove_file(file)
 
                 # Adjuntar el archivo al correo
                 with open(zip_file, 'rb') as f:
@@ -288,7 +285,6 @@ def main() -> None:
     except Exception as e:
         print(e)
 
-    exit()
 
 
 if __name__ == "__main__":
