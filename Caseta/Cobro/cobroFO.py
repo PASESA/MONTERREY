@@ -1,7 +1,4 @@
-from datetime import datetime, date, time, timedelta
-from tkinter import messagebox as mb
-
-PensionadoOpen=1
+from datetime import datetime, date, timedelta
 
 from escpos.printer import *
 import tkinter as tk
@@ -10,7 +7,6 @@ from tkinter import messagebox as mb
 from tkinter import scrolledtext as st
 from tkinter import *
 from tkinter import simpledialog
-import time
 from operacion import Operacion
 import xlsxwriter
 import RPi.GPIO as io
@@ -32,7 +28,10 @@ from view_modificar_pensionado import View_modificar_pensionados
 import traceback
 import math
 
-import atexit
+from atexit import register
+from reloj import RelojAnalogico
+from time import sleep
+from controller_email import main
 
 contraseña_pensionados = "P4s3"
 
@@ -41,15 +40,18 @@ valor_reposiion_tarjeta = 232
 penalizacion_diaria_pension = 0
 
 logo_1 = "LOGO1.jpg"
+AutoA = "AutoA.png"
 qr_imagen = "reducida.png"
 PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
-from controller_email import main
+show_clock = True
+send_data = True
 
 class FormularioOperacion:
     def __init__(self):
-        atexit.register(main)
+        if send_data:
+            register(main)
 
         self.controlador_crud_pensionados = Pensionados()
         self.folio_auxiliar = None
@@ -64,6 +66,11 @@ class FormularioOperacion:
         self.listado_completo()
         self.interface_pensionados()
         self.cuaderno1.grid(column=0, row=0, padx=5, pady=5)
+
+        if show_clock:
+            self.reloj = RelojAnalogico()
+            self.ventana1.geometry("+200+0")
+
         self.ventana1.mainloop()
         ###########################Inicia Pagina1##########################
 
@@ -139,7 +146,6 @@ class FormularioOperacion:
         p.text('Entro: '+horaentrada[:-3]+'\n')
         p.text('Placas '+placa+'\n')
         p.text(folioZZ+'\n')
-
         p.set(align = "center")
         p.image(qr_imagen)
 
@@ -394,6 +400,9 @@ class FormularioOperacion:
             self.promo.set("")
             self.PonerFOLIO.set("")
 
+            if show_clock:
+                self.reloj.update_data(self.TarifaPreferente.get(), importe)
+
         else:
             # Limpiar campos y mostrar mensaje de error
             self.limpiar_campos()
@@ -570,8 +579,8 @@ class FormularioOperacion:
         self.dias_dentro = TiempoTotal.days
         segundos_vividos = TiempoTotal.seconds
 
-        self.horas_dentro, segundos_vividos = divmod(segundos_vividos, 3600)
-        self.minutos_dentro, segundos_vividos = divmod(segundos_vividos, 60)
+        self.horas_dentro, _ = divmod(segundos_vividos, 3600)
+        self.minutos_dentro, _ = divmod(segundos_vividos, 60)
 
         self.TiempoTotal.set(TiempoTotal)
         self.TiempoTotal_auxiliar.set(self.TiempoTotal.get()[:-3])
@@ -590,6 +599,7 @@ class FormularioOperacion:
 
         importe = 0
 
+
         if self.dias_dentro == 0 and self.horas_dentro == 0:
             # Si la permanencia es menor a 1 hora, se aplica una tarifa fija de 28 unidades
             importe = 28
@@ -602,6 +612,12 @@ class FormularioOperacion:
 
         # Coloca el foco en el campo entrypromo
         self.entrypromo.focus()
+
+        if show_clock:
+            self.reloj.set_time(entrada=str(Entrada), salida=str(Salida), hour= self.horas_dentro, minute= self.minutos_dentro, importe=importe)
+
+            # Espera un segundo para que de tiempo a cargar la animacion
+            sleep(0.5)
 
     def calcular_cambio(self):
         folio = self.folio.get()
@@ -688,6 +704,7 @@ class FormularioOperacion:
                 # Imprimir el logo si está habilitado
                 p.image(logo_1)
                 print("Imprime logo")
+
             p.set(align="left")
 
             p.text("El importe es: $" + Importe + "\n")
@@ -824,6 +841,9 @@ class FormularioOperacion:
         self.TarifaPreferente.set(text_promo)
         self.promo.set("")
         self.mostrar_importe(importe)
+
+        if show_clock:
+            self.reloj.update_data(text_promo, importe)
 
 
 
@@ -1012,7 +1032,6 @@ class FormularioOperacion:
         self.FechUCORTE=tk.StringVar()
         self.entryFechUCORTE=tk.Entry(self.labelframe2, width=20, textvariable=self.FechUCORTE, state= "readonly")
         self.entryFechUCORTE.grid(column=1, row=3)
-
 
 
         self.CortesAnteri=tk.StringVar()
@@ -1245,7 +1264,6 @@ class FormularioOperacion:
         ImpCorte2 =str(self.ImporteCorte.get(),)
         Im38=ImpCorte2.strip('(,)')
         AEE=(self.DB.CuantosAutosdentro())
-        #AEE=(self.DB.BAnteriores())
         maxnumid=str(self.DB.MaxfolioEntrada())
         maxnumid = "".join([x for x in maxnumid if x.isdigit()])#con esto solo obtenemos los numeros
         maxnumid=int(maxnumid)
@@ -1422,6 +1440,7 @@ class FormularioOperacion:
 
         # Corta el papel
         p.cut()
+
         p.close()
 
         # Cierra el programa al final del reporte
@@ -1430,6 +1449,7 @@ class FormularioOperacion:
 
     def Cerrar_Programa(self):
         self.ventana1.destroy()
+
 
 
 
@@ -2096,7 +2116,7 @@ class FormularioOperacion:
 
         p.text("----------------------------------\n")
         # Agrega un encabezado al comprobante
-        p.text("        Comprobante de pago\n\n")
+        p.text("Comprobante de pago\n\n")
         
         # Establece la alineacion del texto a la izquierda
         p.set(align="left")
@@ -2264,7 +2284,7 @@ class FormularioOperacion:
         """Esta funcion se encarga de abrir la barrera."""
 
         io.output(out1, 0)
-        time.sleep(1)
+        sleep(1)
         io.output(out1, 1)
         print('------------------------------')
         print("Se abre barrera")
@@ -2318,6 +2338,8 @@ class FormularioOperacion:
         self.BoletoDentro()
         self.BoletoDentro2()
 
+        if show_clock:
+            self.reloj.clear_data()
 
     def vaciar_tabla(self):
         """Vacía la tabla de datos.
