@@ -83,7 +83,7 @@ class RelojAnalogico:
         self.font = ("Arial",  20)
 
         self.blinking_label_info_color = BlinkingLabel()
-        self.root.geometry("+1650+0")
+        self.root.geometry("+1640+50")
 
         self.interface()
 
@@ -95,7 +95,7 @@ class RelojAnalogico:
 
         # Frame para los colores y rango
         self.frame_colores = tk.LabelFrame(frame_contenedor, text="Colores y Rangos")
-        self.frame_colores.grid(row=0, column=0, padx=5, pady=5)
+        self.frame_colores.grid(row=0, column=0)
 
         # Etiqueta informativa para el color verde
         label_hora_inicial = tk.Label(self.frame_colores, text="Primera hora", font=self.font)
@@ -153,11 +153,11 @@ class RelojAnalogico:
         frame_importe.grid(row=1, column=0)
 
         # Etiqueta para el importe total
-        label_importe = tk.Label(frame_importe, text="Importe Total: ", font=self.font)
+        label_importe = tk.Label(frame_importe, text="Importe Total:", font=self.font)
         label_importe.grid(row=0, column=0, padx=5, pady=5)
 
         # Etiqueta para el importe total
-        self.label_importe_total_horas = tk.Label(frame_importe, text="$0.00", font=("Arial", 25))
+        self.label_importe_total_horas = tk.Label(frame_importe, text="$0.00", font=("Arial", 20))
         self.label_importe_total_horas.grid(row=0, column=1, padx=5, pady=5)
 
         frame_reloj = tk.Frame(frame_total_reloj, padx=5, pady=5)
@@ -204,26 +204,26 @@ class RelojAnalogico:
 
         # Frame para los datos
         self.frame_datos = tk.LabelFrame(frame_contenedor, text="Datos")
-        self.frame_datos.grid(row=0, column=2, padx=5, pady=5)
+        self.frame_datos.grid(row=0, column=2)
 
 
         # Etiqueta para el tiempo total
-        self.label_tiempo_entrada = tk.Label(self.frame_datos, text="Entrada: 00:00 Hrs", font=self.font)
+        self.label_tiempo_entrada = tk.Label(self.frame_datos, text="Entrada:\n00:00 Hrs", font=self.font)
         self.label_tiempo_entrada.grid(row=0, column=0, padx=5, pady=5)
 
         # Etiqueta para el importe total
-        self.label_tiempo_salida = tk.Label(self.frame_datos, text="Salida: 00:00 Hrs", font=self.font)
+        self.label_tiempo_salida = tk.Label(self.frame_datos, text="Salida:\n00:00 Hrs", font=self.font)
         self.label_tiempo_salida.grid(row=1, column=0, padx=5, pady=5)
 
 
 
         # Etiqueta para el tiempo total
         self.label_tiempo = tk.Label(self.frame_datos, text="Tiempo Total", font=self.font)
-        self.label_tiempo.grid(row=2, column=0, padx=5, pady=5)
+        # self.label_tiempo.grid(row=2, column=0, padx=5, pady=5)
 
         # Etiqueta para el tiempo total
         self.label_tiempo_total = tk.Label(self.frame_datos, text="00 Hrs 00 Min 00 Seg", font=("Arial", 25))
-        self.label_tiempo_total.grid(row=3, column=0, padx=5, pady=5)
+        # self.label_tiempo_total.grid(row=3, column=0, padx=5, pady=5)
 
         # Etiqueta para el tiempo total
         self.label_tarifa = tk.Label(self.frame_datos, text="Tarifa: Normal", font=self.font)
@@ -235,7 +235,7 @@ class RelojAnalogico:
 
         # Etiqueta para el importe total
         self.label_importe = tk.Label(frame_importe, text="Importe Total: ", font=self.font)
-        self.label_importe.grid(row=0, column=0, padx=5, pady=5)
+        self.label_importe.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         # Etiqueta para el importe total
         self.label_importe_total = tk.Label(frame_importe, text="$0.00", font=("Arial", 25))
@@ -378,8 +378,8 @@ class RelojAnalogico:
 
 
         # Actualizar etiquetas con los valores de tiempo y importe
-        self.label_tiempo_entrada.config(text = f"Entrada: {entrada[:-3]} Hrs")
-        self.label_tiempo_salida.config(text = f"  Salida: {salida[:-3]} Hrs")
+        self.label_tiempo_entrada.config(text = f"Entrada:\n{entrada[:-3]} Hrs")
+        self.label_tiempo_salida.config(text = f"  Salida:\n{salida[:-3]} Hrs")
 
         if days == 0:time_str = f"{self.hour:02d} Hrs {minute:02d} Min {seconds:02d} Seg"
 
