@@ -46,7 +46,7 @@ PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
 show_clock = True
-send_data = True
+send_data = False
 
 class FormularioOperacion:
     def __init__(self):
@@ -580,10 +580,12 @@ class FormularioOperacion:
         segundos_vividos = TiempoTotal.seconds
 
         self.horas_dentro, _ = divmod(segundos_vividos, 3600)
-        self.minutos_dentro, _ = divmod(segundos_vividos, 60)
+        self.minutos_dentro, self.segundos_dentro, = divmod(segundos_vividos, 60)
 
         self.TiempoTotal.set(TiempoTotal)
         self.TiempoTotal_auxiliar.set(self.TiempoTotal.get()[:-3])
+
+        minutos = 0
 
         # Calcula la tarifa y el importe a pagar
         if self.minutos_dentro == 0:
@@ -614,7 +616,15 @@ class FormularioOperacion:
         self.entrypromo.focus()
 
         if show_clock:
-            self.reloj.set_time(entrada=str(Entrada), salida=str(Salida), hour= self.horas_dentro, minute= self.minutos_dentro, importe=importe)
+            _, minutos_dentro = divmod(self.minutos_dentro, 60)
+            self.reloj.set_time(
+                entrada=str(Entrada),
+                salida=str(Salida),
+                days = self.dias_dentro,
+                hour= self.horas_dentro,
+                minute= minutos_dentro,
+                seconds= self.segundos_dentro,
+                importe=importe)
 
             # Espera un segundo para que de tiempo a cargar la animacion
             sleep(0.5)
@@ -2654,5 +2664,5 @@ class FormularioOperacion:
         self.importe.set(text_importe)
         self.IImporte.config(text=self.importe.get())
 
-# aplicacion1=FormularioOperacion()
+aplicacion1=FormularioOperacion()
 
