@@ -1,12 +1,15 @@
 from datetime import datetime, date, timedelta
 
 from escpos.printer import *
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import scrolledtext as st
+
 from tkinter import *
 from tkinter import simpledialog
+
 from operacion import Operacion
 import xlsxwriter
 import RPi.GPIO as io
@@ -45,7 +48,7 @@ qr_imagen = "reducida.png"
 PROMOCIONES = ('OM OFFIC', 'om offic', 'OF OFFIC', 'of offic') #, 'NW NETWO')
 nombre_estacionamiento = 'Monterrey'
 
-show_clock = True
+show_clock = False
 send_data = True
 
 class FormularioOperacion:
@@ -579,13 +582,14 @@ class FormularioOperacion:
         self.dias_dentro = TiempoTotal.days
         segundos_vividos = TiempoTotal.seconds
 
-        self.horas_dentro, _ = divmod(segundos_vividos, 3600)
-        self.minutos_dentro, _ = divmod(segundos_vividos, 60)
+        self.horas_dentro, segundos_restantes = divmod(segundos_vividos, 3600)
+        self.minutos_dentro, _ = divmod(segundos_restantes, 60)
 
         self.TiempoTotal.set(TiempoTotal)
         self.TiempoTotal_auxiliar.set(self.TiempoTotal.get()[:-3])
 
         # Calcula la tarifa y el importe a pagar
+        minutos = 0
         if self.minutos_dentro == 0:
             minutos = 0
         elif self.minutos_dentro < 16 and self.minutos_dentro >= 1:
@@ -1604,7 +1608,7 @@ class FormularioOperacion:
                 mb.showwarning("ERROR", 'Contrasena Incorrecta')
 
 
-        
+
     def Puertoycontar(self):
         
         CuantosBoletosCobro=str(self.DB.CuantosBoletosCobro())
