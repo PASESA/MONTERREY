@@ -583,10 +583,12 @@ class FormularioOperacion:
         segundos_vividos = TiempoTotal.seconds
 
         self.horas_dentro, segundos_restantes = divmod(segundos_vividos, 3600)
-        self.minutos_dentro, _ = divmod(segundos_restantes, 60)
+        self.minutos_dentro, segundos_restantes = divmod(segundos_restantes, 60)
 
         self.TiempoTotal.set(TiempoTotal)
         self.TiempoTotal_auxiliar.set(self.TiempoTotal.get()[:-3])
+
+        minutos = 0
 
         # Calcula la tarifa y el importe a pagar
         minutos = 0
@@ -618,7 +620,14 @@ class FormularioOperacion:
         self.entrypromo.focus()
 
         if show_clock:
-            self.reloj.set_time(entrada=str(Entrada), salida=str(Salida), hour= self.horas_dentro, minute= self.minutos_dentro, importe=importe)
+            self.reloj.set_time(
+                entrada=str(Entrada),
+                salida=str(Salida),
+                days = self.dias_dentro,
+                hour= self.horas_dentro,
+                minute= self.minutos_dentro,
+                seconds= segundos_restantes,
+                importe=importe)
 
             # Espera un segundo para que de tiempo a cargar la animacion
             sleep(0.5)
@@ -2658,5 +2667,5 @@ class FormularioOperacion:
         self.importe.set(text_importe)
         self.IImporte.config(text=self.importe.get())
 
-# aplicacion1=FormularioOperacion()
+aplicacion1=FormularioOperacion()
 
