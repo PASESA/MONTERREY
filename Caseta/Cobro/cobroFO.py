@@ -143,7 +143,7 @@ class FormularioOperacion:
         frame_info_placa=tk.Frame(frame_info_cliente)
         frame_info_placa.grid(column=0, row=0, padx=2, pady=2)
 
-        label_placa=tk.Label(frame_info_placa, text="Ingrese Placa o lea Tarjetón", font=('Arial', 25))
+        label_placa=tk.Label(frame_info_placa, text="Ingrese Placa", font=('Arial', 25))
         label_placa.grid(column=0, row=0, padx=2, pady=2)
 
         self.Placa=tk.StringVar()
@@ -374,7 +374,7 @@ class FormularioOperacion:
         self.boton3=tk.Button(self.label_botones_boletos_perdido, text="Boleto Perdido\nCON FOLIO", background=button_color, fg=button_letters_color, command=self.BoletoPerdido_conFolio, width=10, height=3, anchor="center", font=("Arial", 10))
         self.boton3.grid(column=1, row=1, sticky=tk.NE, padx=10, pady=5)
 
-        self.boton3=tk.Button(self.label_botones_boletos_perdido, text="Boleto Perdido\nSIN FOLIO", background=button_color, fg=button_letters_color, command=self.BoletoPerdido_sinFolio, width=10, height=3, anchor="center", font=("Arial", 10), state = "disabled")
+        self.boton3=tk.Button(self.label_botones_boletos_perdido, text="Boleto Perdido\nSIN FOLIO", background=button_color, fg=button_letters_color, command=self.BoletoPerdido_sinFolio, width=10, height=3, anchor="center", font=("Arial", 10))
         self.boton3.grid(column=2, row=1, sticky=tk.NE, padx=10, pady=5)
 
 
@@ -2270,7 +2270,6 @@ class FormularioOperacion:
             self.limpiar_datos_pago()
             return
 
-        numtarjeta = int(numtarjeta)
         resultado = self.DB.ValidarRFID(numtarjeta)
 
         if not resultado:
@@ -2306,6 +2305,7 @@ class FormularioOperacion:
         if Estatus == "Inactiva":
             # Cálculo del pago con penalizacion para estatus Inactiva
             pago = self.calcular_pago_media_pension(monto)
+            nummes = 1
             valor_tarjeta_pension = valor_tarjeta
             if cortesia == "Si":
                 pago = 0
@@ -2377,7 +2377,7 @@ class FormularioOperacion:
         Raises:
             TypeError: Si no se ha seleccionado una forma de pago.
         """
-        numtarjeta = str(self.variable_numero_tarjeta.get())
+        tarjeta = self.variable_numero_tarjeta.get()
         nummes = int(self.meses_pago.get())
 
         try:
@@ -2389,12 +2389,11 @@ class FormularioOperacion:
             if not self.variable_tipo_pago_transferencia.get() and not self.variable_tipo_pago_efectivo.get():
                 raise TypeError("Selecciona una forma de pago")
 
-            if not numtarjeta:
+            if not tarjeta:
                 mb.showwarning("IMPORTANTE", "Debe Leer el Numero de Tarjeta")
                 self.caja_texto_numero_tarjeta.focus()
                 return
 
-            tarjeta = int(numtarjeta)
             Existe = self.DB.ValidarRFID(tarjeta)
 
             if not Existe:
@@ -2422,6 +2421,7 @@ class FormularioOperacion:
             pago = 0
             if Estatus == "Inactiva":
                 pago = self.calcular_pago_media_pension(monto)
+                nummes = 1
                 total = pago + valor_tarjeta
                 pago = total
                 if cortesia == "Si":
