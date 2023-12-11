@@ -4,12 +4,18 @@ from tkinter import messagebox as mb
 import qrcode
 
 class Operacion:
+	def __init__(self):
+		self.host = "169.254.202.242"
+		self.user = "Aurelio"
+		self.password = "RG980320"
+		self.database = "Parqueadero1"
 
 	def abrir(self):
-		conexion = pymysql.connect(host="169.254.202.242",
-						   user="Aurelio",
-						   passwd="RG980320",
-						   database="Parqueadero1")                             
+		conexion=pymysql.connect(host=self.host,
+								user=self.user,
+								passwd=self.password,
+								database=self.database)
+
 		return conexion
 		
 	def Intervalo(self):

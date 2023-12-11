@@ -4,12 +4,18 @@ import qrcode
 from tkinter import messagebox as mb
 
 class Operacion:
+	def __init__(self):
+		self.host = "169.254.202.242"
+		self.user = "Aurelio"
+		self.password = "RG980320"
+		self.database = "Parqueadero1"
 
 	def abrir(self):
-		conexion = pymysql.connect(host="169.254.202.242",
-						   user="Aurelio",
-						   passwd="RG980320",
-						   database="Parqueadero1")                             
+		conexion=pymysql.connect(host=self.host,
+								user=self.user,
+								passwd=self.password,
+								database=self.database)
+
 		return conexion
 		
 	def Intervalo(self):
@@ -256,7 +262,7 @@ class Operacion:
 	def MovsPensionado(self, datos):
 		cone=self.abrir()
 		cursor=cone.cursor()
-        sql="INSERT INTO MovimientosPens(idcliente, num_tarjeta, Entrada, Estatus, Corte) values (%s,%s,%s,%s,%s)"
+		sql="INSERT INTO MovimientosPens(idcliente, num_tarjeta, Entrada, Estatus, Corte) values (%s,%s,%s,%s,%s)"
 		cursor.execute(sql,datos)
 		cone.commit()
 		cone.close()
