@@ -293,8 +293,8 @@ class FormularioOperacion:
 
         printer.set("center")        
         printer.text(f'Entro: {fechaEntro[:-3]}\n')
-        p.text('Monterrey No. 75\n')
-        p.text('Entrada Durango \n')
+        printer.text('Monterrey No. 75\n')
+        printer.text('Entrada Durango \n')
         printer.set(align = "left")
         printer.image(qr_imagen)
 
