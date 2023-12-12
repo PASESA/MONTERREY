@@ -50,6 +50,7 @@ font_reloj = ('Arial', 65)
 
 font_etiquetas = ('Arial', 30, 'bold')
 
+fullscreen = True
 
 from enum import Enum
 class Colors(Enum):
@@ -107,12 +108,18 @@ class Entrada:
         self.root=tk.Tk()
         self.root.title(f"{nombre_estacionamiento} Entrada {nombre_entrada}")
 
-        # Obtener el ancho y alto de la pantalla
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
+        if fullscreen:
+            # Obtener el ancho y alto de la pantalla
+            screen_width = self.root.winfo_screenwidth()
+            screen_height = self.root.winfo_screenheight()
 
-        # Configura la ventana para que ocupe toda la pantalla
-        # self.root.geometry(f"{screen_width}x{screen_height}+0+0")
+            # Configura la ventana para que ocupe toda la pantalla
+            # self.root.geometry(f"{screen_width}x{screen_height}+0+0")
+
+            self.root.attributes('-fullscreen', True)  
+            self.fullScreenState = False
+            self.root.bind("<F11>", self.toggleFullScreen)
+            self.root.bind("<Escape>", self.quitFullScreen)
 
         # Colocar el LabelFrame en las coordenadas calculadas
         self.principal = tk.LabelFrame(self.root)
@@ -126,7 +133,7 @@ class Entrada:
         self.check_inputs()
 
         self.root.mainloop()
-        ###########################Inicia Pagina1##########################
+
 
     def ExpedirRfid(self):
         seccion_entrada = tk.Frame(self.principal)
@@ -517,6 +524,14 @@ class Entrada:
         """
         label.config(text=new_text.value, background=new_color.value)
 
+    def toggleFullScreen(self, event):
+        self.fullScreenState = not self.fullScreenState
+        self.root.attributes("-fullscreen", self.fullScreenState)
+        self.entry_numero_tarjeta.focus() 
 
+    def quitFullScreen(self, event):
+        self.entry_numero_tarjeta.focus()
+        self.fullScreenState = False
+        self.root.attributes("-fullscreen", self.fullScreenState)
 
 instancia = Entrada()
