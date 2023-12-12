@@ -109,7 +109,7 @@ class FormularioOperacion:
             self.reloj = RelojAnalogico()
 
         self.root.mainloop()
-        ###########################Inicia Pagina1##########################
+
 
     def ExpedirRfid(self):
         seccion_entrada = tk.Frame(self.cuaderno1)
