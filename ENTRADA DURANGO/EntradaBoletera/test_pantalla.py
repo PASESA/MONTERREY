@@ -2,34 +2,101 @@ from datetime import datetime, timedelta
 from escpos.printer import Usb
 import traceback
 import tkinter as tk
-from tkinter import ttk
-
 from operacion import Operacion
 from time import sleep
+from enum import Enum
+
+
+class Colors(Enum):
+    """
+    Enumeración que representa colores predefinidos.
+
+    Cada color tiene un nombre asociado y un código hexadecimal.
+    """
+    # Códigos hexadecimales para los colores
+    GREEN:str = "#00FF00"
+    RED:str = "#FF0000"
+
+class Alerts(Enum):
+    """
+    Enumeración de mensajes con descripciones.
+
+    Los miembros de esta enumeración representan mensajes comunes
+    y tienen asociadas cadenas descriptivas.
+    """
+    AUTO_EXISTS:str = "Hay auto"
+    AUTO_NOT_EXISTS:str = "No hay auto"
+
+    BUTTON_PRESSED:str = "Boton presionado."
+    BUTTON_NOT_PRESSED:str = "Boton sin precionar"
+
+class System_Messages(Enum):
+    """
+    Enumeración de mensajes con descripciones.
+
+    Los miembros de esta enumeración representan mensajes comunes
+    y tienen asociadas cadenas descriptivas.
+    """
+    TAKE_TICKET:str = "Tome su boleto\n"
+    NOT_AUTO:str = "No hay auto\n"
+
+    NOT_EXIST_PENSION:str = "No existe Pensionado\n"
+    DESACTIVATE_CARD:str = "Tarjeta desactivada\n"
+
+    PENSION_INSIDE:str = "El Pensionado ya está dentro\n"
+    PENSION_EXPIRED:str = "Pensión vencida\n"
+
+    PROCEED:str = "Avance\n"
+    PRESS_BUTTON:str = "Precione boton\n"
+    ERROR:str = "Ha ocurrido un error\n Lea nuevamente la tarjeta"
+
+    NONE_MESAGE:str = "...\n"
+
+class Pines(Enum):
+    PIN_BARRERA:int = 17
+    PIN_BOTON:int = 20
+    PIN_SENSOR_AUTO:int = 21
+    PIN_SENSOR_BOLETO:int = 16
+
+
+    PIN_INDICADOR_BARRERA:int = 27
+    PIN_INDICADOR_BOTON:int = 18
+
+    PIN_INDICADOR_SENSOR_AUTO:int = 22
+    PIN_INDICADOR_SENSOR_BOLETO:int = 0
+
+class State(Enum):
+    ON = 0
+    OFF = 1
+
 import RPi.GPIO as io           # Importa libreria de I/O (entradas / salidas)
 
-loop = 21                      #gpio5,pin29,entrada loop                    
-boton = 20                     #gpio6,pin31,entrada boton
-SenBBoleto = 16                #gpio13,pin33,sensor boleto
-barrera = 17                  #gpio17,pin11,Salida barrera
-out1 = 22                     #gpio22,pin15,Salida indicador loop
-out2 = 18                     #gpio18,pin12,Salida indicador boton
-out3 = 27                     #gpio27,pin13,Salida indicador barrera
+Pines.PIN_SENSOR_AUTO.value = 21                      #gpio5,pin29,entrada loop                    
+Pines.PIN_BOTON.value = 20                     #gpio6,pin31,entrada boton
+Pines.PIN_SENSOR_BOLETO.value = 16                #gpio13,pin33,sensor boleto
+Pines.PIN_BARRERA.value = 17                  #gpio17,pin11,Salida barrera
+
+Pines.PIN_INDICADOR_SENSOR_AUTO.value = 22                     #gpio22,pin15,Salida indicador loop
+Pines.PIN_INDICADOR_BOTON.value = 18                     #gpio18,pin12,Salida indicador boton
+Pines.PIN_INDICADOR_BARRERA.value = 27                     #gpio27,pin13,Salida indicador barrera
 
 io.setmode(io.BCM)              # modo in/out pin del micro
 io.setwarnings(False)           # no señala advertencias de pin ya usados
-io.setup(loop,io.IN)             # configura en el micro las entradas
-io.setup(boton,io.IN)             # configura en el micro las entradas
-io.setup(SenBBoleto,io.IN)             # configura en el micro las entradas
-io.setup(barrera,io.OUT)           # configura en el micro las salidas
-io.setup(out1,io.OUT)           # configura en el micro las salidas
-io.setup(out2,io.OUT)
-io.setup(out3,io.OUT)  
 
-io.output(barrera,1)
-io.output(out1,1)
-io.output(out2,1)
-io.output(out3,1)
+io.setup(Pines.PIN_SENSOR_AUTO.value,io.IN)             # configura en el micro las entradas
+io.setup(Pines.PIN_BOTON.value,io.IN)             # configura en el micro las entradas
+io.setup(Pines.PIN_SENSOR_BOLETO.value,io.IN)             # configura en el micro las entradas
+
+
+io.setup(Pines.PIN_BARRERA.value,io.OUT)           # configura en el micro las salidas
+io.setup(Pines.PIN_INDICADOR_SENSOR_AUTO.value,io.OUT)           # configura en el micro las salidas
+io.setup(Pines.PIN_INDICADOR_BOTON.value,io.OUT)
+io.setup(Pines.PIN_INDICADOR_BARRERA.value,io.OUT)  
+
+io.output(Pines.PIN_BARRERA.value,1)
+io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value,1)
+io.output(Pines.PIN_INDICADOR_BOTON.value,1)
+io.output(Pines.PIN_INDICADOR_BARRERA.value,1)
 
 BanLoop =1
 BanBoton=1
@@ -50,55 +117,9 @@ font_reloj = ('Arial', 65)
 
 font_etiquetas = ('Arial', 30, 'bold')
 
-fullscreen = True
+fullscreen = False
 
-from enum import Enum
-class Colors(Enum):
-    """
-    Enumeración que representa colores predefinidos.
 
-    Cada color tiene un nombre asociado y un código hexadecimal.
-    """
-    # Códigos hexadecimales para los colores
-    GREEN = "#00FF00"
-    RED = "#FF0000"
-
-class Alerts(Enum):
-    """
-    Enumeración de mensajes con descripciones.
-
-    Los miembros de esta enumeración representan mensajes comunes
-    y tienen asociadas cadenas descriptivas.
-    """
-    AUTO_EXISTS = "Hay auto"
-    AUTO_NOT_EXISTS = "No hay auto"
-
-    BUTTON_PRESSED = "Boton presionado."
-    BUTTON_NOT_PRESSED = "Boton sin precionar"
-
-class System_Messages(Enum):
-    """
-    Enumeración de mensajes con descripciones.
-
-    Los miembros de esta enumeración representan mensajes comunes
-    y tienen asociadas cadenas descriptivas.
-    """
-    NOT_EXIST_PENSION = "No existe Pensionado\n"
-    DESACTIVATE_CARD = "Tarjeta desactivada\n"
-
-    PENSION_INSIDE = "El Pensionado ya está dentro\n"
-    PENSION_EXPIRED = "Pensión vencida\n"
-
-    PROCEED = "Avance\n"
-    PRESS_BUTTON = "Precione boton\n"
-    ERROR = "Ha ocurrido un error\n Lea nuevamente la tarjeta"
-
-    NONE_MESAGE = "...\n"
-
-class Pines(Enum):
-    PIN_SENSOR = 0
-    PIN_BARRERA = 0
-    PIN_BOTON = 0
 
 class Entrada:
     def __init__(self):
@@ -118,8 +139,8 @@ class Entrada:
 
             self.root.attributes('-fullscreen', True)  
             self.fullScreenState = False
-            self.root.bind("<F11>", self.toggleFullScreen)
-            self.root.bind("<Escape>", self.quitFullScreen)
+            self.root.bind("<F11>", self.enter_fullscreen)
+            self.root.bind("<Escape>", self.exit_fullscreen)
 
         # Colocar el LabelFrame en las coordenadas calculadas
         self.principal = tk.LabelFrame(self.root)
@@ -133,7 +154,6 @@ class Entrada:
         self.check_inputs()
 
         self.root.mainloop()
-
 
     def ExpedirRfid(self):
         seccion_entrada = tk.Frame(self.principal)
@@ -204,112 +224,97 @@ class Entrada:
 
         self.entry_numero_tarjeta.focus()
 
-    def SenBoleto(self): #Detecta presencia de automovil
-        global SenBBoleto
-        if io.input(SenBBoleto):
-                 
-                io.output(out3,1)#con un "1" se apaga el led
-                #self.loopDet.config(text = "Inicio", background = '#CCC')                
-                BanSenBoleto = 1
-                print('no siente boleto '+str(BanSenBoleto))
-                #self.check_inputs()
+    def SenBoleto(self): #Detecta presencia de boleto
+        global BanSenBoleto
+        if io.input(Pines.PIN_SENSOR_BOLETO.value):
+            io.output(Pines.PIN_INDICADOR_BARRERA.value ,State.OFF.value)#con un "1" se apaga el led
+            BanSenBoleto = State.OFF.value
+            print('no siente boleto')
+
         else:                
-                 
-                io.output(out3,0)                              
-                #self.loopDet.config(text = "Auto", background = 'red')
-                BanSenBoleto = 0
-                print('siente boleto '+str(BanSenBoleto))
-                #self.check_inputs()
+            io.output(Pines.PIN_INDICADOR_BARRERA.value ,State.ON.value)                              
+            BanSenBoleto = State.ON.value
+            print('siente boleto')
 
     def Intloop(self): #Detecta presencia de automovil
         global BanLoop
-        if io.input(loop):
-                print('no hay auto') 
-                io.output(out1,1)#con un "1" se apaga el led
-                #self.loopDet.config(text = "Inicio", background = '#CCC')                
-                BanLoop = 1
-                #BanImpresion = 0
-                #self.check_inputs()
-        else:                
-                print('hay auto') 
-                io.output(out1,0)                              
-                #self.loopDet.config(text = "Auto", background = 'red')
-                BanLoop = 0
-                #self.check_inputs()
+        if io.input(Pines.PIN_SENSOR_AUTO.value):
+            print('no hay auto') 
+            io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value ,State.OFF.value)#con un "1" se apaga el led              
+            BanLoop = State.OFF.value
 
-    def IntBoton(self): #Detecta presencia de automovil
-        global BanBoton
-        if io.input(boton):
-                        #self.BotDet.config(text = "Presione Boton",background="#CCC")
-                        print('solto boton')
-                        io.output(out2,1)
-                        BanBoton = 1
         else:
-                        print('presiono boton')            
-                        io.output(out2,0)
-                        #self.BotDet.config(text = "Imprimiendo",background="red")
-                        BanBoton = 0
-                        #self.agregarRegistroRFID()
+            print('hay auto') 
+            io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value ,State.ON.value)
+            BanLoop = State.ON.value
 
-    io.add_event_detect(loop, io.BOTH, callback = Intloop)
-    io.add_event_detect(boton, io.BOTH, callback = IntBoton)
-    io.add_event_detect(SenBBoleto, io.BOTH, callback = SenBoleto)
+    def IntBoton(self): #Detecta presion de boton
+        global BanBoton
+        if io.input(Pines.PIN_BOTON.value):
+            print('solto boton')
+            io.output(Pines.PIN_INDICADOR_BOTON.value ,State.OFF.value)
+            BanBoton = State.OFF.value
+
+        else:
+            print('presiono boton')            
+            io.output(Pines.PIN_INDICADOR_BOTON.value ,State.ON.value)
+            BanBoton = State.ON.value
+
+    io.add_event_detect(Pines.PIN_SENSOR_AUTO.value, io.BOTH, callback = Intloop)
+    io.add_event_detect(Pines.PIN_BOTON.value, io.BOTH, callback = IntBoton)
+    io.add_event_detect(Pines.PIN_SENSOR_BOLETO.value, io.BOTH, callback = SenBoleto)
 
     def check_inputs(self):
         global BanBoton
         global BanLoop
         global BanImpresion
     
-        if BanLoop == 0:
-                self.loopDet.config(text = " hay auto", background = 'green')
-                tarjeta=str(self.entry_numero_tarjeta.get(),)
-                if len(tarjeta) == 10:
-                    self.Pensionados(self)
+        if BanLoop == State.ON.value:
+            self.change_info_label(self.label_auto, Alerts.AUTO_EXISTS, Colors.GREEN)
+            tarjeta = self.entry_numero_tarjeta.get()
+            if len(tarjeta) == 10:
+                self.Pensionados(self)
         else:
-                self.loopDet.config(text = "No Siente Auto", background = '#CCC')
-                self.labelMensaje.config(text= "No ejecuta Pensionado")
-                self.variable_numero_tarjeta.set("")               
-                self.entry_numero_tarjeta.focus()
-                BanImpresion = 0
-        if (BanBoton == 1):#BanBoton == 1 no esta oprimido el boton
-            self.BotDet.config(text = "solto Boton ",background="#CCC")
-            #print(str(BanSenBoleto))
-            if BanImpresion == 1: #and BanSenBoleto == 1:# mando a imprimir y ya no tiene boleto en la boquilla
-                self.SenBol.config(text = "No siente boleto ")
-                #print("En BanBoton= 1 "+str(BanSenBoleto))
+            self.change_info_label(self.label_auto, Alerts.AUTO_NOT_EXISTS, Colors.RED)
+            print("No ejecuta Pensionado")
+            self.variable_numero_tarjeta.set("")               
+            self.entry_numero_tarjeta.focus()
+            BanImpresion = State.ON.value
 
-                                    #io.output(out2,1)
-        else:    
-                self.BotDet.config(text = "presiono Boton imprime ",background="green")
-                print("BanSenBoleto ",str(BanSenBoleto))
-                print("BanImpresion ",str(BanImpresion))
-                print("BamLoop ",str(BanLoop))
-                if BanLoop==0 and BanImpresion == 0:
-                    #io.output(out2,0)             
-                   print('imprimir')
-                   #print(str(BanSenBoleto))
-                   self.agregarRegistroRFID()
+        if BanBoton == State.ON.value:
+            self.change_info_label(self.label_boton, Alerts.BUTTON_PRESSED, Colors.GREEN)
+            print("BanSenBoleto ",str(BanSenBoleto))
+            print("BanImpresion ",str(BanImpresion))
+            print("BamLoop ",str(BanLoop))
 
-                   self.abrir_barrera()
+            if BanLoop ==State.ON.value and BanImpresion == State.ON.value:
+                print('imprimir boleto')
+                self.agregarRegistroRFID()
 
-                   #BanImpresion = 0
-                   BanImpresion = 1
-                   if BanSenBoleto == 1:
-                      print("En BanSenBoleto= 1 "+str(BanSenBoleto))
-                      # self.SenBol.config(text = "No siente boleto ")
-                      # io.output(out3,1)#con un "1" se apaga el led
-                       #io.output(barrera,0)#con un "0" abre la barrera
-                       #time.sleep (1)
-                       #io.output(barrera,1)
-                   else:                   
-                      self.SenBol.config(text = "siente boleto ")
-                    
+                self.abrir_barrera()
+
+                #BanImpresion = 0
+                BanImpresion = State.OFF.value
+                if BanSenBoleto == State.OFF.value:
+                    print("En BanSenBoleto= 1 "+str(BanSenBoleto))
+
                 else:
-                   print ('no puede imprimir porque no tiene Auto')
-                   #print(str(BanSenBoleto))
-                   self.BotDet.config(text = "no puede imprimir no hay auto ",background="red")
+                    self.show_message(System_Messages.TAKE_TICKET)
+
+            else:
+                self.show_message(System_Messages.PRESS_BUTTON)
+                print ('no puede imprimir porque no tiene Auto')
+
+        else:
+            self.change_info_label(self.label_boton, Alerts.BUTTON_NOT_PRESSED, Colors.RED)
+
+            # if BanImpresion == 1: #and BanSenBoleto == 1:# mando a imprimir y ya no tiene boleto en la boquilla
+            #     self.SenBol.config(text = "No siente boleto ")
+
+
+
         # Con un "1" se apaga el led
-        io.output(out3,1)
+        io.output(Pines.PIN_INDICADOR_BARRERA.value, State.OFF.value)
 
 
         fecha_hora =datetime.now().strftime("%d-%b-%Y %H:%M:%S")
@@ -370,44 +375,6 @@ class Entrada:
         """
         try:
             numtarjeta = self.variable_numero_tarjeta.get()
-            # if numtarjeta ==  1:
-            #     self.change_info_label(self.label_boton, Alerts.BUTTON_PRESSED, Colors.GREEN)
-            #     self.change_info_label(self.label_auto, Alerts.AUTO_EXISTS, Colors.GREEN)
-
-            # if numtarjeta ==  2:
-            #     self.change_info_label(self.label_boton, Alerts.BUTTON_NOT_PRESSED, Colors.RED)
-            #     self.change_info_label(self.label_auto, Alerts.AUTO_NOT_EXISTS, Colors.RED)
-
-            # if numtarjeta ==  3:
-            #     self.change_info_label(self.label_boton, Alerts.BUTTON_NOT_PRESSED, Colors.RED)
-            #     self.change_info_label(self.label_auto, Alerts.AUTO_EXISTS, Colors.GREEN)
-
-            # if numtarjeta ==  4:
-            #     self.change_info_label(self.label_boton, Alerts.BUTTON_PRESSED, Colors.GREEN)
-            #     self.change_info_label(self.label_auto, Alerts.AUTO_NOT_EXISTS, Colors.RED)
-
-
-            # if numtarjeta ==  5:
-            #     self.show_message(System_Messages.DESACTIVATE_CARD)
-
-            # if numtarjeta ==  6:
-            #     self.show_message(System_Messages.ERROR)
-
-            # if numtarjeta ==  7:
-            #     self.show_message(System_Messages.NOT_EXIST_PENSION)
-
-            # if numtarjeta ==  8:
-            #     self.show_message(System_Messages.PENSION_EXPIRED)
-
-            # if numtarjeta ==  9:
-            #     self.show_message(System_Messages.PENSION_INSIDE)
-
-            # if numtarjeta ==  10:
-            #     self.show_message(System_Messages.PRESS_BUTTON)
-
-            # if numtarjeta ==  11:
-            #     self.show_message(System_Messages.PROCEED)
-
 
             print(numtarjeta)
             Existe = self.DB.ValidarPen(numtarjeta)
@@ -472,15 +439,15 @@ class Entrada:
         self.show_message(System_Messages.PROCEED)
         sleep(1)
         # Con un "1" se apaga el led
-        io.output(out3,1)
+        io.output(Pines.PIN_INDICADOR_BARRERA.value,State.OFF.value)
 
         # Con un "0" abre la barrera
-        io.output(out1, 0)
+        io.output(Pines.PIN_BARRERA.value, State.ON.value)
         sleep(1)
-        io.output(out1, 1)
+        io.output(Pines.PIN_BARRERA.value, State.OFF.value)
 
         print('------------------------------')
-        print("Se abre barrera")
+        print("****** Se abre barrera *******")
         print('------------------------------')
 
     def get_date_limit(self, date_start:datetime, Tolerance:int) -> datetime:
@@ -510,7 +477,7 @@ class Entrada:
         """
         self.label_informacion.config(text=message.value)
         self.variable_numero_tarjeta.set("")
-        self.entry_numero_tarjeta
+        self.entry_numero_tarjeta.focus()
 
     def change_info_label(self, label:tk.Label, new_text:Alerts, new_color:Colors) -> None:
         """
@@ -524,14 +491,19 @@ class Entrada:
         """
         label.config(text=new_text.value, background=new_color.value)
 
-    def toggleFullScreen(self, event):
+    def enter_fullscreen(self, event):
         self.fullScreenState = not self.fullScreenState
         self.root.attributes("-fullscreen", self.fullScreenState)
         self.entry_numero_tarjeta.focus() 
 
-    def quitFullScreen(self, event):
+    def exit_fullscreen(self, event):
         self.entry_numero_tarjeta.focus()
         self.fullScreenState = False
         self.root.attributes("-fullscreen", self.fullScreenState)
 
-instancia = Entrada()
+
+
+
+if __name__ == '__main__':
+    Entrada()
+
