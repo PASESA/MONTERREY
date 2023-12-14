@@ -53,16 +53,16 @@ class System_Messages(Enum):
     NONE_MESAGE:str = "...\n"
 
 class Pines(Enum):
-    PIN_BARRERA:int = 17
-    PIN_BOTON:int = 20
-    PIN_SENSOR_AUTO:int = 21
-    PIN_SENSOR_BOLETO:int = 16
+    PIN_BARRERA:int = 17 # gpio17,pin11,Salida 
+    PIN_BOTON:int = 20 # gpio20,pin38,Salida 
+    PIN_SENSOR_AUTO:int = 21 # gpio21,pin40,Entrada 
+    PIN_SENSOR_BOLETO:int = 16 # gpio16,pin36,Salida 
 
 
-    PIN_INDICADOR_BARRERA:int = 27
-    PIN_INDICADOR_BOTON:int = 18
+    PIN_INDICADOR_BARRERA:int = 27 # gpio27,pin13,Salida 
+    PIN_INDICADOR_BOTON:int = 18 # gpio18,pin12,Salida
 
-    PIN_INDICADOR_SENSOR_AUTO:int = 22
+    PIN_INDICADOR_SENSOR_AUTO:int = 22 # gpio22,pin15,Salida
     PIN_INDICADOR_SENSOR_BOLETO:int = 0
 
 class State(Enum):
@@ -71,14 +71,6 @@ class State(Enum):
 
 import RPi.GPIO as io           # Importa libreria de I/O (entradas / salidas)
 
-Pines.PIN_SENSOR_AUTO.value = 21                      #gpio5,pin29,entrada loop                    
-Pines.PIN_BOTON.value = 20                     #gpio6,pin31,entrada boton
-Pines.PIN_SENSOR_BOLETO.value = 16                #gpio13,pin33,sensor boleto
-Pines.PIN_BARRERA.value = 17                  #gpio17,pin11,Salida barrera
-
-Pines.PIN_INDICADOR_SENSOR_AUTO.value = 22                     #gpio22,pin15,Salida indicador loop
-Pines.PIN_INDICADOR_BOTON.value = 18                     #gpio18,pin12,Salida indicador boton
-Pines.PIN_INDICADOR_BARRERA.value = 27                     #gpio27,pin13,Salida indicador barrera
 
 io.setmode(io.BCM)              # modo in/out pin del micro
 io.setwarnings(False)           # no señala advertencias de pin ya usados
@@ -93,15 +85,16 @@ io.setup(Pines.PIN_INDICADOR_SENSOR_AUTO.value,io.OUT)           # configura en 
 io.setup(Pines.PIN_INDICADOR_BOTON.value,io.OUT)
 io.setup(Pines.PIN_INDICADOR_BARRERA.value,io.OUT)  
 
-io.output(Pines.PIN_BARRERA.value,1)
-io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value,1)
-io.output(Pines.PIN_INDICADOR_BOTON.value,1)
-io.output(Pines.PIN_INDICADOR_BARRERA.value,1)
 
-BanLoop =1
-BanBoton=1
-BanSenBoleto=0
-BanImpresion=0 #No ha impreso
+io.output(Pines.PIN_BARRERA.value, State.OFF.value)
+io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value, State.OFF.value)
+io.output(Pines.PIN_INDICADOR_BOTON.value, State.OFF.value)
+io.output(Pines.PIN_INDICADOR_BARRERA.value, State.OFF.value)
+
+BanLoop = State.OFF.value
+BanBoton = State.OFF.value
+BanSenBoleto = State.ON.value
+BanImpresion = State.ON.value #No ha impreso
 
 logo_1 = "LOGO1.jpg"
 AutoA = "AutoA.png"
@@ -227,7 +220,7 @@ class Entrada:
     def SenBoleto(self): #Detecta presencia de boleto
         global BanSenBoleto
         if io.input(Pines.PIN_SENSOR_BOLETO.value):
-            io.output(Pines.PIN_INDICADOR_BARRERA.value ,State.OFF.value)#con un "1" se apaga el led
+            io.output(Pines.PIN_INDICADOR_BARRERA.value, State.OFF.value)#con un "1" se apaga el led
             BanSenBoleto = State.OFF.value
             print('no siente boleto')
 
@@ -240,7 +233,7 @@ class Entrada:
         global BanLoop
         if io.input(Pines.PIN_SENSOR_AUTO.value):
             print('no hay auto') 
-            io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value ,State.OFF.value)#con un "1" se apaga el led              
+            io.output(Pines.PIN_INDICADOR_SENSOR_AUTO.value, State.OFF.value)#con un "1" se apaga el led              
             BanLoop = State.OFF.value
 
         else:
@@ -252,7 +245,7 @@ class Entrada:
         global BanBoton
         if io.input(Pines.PIN_BOTON.value):
             print('solto boton')
-            io.output(Pines.PIN_INDICADOR_BOTON.value ,State.OFF.value)
+            io.output(Pines.PIN_INDICADOR_BOTON.value, State.OFF.value)
             BanBoton = State.OFF.value
 
         else:
