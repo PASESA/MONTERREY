@@ -603,6 +603,10 @@ class Entrada:
 
         # Si ocurre una excepción
         except Exception as e:
+            # Limpiar el entry de la tarjeta
+            self.variable_numero_tarjeta.set("")               
+            # Dar el foco al entry de la tarjeta
+            self.entry_numero_tarjeta.focus()
             # Imprimir la excepción en la consola
             print(e)
             # Imprimir la traza de la excepción en la consola
