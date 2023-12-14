@@ -5,3 +5,4 @@ python-escpos==2.2.0
 python-dateutil==2.8.2
 qrcode==7.4.2
 XlsxWriter==3.1.0
+RPi.GPIO==0.7.1
