@@ -19,10 +19,10 @@ import operacion
 import time
 import serial
 import RPi.GPIO as io           # Importa libreria de I/O (entradas / salidas)
-loop = 5                      #gpio5,pin29,entrada loop                    
-boton = 6                     #gpio6,pin31,entrada boton
-SenBoleto = 13                #gpio13,pin33,sensor boleto
-barrera = 17                  #gpio17,pin11,Salida barrera
+loop = 6                      #gpio5,pin29,entrada loop                    
+boton = 23                     #gpio6,pin31,entrada boton
+SenBoleto = 16                #gpio13,pin33,sensor boleto
+barrera = 11                  #gpio17,pin11,Salida barrera
 out1 = 22                     #gpio22,pin15,Salida indicador loop
 out2 = 18                     #gpio18,pin12,Salida indicador boton
 out3 = 27                     #gpio27,pin13,Salida indicador barrera
