@@ -105,11 +105,11 @@ class FormularioOperacion:
         self.cuaderno1.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
         self.cuaderno1.config(cursor="")         # Tipo de cursor
-        self.ExpedirRfid()
+        self.modulo_boletos()
         self.check_inputs()
-        self.consulta_por_folio()
-        self.listado_completo()
-        self.interface_pensionados()
+        self.modulo_cobro()
+        self.modulo_corte()
+        self.modulo_pensionados()
         self.cuaderno1.grid(column=0, row=0, padx=2, pady=5)
         if show_clock:
             self.reloj = RelojAnalogico()
@@ -117,7 +117,7 @@ class FormularioOperacion:
         self.root.mainloop()
 
 
-    def ExpedirRfid(self):
+    def modulo_boletos(self):
         seccion_entrada = tk.Frame(self.cuaderno1)
         self.cuaderno1.add(seccion_entrada, text="Expedir Boleto")
 
@@ -170,7 +170,7 @@ class FormularioOperacion:
         entryMaxId=ttk.Entry(frame_folio, width=12, textvariable=self.MaxId, state="readonly", font=font_entrada)
         entryMaxId.grid(column=1, row=0, padx=2, pady=2, sticky=tk.NW)
 
-        boton_entrada=tk.Button(frame_boton, text="Generar Entrada", width=15, height=3, anchor="center", background=button_color, fg=button_letters_color, font=font_entrada_negritas, command=self.agregarRegistroRFID)
+        boton_entrada=tk.Button(frame_boton, text="Generar Entrada", width=15, height=3, anchor="center", background=button_color, fg=button_letters_color, font=font_entrada_negritas, command=self.generar_boleto)
         boton_entrada.grid(column=0, row=1, padx=2, pady=2)
         
 
@@ -194,7 +194,7 @@ class FormularioOperacion:
         self.Reloj.config(text=fecha_hora)            
         self.root.after(60, self.check_inputs)
 
-    def agregarRegistroRFID(self):
+    def generar_boleto(self):
         placa=self.Placa.get()
         if not placa and required_plate:
             self.label_informacion.config(text=f"Error: Ingrese una placa")
@@ -204,7 +204,7 @@ class FormularioOperacion:
         self.MaxId.set(folio_boleto)
 
         folio_cifrado = self.DB.cifrar_folio(folio = folio_boleto)
-        # print(f"QR entrada: {folio_cifrado}")
+        print(f"QR entrada: {folio_cifrado}")
 
         #Generar QR
         self.DB.generar_QR(folio_cifrado)
@@ -237,9 +237,9 @@ class FormularioOperacion:
         self.label_informacion.config(text="Se genera boleto")
 
     #########################fin de pagina1 inicio pagina2#########################
-    def consulta_por_folio(self):
+    def modulo_cobro(self):
         self.pagina2 = ttk.Frame(self.cuaderno1)
-        self.cuaderno1.add(self.pagina2, text=" Modulo de Cobro")
+        self.cuaderno1.add(self.pagina2, text="Modulo de Cobro")
         #en el frame
         self.FOLIO_QR=tk.LabelFrame(self.pagina2, text="FOLIO_QR")
         self.FOLIO_QR.grid(column=0, row=0, padx=2, pady=10, sticky=tk.NW)
@@ -308,11 +308,11 @@ class FormularioOperacion:
         self.lbl3.grid(column=0, row=3, padx=4, pady=4)
 
 
-        self.IImporte = tk.Label(self.labelframe3, text="") #Creacion del Label
-        self.IImporte.config(width =4)
-        self.IImporte.config(background="white") #Cambiar color de fondo
-        self.IImporte.config(font=('Arial', 48)) #Cambiar tipo y tamaño de fuente
-        self.IImporte.grid(column=1, row=4, padx=0, pady=0)   
+        self.etiqueta_importe = tk.Label(self.labelframe3, text="") #Creacion del Label
+        self.etiqueta_importe.config(width =4)
+        self.etiqueta_importe.config(background="white") #Cambiar color de fondo
+        self.etiqueta_importe.config(font=('Arial', 48)) #Cambiar tipo y tamaño de fuente
+        self.etiqueta_importe.grid(column=1, row=4, padx=0, pady=0)   
 
 
         #se crea objeto para MOSTRAR LA HORA DEL CALCULO
@@ -544,7 +544,7 @@ class FormularioOperacion:
 
     def consultar(self, event):
         # Vaciar campo de importe
-        self.IImporte.config(text="")
+        self.etiqueta_importe.config(text="")
 
         # Obtener folio
         datos=str(self.folio.get())
@@ -591,7 +591,7 @@ class FormularioOperacion:
         :return: None
         """
         # Borra el valor actual del importe
-        self.IImporte.config(text="")
+        self.etiqueta_importe.config(text="")
 
         # Obtiene el valor de salida
         salida = self.fecha_salida.get()
@@ -997,7 +997,7 @@ class FormularioOperacion:
 
 
     ###################### Fin de Pagina2 Inicio Pagina3 ###############################
-    def listado_completo(self):
+    def modulo_corte(self):
         self.motive_cancel=tk.StringVar()
 
         self.modulo_corte = ttk.Frame(self.cuaderno1)
@@ -2061,7 +2061,7 @@ class FormularioOperacion:
 
 
     ###################### Fin de Pagina2 Inicio Pagina3 ###############################
-    def interface_pensionados(self):
+    def modulo_pensionados(self):
         self.registros = None
         self.tipo_pago_ = None
 
@@ -2577,6 +2577,7 @@ class FormularioOperacion:
 
         except Exception as e:
             # Si ocurre un error, no hace nada
+            print(e)
             pass
 
     def vaciar_tipo_pago(self):
@@ -2744,7 +2745,7 @@ class FormularioOperacion:
         self.PonerFOLIO.set("")
         self.label15.configure(text="")
         self.TarifaPreferente.set("")
-        self.IImporte.config(text="")
+        self.etiqueta_importe.config(text="")
         self.folio_auxiliar = None
         self.motive_cancel.set("")
         self.entryfolio.focus()
@@ -3054,7 +3055,7 @@ class FormularioOperacion:
         Esta funcion muestra el importe en la interfaz gráfica, actualizando el valor en la etiqueta correspondiente.
         """
         self.importe.set(text_importe)
-        self.IImporte.config(text=self.importe.get())
+        self.etiqueta_importe.config(text=self.importe.get())
 
     def get_date_limit(self, date_start:datetime, Tolerance:int) -> datetime:
         """
