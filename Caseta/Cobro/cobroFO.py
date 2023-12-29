@@ -23,6 +23,8 @@ from controller_email import ToolsEmail
 from enum import Enum
 tools = ToolsEmail()
 
+date_format = "%Y-%m-%d %H:%M:%S"
+
 ###--###
 penalizacion_con_importe = False
 data_rinter = (0x04b8, 0x0202, 0)
@@ -105,27 +107,27 @@ class FormularioOperacion:
         self.cuaderno1.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
         self.cuaderno1.config(cursor="")         # Tipo de cursor
-        self.modulo_boletos()
+        self.modulo_expedir_boletos()
         self.check_inputs()
         self.modulo_cobro()
         self.modulo_corte()
         self.modulo_pensionados()
+        self.modulo_configuracion()
         self.cuaderno1.grid(column=0, row=0, padx=2, pady=5)
         if show_clock:
             self.reloj = RelojAnalogico()
 
         self.root.mainloop()
 
+    def modulo_expedir_boletos(self):
+        seccion_expedir_boletos = tk.Frame(self.cuaderno1)
+        self.cuaderno1.add(seccion_expedir_boletos, text="Expedir Boleto")
 
-    def modulo_boletos(self):
-        seccion_entrada = tk.Frame(self.cuaderno1)
-        self.cuaderno1.add(seccion_entrada, text="Expedir Boleto")
+        seccion_expedir_boletos = tk.Frame(seccion_expedir_boletos)
 
-        seccion_entrada = tk.Frame(seccion_entrada)
+        seccion_expedir_boletos.grid(column=0, row=0, padx=2, pady=2, sticky=tk.NSEW)
 
-        seccion_entrada.grid(column=0, row=0, padx=2, pady=2, sticky=tk.NSEW)
-
-        frame_bienvenida = tk.Frame(seccion_entrada)
+        frame_bienvenida = tk.Frame(seccion_expedir_boletos)
         frame_bienvenida.grid(column=0, row=0, padx=2, pady=2)
 
         frame_mensaje_bienvenida = tk.Frame(frame_bienvenida)
@@ -140,7 +142,7 @@ class FormularioOperacion:
 
 
 
-        frame_datos_entrada = tk.Frame(seccion_entrada)
+        frame_datos_entrada = tk.Frame(seccion_expedir_boletos)
         frame_datos_entrada.grid(column=0, row=1, padx=2, pady=2)
 
         frame_info_cliente=tk.Frame(frame_datos_entrada)
@@ -174,7 +176,7 @@ class FormularioOperacion:
         boton_entrada.grid(column=0, row=1, padx=2, pady=2)
         
 
-        frame_info = tk.LabelFrame(seccion_entrada)#, background = '#CCC')
+        frame_info = tk.LabelFrame(seccion_expedir_boletos)#, background = '#CCC')
         frame_info.grid(column=0, row=2, padx=2, pady=2)
 
         self.label_informacion = tk.Label(frame_info, text="... ", width=25, font=font_mensaje, justify='center')
@@ -182,7 +184,7 @@ class FormularioOperacion:
 
 
 
-        frame_reloj = tk.Frame(seccion_entrada)
+        frame_reloj = tk.Frame(seccion_expedir_boletos)
         frame_reloj.grid(column=0, row=3, padx=2, pady=2)
 
         self.Reloj = tk.Label(frame_reloj, text="Reloj", background="white", font=font_reloj, justify='center')
@@ -644,13 +646,13 @@ class FormularioOperacion:
         self.label15.configure(text="Lo puedes COBRAR")
 
         # Obtiene la fecha actual
-        Salida = datetime.strptime(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), '%Y-%m-%d %H:%M:%S')
+        Salida = datetime.strptime(datetime.today().strftime(date_format), date_format)
 
         self.copia_fecha_salida.set(Salida)
 
 
         # Obtiene la fecha del boleto seleccionado y realiza las conversiones necesarias
-        Entrada = datetime.strptime(self.fecha_entrada.get(), '%Y-%m-%d %H:%M:%S')
+        Entrada = datetime.strptime(self.fecha_entrada.get(), date_format)
 
         TiempoTotal = Salida - Entrada
 
@@ -738,7 +740,6 @@ class FormularioOperacion:
 
         self.limpiar_campos()
         self.AbrirBarrera()
-
 
     def Comprobante(self, titulo: str = 'Comprobante de pago', imagen_logo: bool = True, QR_salida: bool = False) -> None:
         """Genera un comprobante de pago o un boleto cancelado.
@@ -975,7 +976,7 @@ class FormularioOperacion:
         Entrada = self.DB.consultar_UpdMovsPens(Existe)
 
         # Convertir la cadena de caracteres en un objeto datetime
-        Salida = datetime.strptime(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+        Salida = datetime.strptime(datetime.today().strftime(date_format), date_format)
 
         # Calcular el tiempo total en el estacionamiento
         tiempo_total = Salida - Entrada
@@ -994,7 +995,6 @@ class FormularioOperacion:
         self.entryNumTarjeta2.focus()
         mb.showinfo("Pension", 'Se registra SALIDA de pension')
         self.AbrirBarrera()
-
 
     ###################### Fin de Pagina2 Inicio Pagina3 ###############################
     def modulo_corte(self):
@@ -1198,7 +1198,7 @@ class FormularioOperacion:
         print(""+txt)
         list_corte.append(txt)
 
-        txt = f"Hora de consulta: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        txt = f"Hora de consulta: {datetime.now().strftime(date_format)}\n\n"
         print(""+txt)
         list_corte.append(txt)
 
@@ -1391,8 +1391,6 @@ class FormularioOperacion:
         self.entry_cortes_anteriores.focus()
         self.corte_anterior.set("")
 
-
-
     def BoletoCancelado(self):
         self.desactivar()
         # Crear la ventana principal
@@ -1559,8 +1557,7 @@ class FormularioOperacion:
         ##obtengamo la fechaFin del ultimo corte
         self.FechUCORTE.set(self.DB.UltimoCorte())
 
-        self.FechaCorte.set(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))#donde el label esta bloqueado
-
+        self.FechaCorte.set(datetime.now().strftime(date_format))#donde el label esta bloqueado
 
     def Guardar_Corte(self):
         self.Calcular_Corte()
@@ -1574,7 +1571,7 @@ class FormularioOperacion:
             inicio_corte = self.FechUCORTE.get()
             turno_cajero = fila[3]
 
-        fecha_hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        fecha_hoy = datetime.now().strftime(date_format)
         datos=(fecha_hoy, id_cajero)
         self.DB.Cierreusuario(datos)
 
@@ -1613,14 +1610,14 @@ class FormularioOperacion:
         print(""+txt)
         list_corte.append(txt)
 
-        inicio_corte_fecha= datetime.strptime(self.FechUCORTE.get(), '%Y-%m-%d %H:%M:%S')
+        inicio_corte_fecha= datetime.strptime(self.FechUCORTE.get(), date_format)
         nombre_dia_inicio = self.get_day_name(inicio_corte_fecha.weekday())
         inicio_corte_fecha = datetime.strftime(inicio_corte_fecha, '%d-%b-%Y a las %H:%M:%S')
         txt = f'Inicio: {nombre_dia_inicio} {inicio_corte_fecha}\n'
         print(""+txt)
         list_corte.append(txt)
 
-        final_corte_fecha= datetime.strptime(self.FechaCorte.get(), '%Y-%m-%d %H:%M:%S')
+        final_corte_fecha= datetime.strptime(self.FechaCorte.get(), date_format)
         nombre_dia_fin = self.get_day_name(final_corte_fecha.weekday())
         final_corte_fecha = datetime.strftime(final_corte_fecha, "%d-%b-%Y a las %H:%M:%S")
         txt = f'Final: {nombre_dia_fin} {final_corte_fecha}\n\n'
@@ -1918,7 +1915,6 @@ class FormularioOperacion:
         # Cierra el programa al final del reporte
         self.Cerrar_Programa()
 
-
     def Cerrar_Programa(self):
         self.root.destroy()
 
@@ -2038,7 +2034,6 @@ class FormularioOperacion:
             else:
                 mb.showwarning("ERROR", 'Contrasena Incorrecta')
 
-
     def Puertoycontar(self):
 
         self.BoletosCobrados.set(self.DB.CuantosBoletosCobro())
@@ -2058,7 +2053,6 @@ class FormularioOperacion:
         self.BDentro.set(self.DB.CuantosAutosdentro())
 
         self.Autos_Anteriores.set(self.DB.Quedados_Sensor(MaxFolioCorte))
-
 
     ###################### Fin de Pagina2 Inicio Pagina3 ###############################
     def modulo_pensionados(self):
@@ -2328,7 +2322,7 @@ class FormularioOperacion:
         elif VigAct != None:
 
             # Obtener la fecha y hora actual en formato deseado
-            hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            hoy = datetime.now().strftime(date_format)
 
             limite = self.get_date_limit(VigAct, Tolerancia)
             print(f"limite: {limite}")
@@ -2397,7 +2391,7 @@ class FormularioOperacion:
             cortesia = cliente[16]
             Tolerancia = int(cliente[17])
 
-            fechaPago = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            fechaPago = datetime.now().strftime(date_format)
             pago = 0
             if Estatus == "Inactiva":
                 pago = self.calcular_pago_media_pension(monto)
@@ -2425,7 +2419,7 @@ class FormularioOperacion:
             elif VigAct != None:
 
                 # Obtener la fecha y hora actual en formato deseado
-                hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                hoy = datetime.now().strftime(date_format)
 
                 limite = self.get_date_limit(VigAct, Tolerancia)
                 print(f"limite: {limite}")
@@ -2591,20 +2585,20 @@ class FormularioOperacion:
 
     def nueva_vigencia(self, fecha, meses = 1, cortesia = None):
         """
-        Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato '%Y-%m-%d %H:%M:%S'.
+        Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato date_format.
 
         :param fecha (str or datetime): Fecha a partir de la cual se obtendrá la fecha del último día del mes siguiente.
 
         :raises: TypeError si la fecha no es una cadena de texto ni un objeto datetime.
 
         :return:
-            - nueva_vigencia (str): Una cadena de texto en el formato '%Y-%m-%d %H:%M:%S' que representa la fecha del último día del mes siguiente a la fecha dada.
+            - nueva_vigencia (str): Una cadena de texto en el formato date_format que representa la fecha del último día del mes siguiente a la fecha dada.
         """
         try:
             nueva_vigencia = ''
             if fecha == None:
                 # Obtener la fecha y hora actual en formato deseado
-                fecha = datetime.strptime(datetime.today().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+                fecha = datetime.strptime(datetime.today().strftime(date_format), date_format)
 
                 fecha = fecha - relativedelta(months=1)
 
@@ -2911,7 +2905,6 @@ class FormularioOperacion:
 
         return pago
 
-
     def calcular_penalizacion_diaria(self, penalizacion_diaria, fecha_limite):
         """
         Calcula la penalizacion diaria basada en la diferencia de días entre la fecha límite y la fecha actual.
@@ -2923,11 +2916,11 @@ class FormularioOperacion:
         """
 
         # Obtener la fecha y hora actual en formato deseado
-        hoy = datetime.strptime(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S")
+        hoy = datetime.strptime(datetime.now().strftime(date_format), date_format)
 
         # Convertir la fecha límite en un objeto datetime si es de tipo str
         if isinstance(fecha_limite, str):
-            fecha_limite = datetime.strptime(fecha_limite, "%Y-%m-%d %H:%M:%S")
+            fecha_limite = datetime.strptime(fecha_limite, date_format)
 
         # Calcular la cantidad de días de atraso
         fecha_atrasada = hoy - fecha_limite
@@ -3013,7 +3006,7 @@ class FormularioOperacion:
 
         def cerrar_ventana():
             # Obtener la fecha y hora actual en formato deseado
-            hoy = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            hoy = datetime.now().strftime(date_format)
 
             self.controlador_crud_pensionados.desactivar_tarjetas_expiradas(hoy)
             self.ver_pensionados()
@@ -3075,6 +3068,82 @@ class FormularioOperacion:
         
         return date_limit
 
+    def get_day_name(self, day_number:int):
+        days = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
+        return days[day_number]
+
+    def modulo_configuracion(self):
+        seccion_configuracion = tk.Frame(self.cuaderno1)
+        self.cuaderno1.add(seccion_configuracion, text="Expedir Boleto")
+
+        seccion_configuracion = tk.Frame(seccion_configuracion)
+
+        seccion_configuracion.grid(column=0, row=0, padx=2, pady=2, sticky=tk.NSEW)
+
+        frame_bienvenida = tk.Frame(seccion_configuracion)
+        frame_bienvenida.grid(column=0, row=0, padx=2, pady=2)
+
+        frame_mensaje_bienvenida = tk.Frame(frame_bienvenida)
+        frame_mensaje_bienvenida.grid(column=0, row=0, padx=2, pady=2)
+
+        # Asegura que la fila y la columna del frame se expandan con el contenedor
+        frame_mensaje_bienvenida.grid_rowconfigure(0, weight=1)
+        frame_mensaje_bienvenida.grid_columnconfigure(0, weight=1)
+
+        label_entrada = tk.Label(frame_mensaje_bienvenida, text=f"Bienvenido(a) al estacionamiento {nombre_estacionamiento}", font=('Arial', 25), justify='center')
+        label_entrada.grid(row=0, column=0)
+
+
+
+        frame_datos_entrada = tk.Frame(seccion_configuracion)
+        frame_datos_entrada.grid(column=0, row=1, padx=2, pady=2)
+
+        frame_info_cliente=tk.Frame(frame_datos_entrada)
+        frame_info_cliente.grid(column=0, row=0, padx=2, pady=2)
+
+        frame_info_placa=tk.Frame(frame_info_cliente)
+        frame_info_placa.grid(column=0, row=0, padx=2, pady=2)
+
+        label_placa=tk.Label(frame_info_placa, text="Ingrese Placa", font=('Arial', 25))
+        label_placa.grid(column=0, row=0, padx=2, pady=2)
+
+        self.Placa=tk.StringVar()
+        self.entry_placa=tk.Entry(frame_info_placa, width=20, textvariable=self.Placa, font=('Arial', 35, 'bold'), justify='center')
+        self.entry_placa.grid(column=0, row=1, padx=2, pady=2)
+
+
+
+        frame_boton=tk.Frame(frame_datos_entrada)
+        frame_boton.grid(column=2, row=0, padx=2, pady=2)
+
+        frame_folio = tk.Frame(frame_boton)
+        frame_folio.grid(column=0, row=0, padx=2, pady=2)
+
+        label_folio=tk.Label(frame_folio, text="Folio:", font=font_entrada)
+        label_folio.grid(column=0, row=0, padx=2, pady=2, sticky="nsew")
+        self.MaxId=tk.StringVar()
+        entryMaxId=ttk.Entry(frame_folio, width=12, textvariable=self.MaxId, state="readonly", font=font_entrada)
+        entryMaxId.grid(column=1, row=0, padx=2, pady=2, sticky=tk.NW)
+
+        boton_entrada=tk.Button(frame_boton, text="Generar Entrada", width=15, height=3, anchor="center", background=button_color, fg=button_letters_color, font=font_entrada_negritas, command=self.generar_boleto)
+        boton_entrada.grid(column=0, row=1, padx=2, pady=2)
+        
+
+        frame_info = tk.LabelFrame(seccion_configuracion)#, background = '#CCC')
+        frame_info.grid(column=0, row=2, padx=2, pady=2)
+
+        self.label_informacion = tk.Label(frame_info, text="... ", width=25, font=font_mensaje, justify='center')
+        self.label_informacion.grid(column=0, row=0, padx=2, pady=2)
+
+
+
+        frame_reloj = tk.Frame(seccion_configuracion)
+        frame_reloj.grid(column=0, row=3, padx=2, pady=2)
+
+        self.Reloj = tk.Label(frame_reloj, text="Reloj", background="white", font=font_reloj, justify='center')
+        self.Reloj.grid(column=0, row=0, padx=2, pady=2)
+        self.entry_placa.focus()
+
     def on_tab_changed(self, event):
         # Obtener el índice de la pestaña actual
         current_tab_index = self.cuaderno1.index(self.cuaderno1.select())
@@ -3100,12 +3169,7 @@ class FormularioOperacion:
             # Hacer focus en el widget deseado
             self.caja_texto_numero_tarjeta.focus_set()
 
-    def get_day_name(self, day_number:int):
-        days = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
-        return days[day_number]
 
-    def add_to_text_file(self, txt_file):
-        pass
 
 
 aplicacion1=FormularioOperacion()
