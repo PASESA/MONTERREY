@@ -102,26 +102,26 @@ class FormularioOperacion:
         principal = tk.LabelFrame(self.root)
         principal.pack(expand=True, padx=5, pady=5, anchor='n')
 
-        self.cuaderno1 = ttk.Notebook(principal)
+        self.cuaderno_modulos = ttk.Notebook(principal)
         # Asociar el evento <<NotebookTabChanged>> a la función on_tab_changed
-        self.cuaderno1.bind("<<NotebookTabChanged>>", self.on_tab_changed)
+        self.cuaderno_modulos.bind("<<NotebookTabChanged>>", self.on_tab_changed)
 
-        self.cuaderno1.config(cursor="")         # Tipo de cursor
+        self.cuaderno_modulos.config(cursor="")         # Tipo de cursor
         self.modulo_expedir_boletos()
         self.check_inputs()
         self.modulo_cobro()
         self.modulo_corte()
         self.modulo_pensionados()
         self.modulo_configuracion()
-        self.cuaderno1.grid(column=0, row=0, padx=2, pady=5)
+        self.cuaderno_modulos.grid(column=0, row=0, padx=2, pady=5)
         if show_clock:
             self.reloj = RelojAnalogico()
 
         self.root.mainloop()
 
     def modulo_expedir_boletos(self):
-        seccion_expedir_boletos = tk.Frame(self.cuaderno1)
-        self.cuaderno1.add(seccion_expedir_boletos, text="Expedir Boleto")
+        seccion_expedir_boletos = tk.Frame(self.cuaderno_modulos)
+        self.cuaderno_modulos.add(seccion_expedir_boletos, text="Expedir Boleto")
 
         seccion_expedir_boletos = tk.Frame(seccion_expedir_boletos)
 
@@ -240,8 +240,8 @@ class FormularioOperacion:
 
     #########################fin de pagina1 inicio pagina2#########################
     def modulo_cobro(self):
-        self.pagina2 = ttk.Frame(self.cuaderno1)
-        self.cuaderno1.add(self.pagina2, text="Modulo de Cobro")
+        self.pagina2 = ttk.Frame(self.cuaderno_modulos)
+        self.cuaderno_modulos.add(self.pagina2, text="Modulo de Cobro")
         #en el frame
         self.FOLIO_QR=tk.LabelFrame(self.pagina2, text="FOLIO_QR")
         self.FOLIO_QR.grid(column=0, row=0, padx=2, pady=10, sticky=tk.NW)
@@ -1000,8 +1000,8 @@ class FormularioOperacion:
     def modulo_corte(self):
         self.motive_cancel=tk.StringVar()
 
-        self.modulo_corte = ttk.Frame(self.cuaderno1)
-        self.cuaderno1.add(self.modulo_corte, text="Modulo de Corte")
+        self.modulo_corte = ttk.Frame(self.cuaderno_modulos)
+        self.cuaderno_modulos.add(self.modulo_corte, text="Modulo de Corte")
         self.labelframe1=tk.LabelFrame(self.modulo_corte, text="Autos")
         self.labelframe1.grid(column=0, row=0, padx=1, pady=1)
         self.labelframe2=tk.LabelFrame(self.modulo_corte, text="Generar Corte")
@@ -2059,8 +2059,8 @@ class FormularioOperacion:
         self.registros = None
         self.tipo_pago_ = None
 
-        self.pagina4 = ttk.Frame(self.cuaderno1)
-        self.cuaderno1.add(self.pagina4, text="Modulo Pensionados")
+        self.pagina4 = ttk.Frame(self.cuaderno_modulos)
+        self.cuaderno_modulos.add(self.pagina4, text="Modulo Pensionados")
         #enmarca los controles LabelFrame 
         labelframe_pensionados = tk.LabelFrame(self.pagina4, text="Pensionados")
         labelframe_pensionados.grid(column=0, row=0, padx=2, pady=5, sticky=tk.NW)
@@ -3073,80 +3073,30 @@ class FormularioOperacion:
         return days[day_number]
 
     def modulo_configuracion(self):
-        seccion_configuracion = tk.Frame(self.cuaderno1)
-        self.cuaderno1.add(seccion_configuracion, text="Expedir Boleto")
+        modulo_configuracion = tk.Frame(self.cuaderno_modulos)
+        self.cuaderno_modulos.add(modulo_configuracion, text="Configuración")
 
-        seccion_configuracion = tk.Frame(seccion_configuracion)
+        # Agrega el ttk.Notebook a la página de Configuración
+        cuaderno_configuracion = ttk.Notebook(modulo_configuracion)
+        cuaderno_configuracion.pack(expand=True, fill='both')
 
-        seccion_configuracion.grid(column=0, row=0, padx=2, pady=2, sticky=tk.NSEW)
+        # Agrega sección a cuaderno_configuracion
+        seccion_configuracion = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion, text="Tarifa")
 
-        frame_bienvenida = tk.Frame(seccion_configuracion)
-        frame_bienvenida.grid(column=0, row=0, padx=2, pady=2)
+        # Agrega sección a cuaderno_configuracion
+        seccion_configuracion = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion, text="Pensiones")
 
-        frame_mensaje_bienvenida = tk.Frame(frame_bienvenida)
-        frame_mensaje_bienvenida.grid(column=0, row=0, padx=2, pady=2)
-
-        # Asegura que la fila y la columna del frame se expandan con el contenedor
-        frame_mensaje_bienvenida.grid_rowconfigure(0, weight=1)
-        frame_mensaje_bienvenida.grid_columnconfigure(0, weight=1)
-
-        label_entrada = tk.Label(frame_mensaje_bienvenida, text=f"Bienvenido(a) al estacionamiento {nombre_estacionamiento}", font=('Arial', 25), justify='center')
-        label_entrada.grid(row=0, column=0)
-
+        # Agrega sección a cuaderno_configuracion
+        seccion_configuracion = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion, text="General")
 
 
-        frame_datos_entrada = tk.Frame(seccion_configuracion)
-        frame_datos_entrada.grid(column=0, row=1, padx=2, pady=2)
-
-        frame_info_cliente=tk.Frame(frame_datos_entrada)
-        frame_info_cliente.grid(column=0, row=0, padx=2, pady=2)
-
-        frame_info_placa=tk.Frame(frame_info_cliente)
-        frame_info_placa.grid(column=0, row=0, padx=2, pady=2)
-
-        label_placa=tk.Label(frame_info_placa, text="Ingrese Placa", font=('Arial', 25))
-        label_placa.grid(column=0, row=0, padx=2, pady=2)
-
-        self.Placa=tk.StringVar()
-        self.entry_placa=tk.Entry(frame_info_placa, width=20, textvariable=self.Placa, font=('Arial', 35, 'bold'), justify='center')
-        self.entry_placa.grid(column=0, row=1, padx=2, pady=2)
-
-
-
-        frame_boton=tk.Frame(frame_datos_entrada)
-        frame_boton.grid(column=2, row=0, padx=2, pady=2)
-
-        frame_folio = tk.Frame(frame_boton)
-        frame_folio.grid(column=0, row=0, padx=2, pady=2)
-
-        label_folio=tk.Label(frame_folio, text="Folio:", font=font_entrada)
-        label_folio.grid(column=0, row=0, padx=2, pady=2, sticky="nsew")
-        self.MaxId=tk.StringVar()
-        entryMaxId=ttk.Entry(frame_folio, width=12, textvariable=self.MaxId, state="readonly", font=font_entrada)
-        entryMaxId.grid(column=1, row=0, padx=2, pady=2, sticky=tk.NW)
-
-        boton_entrada=tk.Button(frame_boton, text="Generar Entrada", width=15, height=3, anchor="center", background=button_color, fg=button_letters_color, font=font_entrada_negritas, command=self.generar_boleto)
-        boton_entrada.grid(column=0, row=1, padx=2, pady=2)
-        
-
-        frame_info = tk.LabelFrame(seccion_configuracion)#, background = '#CCC')
-        frame_info.grid(column=0, row=2, padx=2, pady=2)
-
-        self.label_informacion = tk.Label(frame_info, text="... ", width=25, font=font_mensaje, justify='center')
-        self.label_informacion.grid(column=0, row=0, padx=2, pady=2)
-
-
-
-        frame_reloj = tk.Frame(seccion_configuracion)
-        frame_reloj.grid(column=0, row=3, padx=2, pady=2)
-
-        self.Reloj = tk.Label(frame_reloj, text="Reloj", background="white", font=font_reloj, justify='center')
-        self.Reloj.grid(column=0, row=0, padx=2, pady=2)
-        self.entry_placa.focus()
 
     def on_tab_changed(self, event):
         # Obtener el índice de la pestaña actual
-        current_tab_index = self.cuaderno1.index(self.cuaderno1.select())
+        current_tab_index = self.cuaderno_modulos.index(self.cuaderno_modulos.select())
 
         # Comprobar si la pestaña actual es la que se desea
         if current_tab_index == 0:
