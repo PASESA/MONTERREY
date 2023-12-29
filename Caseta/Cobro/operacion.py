@@ -6,9 +6,9 @@ from tkinter import messagebox as mb
 class Operacion:
     def __init__(self):
         self.host = "localhost"
-        self.user = "Aurelio"
-        self.password = "RG980320"
-        self.database = "Parqueadero1"
+        self.user = "Admin"
+        self.password = "P4S3S4_ADMIN"
+        self.database = "db_monterrey_89"
 
     def abrir(self):
         conexion=pymysql.connect(host=self.host,
@@ -170,7 +170,7 @@ class Operacion:
         cone.close()
         return cursor.fetchall()[0][0]
 
-    def MaxfolioEntrada(self):
+    def MaxfolioEntrada(self)->int:
         cone=self.abrir()
         cursor=cone.cursor()
         sql="select max(id) from Entradas;"
@@ -600,7 +600,7 @@ class Operacion:
 
         # Se ejecuta la consulta y se almacenan los resultados en una lista de tuplas.
         cursor.execute(sql)
-        resultados = cursor.fetchall()
+        resultados = cursor.fetchall()[0][0]
 
         # Se cierra la conexión con la base de datos.
         cone.close()
@@ -683,7 +683,7 @@ class Operacion:
         cursor.execute(sql, datos)
         cone.commit()
         cone.close()
-        return cursor.fetchall()
+        return cursor.fetchall()[0][0]
 
     def ConsultaPensionado_entrar(self, datos):
         cone=self.abrir()

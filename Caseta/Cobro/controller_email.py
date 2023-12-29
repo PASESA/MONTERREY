@@ -361,18 +361,18 @@ def main() -> None:
         message_send_corte = send_corte()
 
         # Instanciar el objeto Usb para imprimir el resultado
-        printer = Usb(0x04b8, 0x0202, 0)
+        ###-###printer = Usb(0x04b8, 0x0202, 0)
 
         # Alinea al centro el texto
-        printer.set(align = "center")
+        ###-###printer.set(align = "center")
 
         # Imprimir separadores y mensaje de resultado en la consola
-        printer.text("-" * 30 + "\n")
-        printer.text(f"{message_send_database}\n")
-        printer.text(f"{message_send_corte}\n")
-        printer.text("-" * 30 + "\n")
-        printer.cut()
-        printer.close()
+        print(""+"-" * 30 + "\n")
+        print(""+f"{message_send_database}\n")
+        print(""+f"{message_send_corte}\n")
+        print(""+"-" * 30 + "\n")
+        ###-###printer.cut()
+        ###-###printer.close()
 
         # Imprimir el mensaje en la consola
         print(message_send_database)
