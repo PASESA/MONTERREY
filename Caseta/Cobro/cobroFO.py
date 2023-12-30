@@ -100,7 +100,7 @@ class FormularioOperacion:
 
         # Colocar el LabelFrame en las coordenadas calculadas
         principal = tk.LabelFrame(self.root)
-        principal.pack(expand=True, padx=5, pady=5, anchor='n')
+        principal.pack(expand=True, padx=3, pady=3, anchor='n')
 
         self.cuaderno_modulos = ttk.Notebook(principal)
         # Asociar el evento <<NotebookTabChanged>> a la función on_tab_changed
@@ -311,10 +311,8 @@ class FormularioOperacion:
 
 
         self.etiqueta_importe = tk.Label(self.labelframe3, text="") #Creacion del Label
-        self.etiqueta_importe.config(width =4)
-        self.etiqueta_importe.config(background="white") #Cambiar color de fondo
-        self.etiqueta_importe.config(font=('Arial', 48)) #Cambiar tipo y tamaño de fuente
-        self.etiqueta_importe.grid(column=1, row=4, padx=0, pady=0)   
+        self.etiqueta_importe.config(width = 4, background="white", font=('Arial', 48))
+        self.etiqueta_importe.grid(column=1, row=4, padx=3, pady=3)   
 
 
         #se crea objeto para MOSTRAR LA HORA DEL CALCULO
@@ -337,7 +335,7 @@ class FormularioOperacion:
         self.labelPensionado=ttk.LabelFrame(self.labelframe3_principal, text="SALIDA PENSIONADO")
         self.labelPensionado.grid(column=0, row=1, padx=5, pady=10)
         self.labelTarjeta=ttk.Label(self.labelPensionado, text="Num. Tarjeta:")
-        self.labelTarjeta.grid(column=0, row=2, padx=0, pady=0)
+        self.labelTarjeta.grid(column=0, row=2, padx=3, pady=3)
         self.NumTarjeta2=tk.StringVar()
         self.entryNumTarjeta2=tk.Entry(self.labelPensionado, width=15, textvariable=self.NumTarjeta2)
         self.entryNumTarjeta2.grid(column=1, row=2, padx=4, pady=4)
@@ -348,7 +346,7 @@ class FormularioOperacion:
         self.scrol_datos_boleto_cobrado.grid(column=0,row=2, padx=1, pady=1)
 
         self.label15=tk.Label(self.labelframe3_principal, text="Viabilidad de COBRO")
-        self.label15.grid(column=0, row=3, padx=0, pady=0)
+        self.label15.grid(column=0, row=3, padx=3, pady=3)
 
         self.labelPerdido_principal=tk.LabelFrame(self.pagina2, text="")
         self.labelPerdido_principal.grid(column=2,row=0, pady=10, sticky=tk.NW)
@@ -1005,11 +1003,11 @@ class FormularioOperacion:
         self.labelframe1=tk.LabelFrame(self.modulo_corte, text="Autos")
         self.labelframe1.grid(column=0, row=0, padx=1, pady=1)
         self.labelframe2=tk.LabelFrame(self.modulo_corte, text="Generar Corte")
-        self.labelframe2.grid(column=1, row=0, padx=0, pady=0)
+        self.labelframe2.grid(column=1, row=0, padx=3, pady=3)
 
 
         self.labelframe4=tk.LabelFrame(self.modulo_corte, text="Cuadro Comparativo")
-        self.labelframe4.grid(column=1, row=1, padx=0, pady=0)
+        self.labelframe4.grid(column=1, row=1, padx=3, pady=3)
         self.labelframe5=tk.LabelFrame(self.modulo_corte, text="Reporte de Cortes")
         self.labelframe5.grid(column=1, row=2, padx=1, pady=1)       
         self.lblSal=tk.Label(self.labelframe4, text="Salida de Autos")
@@ -1056,9 +1054,9 @@ class FormularioOperacion:
         self.boton6.grid(column=1, row=0, padx=1, pady=1)
 
         self.FrmCancelado=tk.LabelFrame(self.modulo_corte, text="Boleto Cancelado")
-        self.FrmCancelado.grid(column=0, row=2, padx=0, pady=0)
+        self.FrmCancelado.grid(column=0, row=2, padx=3, pady=3)
         self.labelCorte=tk.Label(self.labelframe2, text="El Total del CORTE es:")
-        self.labelCorte.grid(column=0, row=1, padx=0, pady=0)
+        self.labelCorte.grid(column=0, row=1, padx=3, pady=3)
         self.label2=tk.Label(self.labelframe2, text="La Fecha de CORTE es:")
         self.label2.grid(column=0, row=2, padx=1, pady=1)
         self.label3=tk.Label(self.labelframe2, text="El CORTE Inicia ")
@@ -1069,10 +1067,10 @@ class FormularioOperacion:
 
 
         label_frame_corte_anterior = tk.LabelFrame(self.modulo_corte, text="Consulta Cortes Anteriores")
-        label_frame_corte_anterior.grid(column=0, row=1, padx=0, pady=0)
+        label_frame_corte_anterior.grid(column=0, row=1, padx=3, pady=3)
 
         label_etiquetas_corte = tk.Frame(label_frame_corte_anterior)
-        label_etiquetas_corte.grid(column=0, row=0, padx=0, pady=0)
+        label_etiquetas_corte.grid(column=0, row=0, padx=3, pady=3)
 
         etiqueta_corte=tk.Label(label_etiquetas_corte, text="CORTE a Consultar: ")
         etiqueta_corte.grid(column=0, row=0, padx=1, pady=1)
@@ -1405,13 +1403,13 @@ class FormularioOperacion:
 
         # Colocar el LabelFrame en las coordenadas calculadas
         principal_frame_cancel = tk.LabelFrame(self.cancel_window)
-        principal_frame_cancel.pack(expand=True, padx=5, pady=5, anchor='n')
+        principal_frame_cancel.pack(expand=True, padx=3, pady=3, anchor='n')
 
         labelframe_cancelar_boleto=tk.LabelFrame(principal_frame_cancel, text="Cancelar Boleto")
-        labelframe_cancelar_boleto.grid(column=0, row=0, padx=5, pady=5)
+        labelframe_cancelar_boleto.grid(column=0, row=0, padx=3, pady=3)
 
         labelframe_cancelar_boleto_folio=tk.Frame(labelframe_cancelar_boleto)
-        labelframe_cancelar_boleto_folio.grid(column=0, row=0, padx=5, pady=5)
+        labelframe_cancelar_boleto_folio.grid(column=0, row=0, padx=3, pady=3)
 
         etiqueta = tk.Label(labelframe_cancelar_boleto_folio, text="Ingresa el Folio a cancelar: ", font=font_cancel)
         etiqueta.grid(column=0, row=0, padx=2, pady=2)
@@ -1434,7 +1432,7 @@ class FormularioOperacion:
         boton.grid(column=0, row=3, padx=2, pady=2)
 
         labelframe_lista_boletos=tk.LabelFrame(principal_frame_cancel, text="Lista de boletos")
-        labelframe_lista_boletos.grid(column=1, row=0, padx=5, pady=5)
+        labelframe_lista_boletos.grid(column=1, row=0, padx=3, pady=3)
 
         self.boton7=tk.Button(labelframe_lista_boletos, text="Actualizar", command=lambda:boletos_dentro(), width=12, height=1, background=button_color, fg=button_letters_color, font=font_cancel)
         self.boton7.grid(column=0, row=0, padx=1, pady=1)
@@ -2128,14 +2126,14 @@ class FormularioOperacion:
         checkbox_efectivo = tk.Checkbutton(label_frame_tipo_pago, text="Efectivo", variable=self.variable_tipo_pago_efectivo, command=lambda:{self.cambiar_valor(self.variable_tipo_pago_transferencia)})
 
         # Ubicar el checkbox en la ventana principal
-        checkbox_efectivo.grid(column=0, row=0, padx=0, pady=0, sticky=tk.NW)
+        checkbox_efectivo.grid(column=0, row=0, padx=3, pady=3, sticky=tk.NW)
 
         self.variable_tipo_pago_transferencia = tk.BooleanVar()
 
         checkbox_transferencia = tk.Checkbutton(label_frame_tipo_pago, text="Transferencia", variable=self.variable_tipo_pago_transferencia, command=lambda:{self.cambiar_valor(self.variable_tipo_pago_efectivo)})
 
         # Ubicar el checkbox en la ventana principal
-        checkbox_transferencia.grid(column=0, row=1, padx=0, pady=0, sticky=tk.NW)
+        checkbox_transferencia.grid(column=0, row=1, padx=3, pady=3, sticky=tk.NW)
 
 
         boton2=tk.Button(label_frame_tipo_pago, text="Cobrar Pension", command=self.Cobro_Pensionado, width=12, height=1, anchor="center",  font=("Arial", 10), background=button_color, fg=button_letters_color)
@@ -3083,21 +3081,65 @@ class FormularioOperacion:
         seccion_configuracion = tk.Frame(cuaderno_configuracion)
         cuaderno_configuracion.add(seccion_configuracion, text="Tarifa")
 
+        label = tk.Label(seccion_configuracion, text="Seleccione tipo de tarifa", font=('Arial', 14))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
         # Agregar otro cuaderno a seccion_configuracion
         cuaderno_tarifa = ttk.Notebook(seccion_configuracion)
-        cuaderno_tarifa.grid(column=0, row=0, padx=4, pady=4)
+        cuaderno_tarifa.grid(column=0, row=1, padx=4, pady=4)
 
         # Pestaña Tarifa General
         tarifa_general_frame = tk.Frame(cuaderno_tarifa)
-        cuaderno_tarifa.add(tarifa_general_frame, text="Tarifa General")
+        cuaderno_tarifa.add(tarifa_general_frame, text="Tarifa simple")
+
+
+        label = tk.Label(tarifa_general_frame, text="Se cobra 1/4 de Hora apartir de ", font=('Arial', 12), anchor="center")
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+
+        frame_checkbox = tk.Frame(tarifa_general_frame)
+        frame_checkbox.grid(column=0, row=1, padx=3, pady=3)
+
+        checkbox_pimera_hora = tk.Checkbutton(frame_checkbox, text="Primera hora", font=('Arial', 12), anchor="center")
+        checkbox_pimera_hora.grid(column=0, row=0, padx=3, pady=3, sticky=tk.NW)
+
+        checkbox_segunda_hora = tk.Checkbutton(frame_checkbox, text="Segunda hora", font=('Arial', 12), anchor="center")
+        checkbox_segunda_hora.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+        checkbox_segunda_hora.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+
+
+        frame_importe_hora = tk.LabelFrame(tarifa_general_frame)
+        frame_importe_hora.grid(column=0, row=2, padx=3, pady=3)
+
+
+        label = tk.Label(frame_importe_hora, text="Importe de hora", font=('Arial', 12))
+        label.grid(column=0, row=0, padx=3, pady=3)
+        self.variable_importe_hora=tk.StringVar()
+        entry_importe_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_hora, justify='center')
+        entry_importe_hora.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(frame_importe_hora, text="Importe de 1/4 hora", font=('Arial', 12))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_importe_cuarto_hora=tk.StringVar()
+        entry_importe_cuarto_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+        entry_importe_cuarto_hora.grid(column=1, row=1, padx=3, pady=3, sticky=tk.NW)
+
+
+
+
+
+
+
+
+
 
         # Pestaña Promociones
         promociones_frame = tk.Frame(cuaderno_tarifa)
-        cuaderno_tarifa.add(promociones_frame, text="Promociones")
+        cuaderno_tarifa.add(promociones_frame, text="Tarifa avanzada")
 
         # Botón al final del cuaderno
-        boton_guardar=tk.Button(seccion_configuracion, text="Guardar", width=28, height=1, anchor="center", font=("Arial", 9), background=button_color, fg=button_letters_color)
-        boton_guardar.grid(row=1, column=0, pady=5)
+        boton_guardar=tk.Button(seccion_configuracion, text="Guardar", width=20, height=1, anchor="center", font=("Arial", 13), background=button_color, fg=button_letters_color)
+        boton_guardar.grid(column=0, row=2, pady=5)
 
         # Agrega sección a cuaderno_configuracion
         seccion_configuracion = tk.Frame(cuaderno_configuracion)
@@ -3116,12 +3158,12 @@ class FormularioOperacion:
         # Comprobar si la pestaña actual es la que se desea
         if current_tab_index == 0:
             # Hacer focus en el widget deseado
-            self.entry_placa.focus_set()
+            self.entry_placa.focus()
         
         # Comprobar si la pestaña actual es la que se desea
         elif current_tab_index == 1:
             # Hacer focus en el widget deseado
-            self.entryfolio.focus_set()
+            self.entryfolio.focus()
 
         # Comprobar si la pestaña actual es la que se desea
         elif current_tab_index == 2:
@@ -3132,7 +3174,7 @@ class FormularioOperacion:
         # Comprobar si la pestaña actual es la que se desea
         elif current_tab_index == 3:
             # Hacer focus en el widget deseado
-            self.caja_texto_numero_tarjeta.focus_set()
+            self.caja_texto_numero_tarjeta.focus()
 
 
 
