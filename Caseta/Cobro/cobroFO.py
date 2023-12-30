@@ -3076,13 +3076,28 @@ class FormularioOperacion:
         modulo_configuracion = tk.Frame(self.cuaderno_modulos)
         self.cuaderno_modulos.add(modulo_configuracion, text="Configuración")
 
-        # Agrega el ttk.Notebook a la página de Configuración
         cuaderno_configuracion = ttk.Notebook(modulo_configuracion)
-        cuaderno_configuracion.pack(expand=True, fill='both')
+        cuaderno_configuracion.grid(column=0, row=0, padx=4, pady=4)
 
-        # Agrega sección a cuaderno_configuracion
+        # Sección para Tarifa
         seccion_configuracion = tk.Frame(cuaderno_configuracion)
         cuaderno_configuracion.add(seccion_configuracion, text="Tarifa")
+
+        # Agregar otro cuaderno a seccion_configuracion
+        cuaderno_tarifa = ttk.Notebook(seccion_configuracion)
+        cuaderno_tarifa.grid(column=0, row=0, padx=4, pady=4)
+
+        # Pestaña Tarifa General
+        tarifa_general_frame = tk.Frame(cuaderno_tarifa)
+        cuaderno_tarifa.add(tarifa_general_frame, text="Tarifa General")
+
+        # Pestaña Promociones
+        promociones_frame = tk.Frame(cuaderno_tarifa)
+        cuaderno_tarifa.add(promociones_frame, text="Promociones")
+
+        # Botón al final del cuaderno
+        boton_guardar=tk.Button(seccion_configuracion, text="Guardar", width=28, height=1, anchor="center", font=("Arial", 9), background=button_color, fg=button_letters_color)
+        boton_guardar.grid(row=1, column=0, pady=5)
 
         # Agrega sección a cuaderno_configuracion
         seccion_configuracion = tk.Frame(cuaderno_configuracion)
