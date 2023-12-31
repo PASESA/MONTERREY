@@ -3112,7 +3112,7 @@ class FormularioOperacion:
         frame_importe_hora.grid(column=0, row=2, padx=3, pady=3)
 
 
-        label = tk.Label(frame_importe_hora, text="Importe de hora", font=('Arial', 12))
+        label = tk.Label(frame_importe_hora, text="Importe de hora completa", font=('Arial', 12))
         label.grid(column=0, row=0, padx=3, pady=3)
         self.variable_importe_hora=tk.StringVar()
         entry_importe_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_hora, justify='center')
@@ -3123,6 +3123,19 @@ class FormularioOperacion:
         self.variable_importe_cuarto_hora=tk.StringVar()
         entry_importe_cuarto_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(column=1, row=1, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(frame_importe_hora, text="Importe de 2/4 hora", font=('Arial', 12))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_importe_cuarto_hora=tk.StringVar()
+        entry_importe_cuarto_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+        entry_importe_cuarto_hora.grid(column=1, row=2, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(frame_importe_hora, text="Importe de 3/4 hora", font=('Arial', 12))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable_importe_cuarto_hora=tk.StringVar()
+        entry_importe_cuarto_hora = tk.Entry(frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+        entry_importe_cuarto_hora.grid(column=1, row=3, padx=3, pady=3, sticky=tk.NW)
+
 
 
 

@@ -86,7 +86,7 @@ class View_modificar_pensionados():
         self.variable_cortesia.set(datos_pensionado[0][14])
 
         self.variable_tolerancia = StringVar()
-        self.variable_tolerancia.set("5")
+        self.variable_tolerancia.set(datos_pensionado[0][15])
 
         self.variable_vigencia = StringVar()
         self.variable_vigencia.set(datos_pensionado[0][16])

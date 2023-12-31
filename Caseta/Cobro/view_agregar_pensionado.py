@@ -223,7 +223,7 @@ class View_agregar_pensionados:
 
             variable_monto = self.variable_monto.get()
             variable_cortesia = self.variable_cortesia.get()
-            variable_tolerancia = 5
+            variable_tolerancia = self.variable_tolerancia.get()
             variable_estatus = "Inactiva"
 
             try:
@@ -258,6 +258,7 @@ class View_agregar_pensionados:
                 raise TypeError("Ingrese el monto a pagar")
             if variable_cortesia == "Si": variable_monto = 0
 
+            if int(variable_tolerancia) == 0:raise TypeError("Ingrese una tolerancia valida")
 
             datos_pensionado = (variable_numero_tarjeta, variable_nombre, variable_apellido_1, variable_apellido_2, variable_fecha_alta, variable_telefono_1, variable_telefono_2, variable_ciudad, variable_colonia, variable_cp, variable_numero_calle, variable_placas, variable_auto_modelo, variable_auto_color, variable_monto, variable_cortesia, variable_tolerancia, variable_estatus)
 
