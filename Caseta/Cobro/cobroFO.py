@@ -3075,42 +3075,38 @@ class FormularioOperacion:
         self.cuaderno_modulos.add(modulo_configuracion, text="Configuración")
 
         cuaderno_configuracion = ttk.Notebook(modulo_configuracion)
-        cuaderno_configuracion.grid(column=0, row=0, padx=4, pady=4)
+        cuaderno_configuracion.grid(column=0, row=0, padx=3, pady=3)
+
 
         # Sección para Tarifa
-        seccion_configuracion = tk.Frame(cuaderno_configuracion)
-        cuaderno_configuracion.add(seccion_configuracion, text="Tarifa")
+        seccion_configuracion_tarifa = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion_tarifa, text="Tarifa")
 
-        label = tk.Label(seccion_configuracion, text="Seleccione tipo de tarifa", font=('Arial', 14))
+        label = tk.Label(seccion_configuracion_tarifa, text="Seleccione tipo de tarifa", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
 
-        # Agregar otro cuaderno a seccion_configuracion
-        cuaderno_tarifa = ttk.Notebook(seccion_configuracion)
-        cuaderno_tarifa.grid(column=0, row=1, padx=4, pady=4)
+
+        # Agregar otro cuaderno a seccion_configuracion_tarifa
+        cuaderno_tarifa = ttk.Notebook(seccion_configuracion_tarifa)
+        cuaderno_tarifa.grid(column=0, row=1, padx=3, pady=3)
 
         # Pestaña Tarifa General
         tarifa_general_frame = tk.Frame(cuaderno_tarifa)
         cuaderno_tarifa.add(tarifa_general_frame, text="Tarifa simple")
 
-
         label = tk.Label(tarifa_general_frame, text="Se cobra 1/4 de Hora apartir de ", font=('Arial', 12), anchor="center")
         label.grid(column=0, row=0, padx=3, pady=3)
 
-
         frame_checkbox = tk.Frame(tarifa_general_frame)
         frame_checkbox.grid(column=0, row=1, padx=3, pady=3)
-
         checkbox_pimera_hora = tk.Checkbutton(frame_checkbox, text="Primera hora", font=('Arial', 12), anchor="center")
         checkbox_pimera_hora.grid(column=0, row=0, padx=3, pady=3, sticky=tk.NW)
-
         checkbox_segunda_hora = tk.Checkbutton(frame_checkbox, text="Segunda hora", font=('Arial', 12), anchor="center")
-        checkbox_segunda_hora.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
         checkbox_segunda_hora.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
 
 
         frame_importe_hora = tk.LabelFrame(tarifa_general_frame)
         frame_importe_hora.grid(column=0, row=2, padx=3, pady=3)
-
 
         label = tk.Label(frame_importe_hora, text="Importe de hora completa", font=('Arial', 12))
         label.grid(column=0, row=0, padx=3, pady=3)
@@ -3139,28 +3135,62 @@ class FormularioOperacion:
 
 
 
-
-
-
-
-
-
-
         # Pestaña Promociones
         promociones_frame = tk.Frame(cuaderno_tarifa)
         cuaderno_tarifa.add(promociones_frame, text="Tarifa avanzada")
 
+        # Agrega sección a cuaderno_configuracion
+        seccion_configuracion_general = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion_general, text="General")
+
+        labelframe = tk.LabelFrame(seccion_configuracion_general)
+        labelframe.grid(column=0, row=0, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Información del estacionamiento", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(seccion_configuracion_general)
+        labelframe.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración del pensionados", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(seccion_configuracion_general)
+        labelframe.grid(column=0, row=1, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración del sistema", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(seccion_configuracion_general)
+        labelframe.grid(column=1, row=1, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración del envio", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(seccion_configuracion_general)
+        labelframe.grid(column=1, row=2, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración de reloj", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+
+
+
+        # Agrega sección a cuaderno_configuracion
+        seccion_configuracion_funcionamiento_interno = tk.Frame(cuaderno_configuracion)
+        cuaderno_configuracion.add(seccion_configuracion_funcionamiento_interno, text="Funcionamiento interno")
+
+
+        labelframe = tk.LabelFrame(seccion_configuracion_funcionamiento_interno)
+        labelframe.grid(column=0, row=0, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración de base de datos", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(seccion_configuracion_funcionamiento_interno)
+        labelframe.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+        label = tk.Label(labelframe, text="Configuración del controlador", font=('Arial', 12, 'bold'))
+        label.grid(column=0, row=0, padx=3, pady=3)
+
+
+
         # Botón al final del cuaderno
-        boton_guardar=tk.Button(seccion_configuracion, text="Guardar", width=20, height=1, anchor="center", font=("Arial", 13), background=button_color, fg=button_letters_color)
-        boton_guardar.grid(column=0, row=2, pady=5)
-
-        # Agrega sección a cuaderno_configuracion
-        seccion_configuracion = tk.Frame(cuaderno_configuracion)
-        cuaderno_configuracion.add(seccion_configuracion, text="Pensiones")
-
-        # Agrega sección a cuaderno_configuracion
-        seccion_configuracion = tk.Frame(cuaderno_configuracion)
-        cuaderno_configuracion.add(seccion_configuracion, text="General")
+        boton_guardar=tk.Button(modulo_configuracion, text="Guardar", width=20, height=1, anchor="center", font=('Arial', 12, 'bold'), background=button_color, fg=button_letters_color)
+        boton_guardar.grid(column=0, row=1, padx=3, pady=3)
 
 
 
