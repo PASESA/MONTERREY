@@ -1,0 +1,96 @@
+{
+    "general": {
+        "informacion_estacionamiento": {
+            "nombre_estacionamiento": "",
+            "path_logo": "",
+            "correo": "",
+            "contraseña": "",
+            "cantidad_cajones": 0
+        },
+        "configuracion_sistema": {
+            "impresora": {
+                "idVendor": 0,
+                "idProduct": 0
+            },
+            "formato_hora": "",
+            "color_botones": "",
+            "fuente": "",
+            "penalizacion_boleto_perdido": false,
+            "reloj": false,
+            "envio_información": false,
+            "pantalla_completa": false,
+            "requiere_placa": false
+        },
+        "configuracion_pensionados": {
+            "contraseña": "",
+            "costo_tarjeta": 0,
+            "costo_reposicion_tarjeta": 0,
+            "penalizacion_diaria": 0
+        },
+        "configuiracion_envio": {
+            "destinatario_DB": "",
+            "destinatario_corte": "",
+            "destinatario_notificacinoes": ""
+        },
+        "configuiracion_reloj": {
+            "color_antes_de_hora": "",
+            "color_hora_completa": "",
+            "color_1_fraccion": "",
+            "color_2_fraccion": "",
+            "color_3_fraccion": "",
+            "color_alerta": ""
+        }
+    },
+    "tarifa": {
+        "tarifa_sistema": "",
+        "tarifa_simple": {
+            "inicio_cobro_fraccion": 1,
+            "tarifa_1_fraccion": 0.00,
+            "tarifa_2_fraccion": 0.00,
+            "tarifa_3_fraccion": 0.00,
+            "tarifa_hora": 0.00,
+            "tarifa_dia": 0
+        },
+        "tarifa_personalizada": {
+            "inicio_cobro_fraccion": 1,
+            "tarifa_1_fraccion": 0.00,
+            "tarifa_2_fraccion": 0.00,
+            "tarifa_3_fraccion": 0.00,
+            "tarifa_1_hora": 0.00,
+            "tarifa_2_hora": 0.00,
+            "tarifa_3_hora": 0.00,
+            "tarifa_4_hora": 0.00,
+            "tarifa_5_hora": 0.00,
+            "tarifa_6_hora": 0.00,
+            "tarifa_7_hora": 0.00,
+            "tarifa_8_hora": 0.00,
+            "tarifa_9_hora": 0.00,
+            "tarifa_10_hora": 0.00,
+            "tarifa_11_hora": 0.00,
+            "tarifa_12_hora": 0.00,
+            "tarifa_13_hora": 0.00,
+            "tarifa_14_hora": 0.00,
+            "tarifa_15_hora": 0.00,
+            "tarifa_16_hora": 0.00,
+            "tarifa_17_hora": 0.00,
+            "tarifa_18_hora": 0.00,
+            "tarifa_19_hora": 0.00,
+            "tarifa_20_hora": 0.00,
+            "tarifa_21_hora": 0.00,
+            "tarifa_22_hora": 0.00,
+            "tarifa_23_hora": 0.00,
+            "tarifa_24_hora": 0.00
+        }
+    },
+    "funcionamiento_interno": {
+        "db": {
+            "usuario": "",
+            "contraseña": "",
+            "host": "",
+            "db": ""
+        },
+        "controlador": {
+            "pin_barrera": 0
+        }
+    }
+}
