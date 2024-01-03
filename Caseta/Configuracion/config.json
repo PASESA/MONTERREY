@@ -12,7 +12,9 @@
                 "idVendor": 0,
                 "idProduct": 0
             },
-            "formato_hora": "",
+            "formato_hora_interface": "",
+            "formato_hora_boleto": "",
+            "formato_hora_reloj": "",
             "color_botones": "",
             "fuente": "",
             "penalizacion_boleto_perdido": false,
