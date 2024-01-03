@@ -3374,7 +3374,8 @@ class FormularioOperacion:
         label.grid(column=0, row=0, padx=3, pady=3)
 
         labelframe_formulario_info_estacionamiento = tk.Frame(labelframe)
-        labelframe_formulario_info_estacionamiento.grid(column=0, row=1, padx=3, pady=3, sticky=tk.NW)
+        labelframe_formulario_info_estacionamiento.grid(
+            column=0, row=1, padx=3, pady=3, sticky=tk.NW)
 
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Nombre del estacionamiento", font=('Arial', 11))
@@ -3426,6 +3427,46 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe, text="Configuración del pensionados", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe_formulario_pensionados = tk.Frame(labelframe)
+        labelframe_formulario_pensionados.grid(
+            column=0, row=1, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_pensionados, text="Contraseña del modulo", font=('Arial', 11))
+        label.grid(column=0, row=0, padx=3, pady=3)
+        self.variable_contraseña_modulo_pensionados = tk.StringVar()
+        entry_contraseña_modulo_pensionados = tk.Entry(
+            labelframe_formulario_pensionados, width=15, textvariable=self.variable_contraseña_modulo_pensionados, justify='center')
+        entry_contraseña_modulo_pensionados.grid(
+            column=1, row=0, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_pensionados, text="Costo de tarjeta/tarjetón", font=('Arial', 11))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_costo_tarjeta = tk.IntVar()
+        entry_costo_tarjeta = tk.Entry(
+            labelframe_formulario_pensionados, width=15, textvariable=self.variable_costo_tarjeta, justify='center')
+        entry_costo_tarjeta.grid(
+            column=1, row=1, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_pensionados, text="Costo reposición de tarjeta/tarjetón", font=('Arial', 11))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_costo_reposicion = tk.IntVar()
+        entry_variable_costo_reposicion = tk.Entry(
+            labelframe_formulario_pensionados, width=15, textvariable=self.variable_costo_reposicion, justify='center')
+        entry_variable_costo_reposicion.grid(
+            column=1, row=2, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_pensionados, text="Penalización diaria por pago atrasado", font=('Arial', 11))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable_penalizacion_diaria = tk.IntVar()
+        entry_penalizacion_diaria = tk.Entry(
+            labelframe_formulario_pensionados, width=15, textvariable=self.variable_penalizacion_diaria, justify='center')
+        entry_penalizacion_diaria.grid(
+            column=1, row=3, padx=3, pady=3, sticky=tk.NW)
 
         labelframe = tk.LabelFrame(seccion_configuracion_general)
         labelframe.grid(column=0, row=1, padx=3, pady=3, sticky=tk.NW)
