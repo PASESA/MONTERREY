@@ -3554,10 +3554,10 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Color de los botones", font=('Arial', 11))
         label.grid(column=0, row=5, padx=3, pady=3)
-        self.variable_color_sistema = tk.StringVar()
-        entry_color_sistema = tk.Entry(
-            labelframe_form, width=15, textvariable=self.variable_color_sistema, justify='center')
-        entry_color_sistema.grid(
+        self.variable_color_botones_sistema = tk.StringVar()
+        entry_color_botones_sistema = tk.Entry(
+            labelframe_form, width=15, textvariable=self.variable_color_botones_sistema, justify='center')
+        entry_color_botones_sistema.grid(
             column=1, row=5, padx=3, pady=3)
 
         labelframe_form = tk.LabelFrame(
@@ -3573,7 +3573,7 @@ class FormularioOperacion:
 
         self.variable_penalizacion_bolet_perdido = tk.BooleanVar()
         entry_penalizacion_bolet_perdido = tk.Checkbutton(
-            labelframe_form, variable=self.variable_penalizacion_bolet_perdido, justify='center', text="Aplica penalización mas importe de boleto perdido", font=('Arial', 11))
+            labelframe_form, variable=self.variable_penalizacion_bolet_perdido, justify='center', text="Aplica penalización mas\nimporte de boleto perdido", font=('Arial', 11))
         entry_penalizacion_bolet_perdido.grid(
             column=0, row=2, padx=3, pady=3)
 
@@ -3640,6 +3640,64 @@ class FormularioOperacion:
         label = tk.Label(labelframe, text="Configuración de reloj",
                          font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe_formulario_reloj = tk.Frame(labelframe)
+        labelframe_formulario_reloj.grid(
+            column=0, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color menor a una hora", font=('Arial', 11))
+        label.grid(column=0, row=0, padx=3, pady=3)
+        self.variable_color_menor_hora = tk.StringVar()
+        entry_color_menor_hora = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_menor_hora, justify='center')
+        entry_color_menor_hora.grid(
+            column=1, row=0, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color hora completa", font=('Arial', 11))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_color_hora_completa = tk.StringVar()
+        entry_color_hora_completa = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_hora_completa, justify='center')
+        entry_color_hora_completa.grid(
+            column=1, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color 1/4 Hora", font=('Arial', 11))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_color_1_4_hora = tk.StringVar()
+        entry_variable_color_1_4_hora = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_1_4_hora, justify='center')
+        entry_variable_color_1_4_hora.grid(
+            column=1, row=2, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color 2/4 Hora", font=('Arial', 11))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable_color_2_4_hora = tk.StringVar()
+        entry_variable_color_2_4_hora = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_2_4_hora, justify='center')
+        entry_variable_color_2_4_hora.grid(
+            column=1, row=3, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color 3/4 Hora", font=('Arial', 11))
+        label.grid(column=0, row=4, padx=3, pady=3)
+        self.variable_color_3_4_hora = tk.StringVar()
+        entry_variable_color_3_4_hora = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_3_4_hora, justify='center')
+        entry_variable_color_3_4_hora.grid(
+            column=1, row=4, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_reloj, text="Color alerta", font=('Arial', 11))
+        label.grid(column=0, row=5, padx=3, pady=3)
+        self.variable_color_alerta = tk.StringVar()
+        entry_variable_color_alerta = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_alerta, justify='center')
+        entry_variable_color_alerta.grid(
+            column=1, row=5, padx=3, pady=3)
 
         # Agrega sección a cuaderno_configuracion
         seccion_configuracion_funcionamiento_interno = tk.Frame(
