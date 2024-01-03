@@ -3326,7 +3326,7 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de hora completa", font=('Arial', 12))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_importe_hora = tk.StringVar()
+        self.variable_importe_hora = tk.IntVar()
         entry_importe_hora = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_hora, justify='center')
         entry_importe_hora.grid(column=1, row=0, padx=3, pady=3)
@@ -3334,7 +3334,7 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de 1/4 hora", font=('Arial', 12))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.StringVar()
+        self.variable_importe_cuarto_hora = tk.IntVar()
         entry_importe_cuarto_hora = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
@@ -3343,7 +3343,7 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de 2/4 hora", font=('Arial', 12))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.StringVar()
+        self.variable_importe_cuarto_hora = tk.IntVar()
         entry_importe_cuarto_hora = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
@@ -3352,11 +3352,20 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de 3/4 hora", font=('Arial', 12))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.StringVar()
+        self.variable_importe_cuarto_hora = tk.IntVar()
         entry_importe_cuarto_hora = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
             column=1, row=3, padx=3, pady=3)
+
+        label = tk.Label(frame_importe_hora,
+                         text="Importe de boleto perdido", font=('Arial', 12))
+        label.grid(column=0, row=4, padx=3, pady=3)
+        self.variable_importe_boleto_perdido = tk.IntVar()
+        entry_importe_boleto_perdido = tk.Entry(
+            frame_importe_hora, width=15, textvariable=self.variable_importe_boleto_perdido, justify='center')
+        entry_importe_boleto_perdido.grid(
+            column=1, row=4, padx=3, pady=3)
 
         # Pestaña Promociones
         promociones_frame = tk.Frame(cuaderno_tarifa)
@@ -3712,12 +3721,65 @@ class FormularioOperacion:
             labelframe, text="Configuración de base de datos", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
 
+        labelframe_formulario_db = tk.Frame(labelframe)
+        labelframe_formulario_db.grid(
+            column=0, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_db, text="Nombre de usuario", font=('Arial', 11))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_db_usuario = tk.StringVar()
+        entry_db_usuario = tk.Entry(
+            labelframe_formulario_db, width=15, textvariable=self.variable_db_usuario, justify='center')
+        entry_db_usuario.grid(
+            column=1, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_db, text="Contraseña", font=('Arial', 11))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_db_contraseña = tk.StringVar()
+        entry_variable_db_contraseña = tk.Entry(
+            labelframe_formulario_db, width=15, textvariable=self.variable_db_contraseña, justify='center')
+        entry_variable_db_contraseña.grid(
+            column=1, row=2, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_db, text="Host", font=('Arial', 11))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable__db_host = tk.StringVar()
+        entry__db_host = tk.Entry(
+            labelframe_formulario_db, width=15, textvariable=self.variable__db_host, justify='center')
+        entry__db_host.grid(
+            column=1, row=3, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_db, text="Base de datos", font=('Arial', 11))
+        label.grid(column=0, row=4, padx=3, pady=3)
+        self.variable_db_db = tk.StringVar()
+        entry_db_db = tk.Entry(
+            labelframe_formulario_db, width=15, textvariable=self.variable_db_db, justify='center')
+        entry_db_db.grid(
+            column=1, row=4, padx=3, pady=3)
+
         labelframe = tk.LabelFrame(
             seccion_configuracion_funcionamiento_interno)
         labelframe.grid(column=1, row=0, padx=3, pady=3)
         label = tk.Label(
             labelframe, text="Configuración del controlador", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
+
+        labelframe_formulario_controlador = tk.Frame(labelframe)
+        labelframe_formulario_controlador.grid(
+            column=0, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_controlador, text="Pin de barrera", font=('Arial', 11))
+        label.grid(column=0, row=0, padx=3, pady=3)
+        self.variable_pin_barrera = tk.IntVar()
+        entry_pin_barrera = tk.Entry(
+            labelframe_formulario_controlador, width=15, textvariable=self.variable_pin_barrera, justify='center')
+        entry_pin_barrera.grid(
+            column=1, row=0, padx=3, pady=3)
 
         # Botón al final del cuaderno
         boton_guardar = tk.Button(modulo_configuracion, text="Guardar", width=20, height=1, anchor="center", font=(
