@@ -24,7 +24,10 @@ from controller_email import ToolsEmail
 from enum import Enum
 tools = ToolsEmail()
 
-date_format = "%Y-%m-%d %H:%M:%S"
+date_format_system = "%Y-%m-%d %H:%M:%S"
+date_format_interface = "%Y-%m-%d %H:%M"
+date_format_ticket = "%d-%b-%Y %H:%M"
+date_format_clock = "%d-%b-%Y %H:%M:%S"
 
 ### --###
 penalizacion_con_importe = False
@@ -199,7 +202,7 @@ class FormularioOperacion:
         self.entry_placa.focus()
 
     def check_inputs(self):
-        fecha_hora = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        fecha_hora = datetime.now().strftime(date_format_clock)
         self.Reloj.config(text=fecha_hora)
         self.root.after(60, self.check_inputs)
 
@@ -218,10 +221,10 @@ class FormularioOperacion:
         # Generar QR
         self.DB.generar_QR(folio_cifrado)
 
-        horaentrada = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        horaentrada = datetime.now()
 
         corteNum = 0
-        datos = (horaentrada, corteNum, placa)
+        datos = (horaentrada.strftime(date_format_system), corteNum, placa)
 
         # -##printer = Usb(0x04b8, 0x0202, 0)
 
@@ -229,8 +232,8 @@ class FormularioOperacion:
         print(""+"--------------------------------------\n")
         # -###printer.set(align="center")
         print(""+"BOLETO DE ENTRADA\n")
-        print(""+'Entro: '+horaentrada[:-3]+'\n')
-        print(""+'Placas '+placa+'\n')
+        print(""+f'Entro: {horaentrada.strftime(date_format_ticket)}\n')
+        print(""+f'Placas {placa}\n')
         print(""+f'Folio 000{folio_boleto}\n')
 
         # -###printer.set(align = "center")
@@ -555,11 +558,11 @@ class FormularioOperacion:
         folio_boleto = self.DB.MaxfolioEntrada() + 1
         self.MaxId.set(folio_boleto)
 
-        horaentrada = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+        horaentrada = datetime.now()
 
         corteNum = 0
         placa = "BoletoPerdido"
-        datos = (horaentrada, corteNum, placa)
+        datos = (horaentrada.strftime(date_format_system), corteNum, placa)
 
         # aqui lo imprimimos
         # -###printer = Usb(0x04b8, 0x0202, 0)
@@ -570,8 +573,8 @@ class FormularioOperacion:
         print(""+"B O L E T O  P E R D I D O\n")
         # -###printer.set(align="center")
         print(""+"BOLETO DE ENTRADA\n")
-        print(""+'Entro: '+horaentrada[:-3]+'\n')
-        print(""+'Placas '+placa+'\n')
+        print(""+f'Entro: {horaentrada.strftime(date_format_ticket)}\n')
+        print(""+f'Placas {placa}\n')
         print(""+f'Folio 000{folio_boleto}\n')
         # -###printer.set(align = "center")
         print(""+"B O L E T O  P E R D I D O\n")
@@ -689,13 +692,16 @@ class FormularioOperacion:
         self.label15.configure(text="Lo puedes COBRAR")
 
         # Obtiene la fecha actual
-        Salida = datetime.strptime(
-            datetime.today().strftime(date_format), date_format)
+        Salida = datetime.now()
 
-        self.copia_fecha_salida.set(Salida)
+        self.copia_fecha_salida.set(Salida.strftime(date_format_system)[:-3])
 
         # Obtiene la fecha del boleto seleccionado y realiza las conversiones necesarias
-        Entrada = datetime.strptime(self.fecha_entrada.get(), date_format)
+        Entrada = datetime.strptime(
+            self.fecha_entrada.get(), date_format_system)
+
+        Salida = datetime.strptime(
+            Salida.strftime(date_format_system), date_format_system)
 
         TiempoTotal = Salida - Entrada
 
@@ -798,7 +804,7 @@ class FormularioOperacion:
         TarifaPreferente = self.TarifaPreferente.get()
         Importe = self.importe.get()
         Entrada = self.fecha_entrada.get()[:-3]
-        Salida = self.copia_fecha_salida.get()[:-3]
+        Salida = self.copia_fecha_salida.get()
         TiempoTotal = self.TiempoTotal.get()[:-3]
 
         valor = 'N/A'
@@ -831,12 +837,12 @@ class FormularioOperacion:
                 print("Imprime logo")
 
             # -###printer.set(align="left")
-            print(""+"El importe es: $" + Importe + "\n")
-            print(""+'El auto entro: ' + Entrada + '\n')
-            print(""+'El auto salio: ' + Salida + '\n')
-            print(""+'El auto permanecio: ' + TiempoTotal + '\n')
-            print(""+'El folio del boleto es: ' + Folio + '\n')
-            print(""+'TIPO DE COBRO: ' + TarifaPreferente + '\n')
+            print(""+f"El importe es: ${Importe}\n")
+            print(""+f'El auto entro: {Entrada}\n')
+            print(""+f'El auto salio: {Salida}\n')
+            print(""+f'El auto permanecio: {TiempoTotal}\n')
+            print(""+f'El folio del boleto es: {Folio}\n')
+            print(""+f'TIPO DE COBRO: {TarifaPreferente}\n')
 
             if QR_salida:
                 self.DB.generar_QR(f"{Entrada}{Folio}")
@@ -1028,7 +1034,7 @@ class FormularioOperacion:
 
         # Convertir la cadena de caracteres en un objeto datetime
         Salida = datetime.strptime(
-            datetime.today().strftime(date_format), date_format)
+            datetime.today().strftime(date_format_system), date_format_system)
 
         # Calcular el tiempo total en el estacionamiento
         tiempo_total = Salida - Entrada
@@ -1274,7 +1280,7 @@ class FormularioOperacion:
         print(""+txt)
         list_corte.append(txt)
 
-        txt = f"Hora de consulta: {datetime.now().strftime(date_format)}\n\n"
+        txt = f"Hora de consulta: {datetime.now().strftime(date_format_system)}\n\n"
         print(""+txt)
         list_corte.append(txt)
 
@@ -1658,7 +1664,7 @@ class FormularioOperacion:
         self.FechUCORTE.set(self.DB.UltimoCorte())
 
         # donde el label esta bloqueado
-        self.FechaCorte.set(datetime.now().strftime(date_format))
+        self.FechaCorte.set(datetime.now().strftime(date_format_system))
 
     def Guardar_Corte(self):
         self.Calcular_Corte()
@@ -1672,7 +1678,7 @@ class FormularioOperacion:
             inicio_corte = self.FechUCORTE.get()
             turno_cajero = fila[3]
 
-        fecha_hoy = datetime.now().strftime(date_format)
+        fecha_hoy = datetime.now().strftime(date_format_system)
         datos = (fecha_hoy, id_cajero)
         self.DB.Cierreusuario(datos)
 
@@ -1712,7 +1718,7 @@ class FormularioOperacion:
         list_corte.append(txt)
 
         inicio_corte_fecha = datetime.strptime(
-            self.FechUCORTE.get(), date_format)
+            self.FechUCORTE.get(), date_format_system)
         nombre_dia_inicio = self.get_day_name(inicio_corte_fecha.weekday())
         inicio_corte_fecha = datetime.strftime(
             inicio_corte_fecha, '%d-%b-%Y a las %H:%M:%S')
@@ -1721,7 +1727,7 @@ class FormularioOperacion:
         list_corte.append(txt)
 
         final_corte_fecha = datetime.strptime(
-            self.FechaCorte.get(), date_format)
+            self.FechaCorte.get(), date_format_system)
         nombre_dia_fin = self.get_day_name(final_corte_fecha.weekday())
         final_corte_fecha = datetime.strftime(
             final_corte_fecha, "%d-%b-%Y a las %H:%M:%S")
@@ -2501,7 +2507,7 @@ class FormularioOperacion:
         elif VigAct != None:
 
             # Obtener la fecha y hora actual en formato deseado
-            hoy = datetime.now().strftime(date_format)
+            hoy = datetime.now().strftime(date_format_system)
 
             limite = self.get_date_limit(VigAct, Tolerancia)
             print(f"limite: {limite}")
@@ -2573,7 +2579,7 @@ class FormularioOperacion:
             cortesia = cliente[16]
             Tolerancia = int(cliente[17])
 
-            fechaPago = datetime.now().strftime(date_format)
+            fechaPago = datetime.now().strftime(date_format_system)
             pago = 0
             if Estatus == "Inactiva":
                 pago = self.calcular_pago_media_pension(monto)
@@ -2602,7 +2608,7 @@ class FormularioOperacion:
             elif VigAct != None:
 
                 # Obtener la fecha y hora actual en formato deseado
-                hoy = datetime.now().strftime(date_format)
+                hoy = datetime.now().strftime(date_format_system)
 
                 limite = self.get_date_limit(VigAct, Tolerancia)
                 print(f"limite: {limite}")
@@ -2770,21 +2776,21 @@ class FormularioOperacion:
 
     def nueva_vigencia(self, fecha, meses=1, cortesia=None):
         """
-        Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato date_format.
+        Obtiene la fecha del último día del mes siguiente a la fecha dada y la devuelve como una cadena de texto en el formato "%Y-%m-%d %H:%M:%S".
 
         :param fecha (str or datetime): Fecha a partir de la cual se obtendrá la fecha del último día del mes siguiente.
 
         :raises: TypeError si la fecha no es una cadena de texto ni un objeto datetime.
 
         :return:
-            - nueva_vigencia (str): Una cadena de texto en el formato date_format que representa la fecha del último día del mes siguiente a la fecha dada.
+            - nueva_vigencia (str): Una cadena de texto en el formato "%Y-%m-%d %H:%M:%S" que representa la fecha del último día del mes siguiente a la fecha dada.
         """
         try:
             nueva_vigencia = ''
             if fecha == None:
                 # Obtener la fecha y hora actual en formato deseado
                 fecha = datetime.strptime(
-                    datetime.today().strftime(date_format), date_format)
+                    datetime.today().strftime(date_format_system), date_format_system)
 
                 fecha = fecha - relativedelta(months=1)
 
@@ -3113,11 +3119,11 @@ class FormularioOperacion:
 
         # Obtener la fecha y hora actual en formato deseado
         hoy = datetime.strptime(
-            datetime.now().strftime(date_format), date_format)
+            datetime.now().strftime(date_format_system), date_format_system)
 
         # Convertir la fecha límite en un objeto datetime si es de tipo str
         if isinstance(fecha_limite, str):
-            fecha_limite = datetime.strptime(fecha_limite, date_format)
+            fecha_limite = datetime.strptime(fecha_limite, date_format_system)
 
         # Calcular la cantidad de días de atraso
         fecha_atrasada = hoy - fecha_limite
@@ -3207,7 +3213,7 @@ class FormularioOperacion:
 
         def cerrar_ventana():
             # Obtener la fecha y hora actual en formato deseado
-            hoy = datetime.now().strftime(date_format)
+            hoy = datetime.now().strftime(date_format_system)
 
             self.controlador_crud_pensionados.desactivar_tarjetas_expiradas(
                 hoy)
