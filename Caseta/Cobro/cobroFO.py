@@ -3373,6 +3373,54 @@ class FormularioOperacion:
             labelframe, text="Información del estacionamiento", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
 
+        labelframe_formulario_info_estacionamiento = tk.Frame(labelframe)
+        labelframe_formulario_info_estacionamiento.grid(column=0, row=1, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_info_estacionamiento, text="Nombre del estacionamiento", font=('Arial', 11))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_nombre_estacionamiento = tk.StringVar()
+        entry_nombre_estacionamiento = tk.Entry(
+            labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_nombre_estacionamiento, justify='center')
+        entry_nombre_estacionamiento.grid(
+            column=1, row=1, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_info_estacionamiento, text="Logo", font=('Arial', 11))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_path_logo = tk.StringVar()
+        entry_variable_path_logo = tk.Entry(
+            labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_path_logo, justify='center')
+        entry_variable_path_logo.grid(
+            column=1, row=2, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_info_estacionamiento, text="Correo", font=('Arial', 11))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable_correo_estacionamiento = tk.StringVar()
+        entry_correo_estacionamiento = tk.Entry(
+            labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_correo_estacionamiento, justify='center')
+        entry_correo_estacionamiento.grid(
+            column=1, row=3, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_info_estacionamiento, text="Contraseña", font=('Arial', 11))
+        label.grid(column=0, row=4, padx=3, pady=3)
+        self.variable_contraseña_correo = tk.StringVar()
+        entry_contraseña_correo = tk.Entry(
+            labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_contraseña_correo, justify='center')
+        entry_contraseña_correo.grid(
+            column=1, row=4, padx=3, pady=3, sticky=tk.NW)
+
+        label = tk.Label(
+            labelframe_formulario_info_estacionamiento, text="Cajones de estacionamiento", font=('Arial', 11))
+        label.grid(column=0, row=5, padx=3, pady=3)
+        self.variable_cantidad_cajones = tk.IntVar()
+        entry_cantidad_cajones = tk.Entry(
+            labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_cantidad_cajones, justify='center')
+        entry_cantidad_cajones.grid(
+            column=1, row=5, padx=3, pady=3, sticky=tk.NW)
+
         labelframe = tk.LabelFrame(seccion_configuracion_general)
         labelframe.grid(column=1, row=0, padx=3, pady=3, sticky=tk.NW)
         label = tk.Label(
