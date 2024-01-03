@@ -3595,14 +3595,48 @@ class FormularioOperacion:
         entry_formato_pantalla_completa.grid(
             column=0, row=5, padx=3, pady=3)
 
-        labelframe = tk.LabelFrame(seccion_configuracion_general)
-        labelframe.grid(column=1, row=1, padx=3, pady=3)
+        labelframe_derecho = tk.Frame(seccion_configuracion_general)
+        labelframe_derecho.grid(column=1, row=1, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(labelframe_derecho)
+        labelframe.grid(column=0, row=0, padx=3, pady=3)
         label = tk.Label(
             labelframe, text="Configuración del envio", font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
 
-        labelframe = tk.LabelFrame(seccion_configuracion_general)
-        labelframe.grid(column=1, row=2, padx=3, pady=3)
+        labelframe_formulario_config_envio = tk.Frame(labelframe)
+        labelframe_formulario_config_envio.grid(
+            column=0, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_config_envio, text="Destinatario de base de datos", font=('Arial', 11))
+        label.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_destinatario_db = tk.StringVar()
+        entry_destinatario_db = tk.Entry(
+            labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_db, justify='center')
+        entry_destinatario_db.grid(
+            column=1, row=1, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_config_envio, text="Destinatario de corte", font=('Arial', 11))
+        label.grid(column=0, row=2, padx=3, pady=3)
+        self.variable_destinatario_corte = tk.StringVar()
+        entry_variable_destinatario_corte = tk.Entry(
+            labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_corte, justify='center')
+        entry_variable_destinatario_corte.grid(
+            column=1, row=2, padx=3, pady=3)
+
+        label = tk.Label(
+            labelframe_formulario_config_envio, text="Destinatario de notificaciones", font=('Arial', 11))
+        label.grid(column=0, row=3, padx=3, pady=3)
+        self.variable_destinatario_notificaciones = tk.StringVar()
+        entry_destinatario_notificaciones = tk.Entry(
+            labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_notificaciones, justify='center')
+        entry_destinatario_notificaciones.grid(
+            column=1, row=3, padx=3, pady=3)
+
+        labelframe = tk.LabelFrame(labelframe_derecho)
+        labelframe.grid(column=0, row=1, padx=3, pady=3)
         label = tk.Label(labelframe, text="Configuración de reloj",
                          font=('Arial', 12, 'bold'))
         label.grid(column=0, row=0, padx=3, pady=3)
