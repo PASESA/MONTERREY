@@ -1,5 +1,4 @@
 import json
-debug = True
 
 
 class ConfigController:
