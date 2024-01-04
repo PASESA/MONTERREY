@@ -1,7 +1,7 @@
 {
     "general": {
         "informacion_estacionamiento": {
-            "nombre_estacionamiento": "",
+            "nombre_estacionamiento": "Monterrey 75",
             "path_logo": "",
             "correo": "",
             "contraseña": "",
@@ -47,10 +47,10 @@
         "tarifa_sistema": "",
         "tarifa_simple": {
             "inicio_cobro_fraccion": 1,
-            "tarifa_1_fraccion": 0.00,
-            "tarifa_2_fraccion": 0.00,
-            "tarifa_3_fraccion": 0.00,
-            "tarifa_hora": 0.00,
+            "tarifa_1_fraccion": 7.00,
+            "tarifa_2_fraccion": 14.00,
+            "tarifa_3_fraccion": 21.00,
+            "tarifa_hora": 28.00,
             "tarifa_dia": 0
         },
         "tarifa_personalizada": {
