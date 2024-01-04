@@ -20,6 +20,8 @@ class ConfigController:
         except FileNotFoundError:
             print('No se puede obtener configuracion')
             return
+        except Exception as e:
+            print(e)
 
     def set_config(self, *args: tuple, new_value):
         try:
@@ -38,7 +40,8 @@ class ConfigController:
 
         except FileNotFoundError:
             print('No se puede guardar configuracion')
-
+        except Exception as e:
+            print(e)
 
 impresora = ConfigController().set_config(
     "funcionamiento_interno", "db", "usuario",  new_value="Noe")
