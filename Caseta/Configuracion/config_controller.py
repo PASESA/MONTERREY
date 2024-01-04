@@ -21,11 +21,15 @@ class ConfigController:
                 data = json.load(f)
                 data[type_config][module_config][name_config] = new_value
 
+            # Guardar los cambios en el archivo
+            with open(self.__json_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
         except FileNotFoundError:
             print(f'No se puede obtener configuracion')
             return
 
 
 impresora = ConfigController().set_config(
-    "general", "informacion_estacionamiento", "nombre_estacionamiento", "Durango")
+    "general", "informacion_estacionamiento", "nombre_estacionamiento", "a")
 print(impresora)
