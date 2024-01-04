@@ -3,10 +3,30 @@ debug = True
 
 
 class ConfigController:
-    def __init__(self) -> None:
+    def __init__(self):
+        """
+        Inicializa un objeto ConfigController.
+        """
+        # Ruta al archivo de configuración JSON
         self.__json_path = r'Caseta\\Configuracion\\config.json'
 
     def get_config(self, *args: tuple):
+        """
+        Obtiene un valor de configuración del archivo JSON.
+
+        :param args (tuple): Una serie de claves para acceder al valor deseado en el JSON.
+
+        :raises FileNotFoundError: Si el archivo de configuración no se encuentra.
+        :raises Exception: Cualquier otra excepción durante la lectura del archivo.
+
+        :return:
+            - current_data: El valor de configuración obtenido del archivo JSON.
+
+        Ejemplo:
+        >>> config_controller = ConfigController()
+        >>> print(config_controller.get_config("funcionamiento_interno", "db", "usuario"))
+        >>> "Jhon Doe"
+        """
         try:
             with open(self.__json_path, encoding='utf-8') as f:
                 data = json.load(f)
@@ -20,11 +40,28 @@ class ConfigController:
 
         except FileNotFoundError:
             print('No se puede obtener configuracion')
-            return
+            raise  # Re-raise la excepción para que sea manejada externamente
         except Exception as e:
             print(e)
+            raise  # Re-raise la excepción para que sea manejada externamente
 
     def set_config(self, *args: tuple, new_value):
+        """
+        Establece un valor de configuración en el archivo JSON.
+
+        :param args (tuple): Una serie de claves para acceder al valor deseado en el JSON.
+        :param new_value: El nuevo valor que se establecerá.
+
+        :raises FileNotFoundError: Si el archivo de configuración no se encuentra.
+        :raises Exception: Cualquier otra excepción durante la lectura o escritura del archivo.
+
+        :return: None
+
+
+        Ejemplo:
+        >>> config_controller = ConfigController()
+        >>> config_controller.set_config("funcionamiento_interno", "db", "usuario", new_value="Jhon Doe")
+        """
         try:
             with open(self.__json_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -41,11 +78,7 @@ class ConfigController:
 
         except FileNotFoundError:
             print('No se puede guardar configuracion')
+            raise  # Re-raise la excepción para que sea manejada externamente
         except Exception as e:
             print(e)
-
-
-if debug:
-    impresora = ConfigController().set_config(
-        "funcionamiento_interno", "db", "usuario",  new_value="Noe")
-    print(impresora)
+            raise  # Re-raise la excepción para que sea manejada externamente
