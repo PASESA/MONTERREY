@@ -5,31 +5,41 @@ class ConfigController:
     def __init__(self) -> None:
         self.__json_path = r'Caseta\\Configuracion\\config.json'
 
-    def get_config(self, type_config: str, module_config: str, name_config: str):
+    def get_config(self, *args: tuple):
         try:
             with open(self.__json_path, encoding='utf-8') as f:
                 data = json.load(f)
-                return data[type_config][module_config][name_config]
+
+                # Acceder a la información en función de los argumentos proporcionados
+                current_data = data
+                for arg in args:
+                    current_data = current_data[arg]
+
+                return current_data
 
         except FileNotFoundError:
-            print(f'No se puede obtener configuracion')
+            print('No se puede obtener configuracion')
             return
 
-    def set_config(self, type_config: str, module_config: str, name_config: str, new_value):
+    def set_config(self, *args: tuple, new_value):
         try:
-            with open(self.__json_path, encoding='utf-8') as f:
+            with open(self.__json_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                data[type_config][module_config][name_config] = new_value
+
+            # Acceder y actualizar la información en función de los argumentos proporcionados
+            current_data = data
+            for arg in args[:-1]:
+                current_data = current_data[arg]
+            current_data[args[-1]] = new_value
 
             # Guardar los cambios en el archivo
             with open(self.__json_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
 
         except FileNotFoundError:
-            print(f'No se puede obtener configuracion')
-            return
+            print('No se puede guardar configuracion')
 
 
 impresora = ConfigController().set_config(
-    "general", "informacion_estacionamiento", "nombre_estacionamiento", "a")
+    "funcionamiento_interno", "db", "usuario",  new_value="Noe")
 print(impresora)

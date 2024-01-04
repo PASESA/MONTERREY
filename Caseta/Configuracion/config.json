@@ -9,7 +9,7 @@
         },
         "configuracion_sistema": {
             "impresora": {
-                "idVendor": 0,
+                "idVendor": 1000000000,
                 "idProduct": 0
             },
             "formato_hora_interface": "",
@@ -30,7 +30,7 @@
             "penalizacion_diaria": 0
         },
         "configuiracion_envio": {
-            "destinatario_DB": "",
+            "destinatario_DB": "a",
             "destinatario_corte": "",
             "destinatario_notificacinoes": ""
         },
@@ -86,7 +86,7 @@
     },
     "funcionamiento_interno": {
         "db": {
-            "usuario": "",
+            "usuario": "Noe",
             "contraseña": "",
             "host": "",
             "db": ""
