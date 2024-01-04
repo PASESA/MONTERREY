@@ -1,4 +1,5 @@
 import json
+debug = True
 
 
 class ConfigController:
@@ -43,6 +44,8 @@ class ConfigController:
         except Exception as e:
             print(e)
 
-impresora = ConfigController().set_config(
-    "funcionamiento_interno", "db", "usuario",  new_value="Noe")
-print(impresora)
+
+if debug:
+    impresora = ConfigController().set_config(
+        "funcionamiento_interno", "db", "usuario",  new_value="Noe")
+    print(impresora)
