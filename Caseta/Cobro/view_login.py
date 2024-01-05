@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from view_crud_usuarios_tpv import ViewCRUDUsuarios
 from tkinter import messagebox as mb
+from config_controller import ConfigController
 
 
 class View_Login:
@@ -11,14 +12,15 @@ class View_Login:
         """Inicializa una instancia de la clase Login y crea la ventana principal de la interfaz."""
         # Crea la ventana principal
         self.window_login = tk.Toplevel()
+        instance_config = ConfigController()
 
         # Se elimina la funcionalidad del botón de cerrar
         self.window_login.protocol(
             "WM_DELETE_WINDOW", lambda: self.desconectar())
 
         # Establece el tamaño de la ventana y su título
-        self.window_login.title(f'Login')
-
+        self.window_login.title(
+            f"Login -> {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
         # Establece el tamaño máximo de la ventana para que ocupe toda la pantalla
         ancho_max = self.window_login.winfo_screenwidth()
         alto_max = self.window_login.winfo_screenheight()

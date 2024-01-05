@@ -9,29 +9,32 @@ from subprocess import run, CalledProcessError
 from os import path, getcwd, remove, listdir
 from requests import get
 from requests.exceptions import RequestException
-from operacion import Operacion
+from config_controller import ConfigController
 
+instance_config = ConfigController()
 dir_cortes = "../Cortes"
 
 # Nombre del estacionamiento
-nombre_estacionamiento = 'Monterrey 75'
+nombre_estacionamiento = instance_config.get_config(
+    "general", "informacion_estacionamiento", "nombre_estacionamiento")
 
 # Datos de acceso a la cuenta de correo
-username = 'monterrey75@pasesa.com.mx'
-password = '#Monterrey75'
+username = instance_config.get_config(
+    "general", "informacion_estacionamiento", "correo")
+password = instance_config.get_config(
+    "general", "informacion_estacionamiento", "contraseña")
 
 # Correos para enviar la informacion
-EMAIL_send_database = "enviocorreospasesa@outlook.com"
-EMAIL_send_corte = "sistemas@pasesa.com.mx"
-EMAIL_notification = "sistemas@pasesa.com.mx"
+EMAIL_send_database = instance_config.get_config(
+    "general", "configuiracion_envio", "destinatario_DB")
+EMAIL_send_corte = instance_config.get_config(
+    "general", "configuiracion_envio", "destinatario_corte")
+EMAIL_notification = instance_config.get_config(
+    "general", "configuiracion_envio", "destinatario_notificaciones")
 
 
 class ToolsEmail:
     """Clase que proporciona herramientas relacionadas con el correo electronico y archivos."""
-
-    def __init__(self):
-        """Constructor de la clase"""
-        self.DB = Operacion()
 
     def check_internet_connection(self, url: str = "http://www.google.com", timeout: int = 10) -> bool:
         """Comprueba si hay una conexion activa a Internet mediante una peticion HTTP a la URL dada.
@@ -150,14 +153,18 @@ class ToolsEmail:
         """
         try:
             # Configuracion de la base de datos
-            host = self.DB.host
-            user = self.DB.user
-            password = self.DB.password
-            database = self.DB.database
+            host = instance_config.get_config(
+                "funcionamiento_interno", "db", "host")
+            user = instance_config.get_config(
+                "funcionamiento_interno", "db", "usuario")
+            password = instance_config.get_config(
+                "funcionamiento_interno", "db", "contraseña")
+            database = instance_config.get_config(
+                "funcionamiento_interno", "db", "db")
 
             # Comando mysqldump (dependiendo del sistema operativo)
             command = f"mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
-            # command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
+            command = f"cd C:/xampp/mysql/bin && mysqldump -h {host} -u {user} -p{password} {database} > {backup_path}"
 
             run(command, shell=True)
 
@@ -365,13 +372,17 @@ def main() -> None:
     """
     Funcion principal del programa para enviar la base de datos por correo electronico y mostrar el resultado.
     """
+    printer_idVendor = instance_config.get_config(
+        "general", "configuracion_sistema", "impresora", "idVendor")
+    printer_idProduct = instance_config.get_config(
+        "general", "configuracion_sistema", "impresora", "idProduct")
     try:
         # Ejecutar la funcion para enviar los correos electronicos
         message_send_database = send_database()
         message_send_corte = send_corte()
 
         # Instanciar el objeto Usb para imprimir el resultado
-        # -###printer = Usb(0x04b8, 0x0202, 0)
+        # -###printer = Usb(printer_idVendor, printer_idProduct)
 
         # Alinea al centro el texto
         # -###printer.set(align = "center")

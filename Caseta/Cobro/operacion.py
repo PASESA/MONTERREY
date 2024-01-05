@@ -2,14 +2,20 @@ import pymysql
 import random
 import qrcode
 from tkinter import messagebox as mb
+from config_controller import ConfigController
+instance_config = ConfigController()
 
 
 class Operacion:
     def __init__(self):
-        self.host = "localhost"
-        self.user = "Admin"
-        self.password = "P4S3S4_ADMIN"
-        self.database = "db_monterrey_89"
+        self.host = instance_config.get_config(
+            "funcionamiento_interno", "db", "host")
+        self.user = instance_config.get_config(
+            "funcionamiento_interno", "db", "usuario")
+        self.password = instance_config.get_config(
+            "funcionamiento_interno", "db", "contraseña")
+        self.database = instance_config.get_config(
+            "funcionamiento_interno", "db", "db")
 
     def abrir(self):
         conexion = pymysql.connect(host=self.host,
@@ -514,7 +520,6 @@ class Operacion:
 
 
 # PENSIONADOS
-
 
     def ValidarRFID(self, datos):
         cone = self.abrir()

@@ -1,11 +1,9 @@
 from tkinter import messagebox as mb
 import tkinter as tk
 from tkinter import ttk
-
-
 from datetime import datetime
-
 from queries import Usuarios
+from config_controller import ConfigController
 
 
 class View_agregar_usuarios:
@@ -19,9 +17,12 @@ class View_agregar_usuarios:
         """
         self.query = Usuarios()
         self.panel_crud = tk.Toplevel()
+        instance_config = ConfigController()
+
         self.panel_crud.protocol(
             "WM_DELETE_WINDOW", lambda: self.desconectar())
-        self.panel_crud.title(f'Agregar usuarios')
+        self.panel_crud.title(
+            f"Agregar usuarios -> {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
         self.panel_crud.columnconfigure(0, weight=1)
 
         # Variables para almacenar datos de usuario

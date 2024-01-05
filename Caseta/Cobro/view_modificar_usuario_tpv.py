@@ -1,8 +1,8 @@
 from tkinter import messagebox as mb
 import tkinter as tk
 from tkinter import ttk
-
 from queries import Usuarios
+from config_controller import ConfigController
 
 
 class View_modificar_usuarios:
@@ -20,6 +20,7 @@ class View_modificar_usuarios:
             None
         """
         self.query = Usuarios()
+        instance_config = ConfigController()
 
         self.usuario_informacion = usuario_informacion
         self.id = id
@@ -31,7 +32,8 @@ class View_modificar_usuarios:
         self.panel_crud.protocol(
             "WM_DELETE_WINDOW", lambda: self.desconectar())
 
-        self.panel_crud.title(f'Modificar usuarios')
+        self.panel_crud.title(
+            f"Modificar usuarios -> {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
 
         # Configura la columna principal del panel para que use todo el espacio disponible
         self.panel_crud.columnconfigure(0, weight=1)

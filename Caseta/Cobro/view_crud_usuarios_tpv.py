@@ -1,10 +1,10 @@
 from tkinter import messagebox as mb
 import tkinter as tk
 from tkinter import ttk
-
 from queries import Usuarios
 from view_agregar_usuario_tpv import View_agregar_usuarios
 from view_modificar_usuario_tpv import View_modificar_usuarios
+from config_controller import ConfigController
 
 
 class ViewCRUDUsuarios:
@@ -13,10 +13,12 @@ class ViewCRUDUsuarios:
     def __init__(self):
         """Constructor de la clase. Inicializa la ventana y los atributos."""
         # Crear la ventana principal
+        instance_config = ConfigController()
         self.panel_crud = tk.Toplevel()
         self.panel_crud.protocol(
             "WM_DELETE_WINDOW", lambda: self.desconectar())
-        self.panel_crud.title(f'Administración de usuarios -> Monterrey')
+        self.panel_crud.title(
+            f"Administración de usuarios -> {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
         self.panel_crud.columnconfigure(0, weight=1)
 
         self.ID_usuario = tk.StringVar()

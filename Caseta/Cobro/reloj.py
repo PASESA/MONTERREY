@@ -1,17 +1,13 @@
 import tkinter as tk
 from math import radians, cos, sin
-debug = False
-entrada_test = "01:00:00"
-salida_test = "02:30:00"
-importe_test = "100"
-hora_test = 10
-minut_testo = 1
+
+from config_controller import ConfigController
 
 
 class BlinkingLabel:
     # Clase para manejar el parpadeo de etiquetas
 
-    def __init__(self, color_alert: str = "red"):
+    def __init__(self, color_alert: str):
         self.label = None
         self._original_bg = None
         self._blink_id = None
@@ -72,20 +68,28 @@ class RelojAnalogico:
     def __init__(self):
         """Inicializa la interfaz del reloj analógico."""
         self.root = tk.Toplevel()
+        self.instance_config = ConfigController()
         self.root.title(" ")
         # Colores para cada cuarto de hora
         self.colors = [
-            "#b9d8f9",  # Cielo Azul (Primer cuarto de hora)
-            "#5ba3f1",  # Azul Marino (Segundo cuarto de hora)
-            "#1270d3",  # Noche Azul (Tercer cuarto de hora)
-            "#062546"  # Profundo Azul (Último cuarto de hora)
+            self.instance_config.get_config(
+                "general", "configuiracion_reloj", "color_1_fraccion"),  # Cielo Azul (Primer cuarto de hora)
+            self.instance_config.get_config(
+                "general", "configuiracion_reloj", "color_2_fraccion"),  # Azul Marino (Segundo cuarto de hora)
+            self.instance_config.get_config(
+                "general", "configuiracion_reloj", "color_3_fraccion"),  # Noche Azul (Tercer cuarto de hora)
+            self.instance_config.get_config(
+                "general", "configuiracion_reloj", "color_hora_completa")  # Profundo Azul (Último cuarto de hora)
         ]
 
-        self.color_first_hour = "#062445"
+        self.color_first_hour = self.instance_config.get_config(
+            "general", "configuiracion_reloj", "color_primera_hora")
         self.blink_interval = 500
-        self.font = ("Arial",  20)
+        self.font = (self.instance_config.get_config(
+            "general", "configuracion_sistema", "fuente"),  20)
 
-        self.blinking_label_info_color = BlinkingLabel()
+        self.blinking_label_info_color = BlinkingLabel(self.instance_config.get_config(
+            "general", "configuiracion_reloj", "color_alerta"))
         self.root.geometry("+1640+50")
 
         self.interface()
@@ -161,7 +165,8 @@ class RelojAnalogico:
         frame_horas.grid(row=0, column=0)
 
         self.label_horas = tk.Label(
-            frame_horas, text="0 Días 00 Hrs 00 Min 00 Seg", font=("Arial", 20))
+            frame_horas, text="0 Días 00 Hrs 00 Min 00 Seg", font=(self.instance_config.get_config(
+                "general", "configuracion_sistema", "fuente"), 20))
         self.label_horas.grid(row=0, column=0)
 
         frame_importe = tk.Frame(frame_horas, padx=5, pady=5)
@@ -174,7 +179,8 @@ class RelojAnalogico:
 
         # Etiqueta para el importe total
         self.label_importe_total_horas = tk.Label(
-            frame_importe, text="$0.00", font=("Arial", 20))
+            frame_importe, text="$0.00", font=(self.instance_config.get_config(
+                "general", "configuracion_sistema", "fuente"), 20))
         self.label_importe_total_horas.grid(row=0, column=1, padx=5, pady=5)
 
         frame_reloj = tk.Frame(frame_total_reloj, padx=5, pady=5)
@@ -207,7 +213,8 @@ class RelojAnalogico:
                 # Ajustar la posición de los números
                 y_text = 150 - 130 * sin(angle)
                 self.canvas_background.create_text(
-                    x_text, y_text, text=str(number), font=("Arial", 13))
+                    x_text, y_text, text=str(number), font=(self.instance_config.get_config(
+                        "general", "configuracion_sistema", "fuente"), 13))
 
         # Dibujar las divisiones en 4 partes iguales en el canvas de fondo
         for i in range(4):
@@ -248,7 +255,8 @@ class RelojAnalogico:
 
         # Etiqueta para el tiempo total
         self.label_tiempo_total = tk.Label(
-            self.frame_datos, text="00 Hrs 00 Min 00 Seg", font=("Arial", 25))
+            self.frame_datos, text="00 Hrs 00 Min 00 Seg", font=(self.instance_config.get_config(
+                "general", "configuracion_sistema", "fuente"), 25))
         # self.label_tiempo_total.grid(row=3, column=0, padx=5, pady=5)
 
         # Etiqueta para el tiempo total
@@ -266,7 +274,8 @@ class RelojAnalogico:
 
         # Etiqueta para el importe total
         self.label_importe_total = tk.Label(
-            frame_importe, text="$0.00", font=("Arial", 25))
+            frame_importe, text="$0.00", font=(self.instance_config.get_config(
+                "general", "configuracion_sistema", "fuente"), 25))
         self.label_importe_total.grid(row=0, column=1, padx=5, pady=5)
 
         self.update_background(0, False)
@@ -402,7 +411,8 @@ class RelojAnalogico:
 
             # Actualizar las horas cada 60 minutos
             if current_minutes % 60 == 0:
-                self.label_horas.config(text=f"{time_str}", font=("Arial", 20))
+                self.label_horas.config(text=f"{time_str}", font=(self.instance_config.get_config(
+                    "general", "configuracion_sistema", "fuente"), 20))
 
         # Iniciar el parpadeo de la etiqueta de color seleccionada
         self.blinking_label_info_color.start_blinking(
@@ -419,11 +429,13 @@ class RelojAnalogico:
         self.label_importe_total.config(text=f"${importe}.00")
         self.label_importe_total_horas.config(text=f"${importe}.00")
 
-        self.blinking_label_importe = BlinkingLabel()
+        self.blinking_label_importe = BlinkingLabel(self.instance_config.get_config(
+            "general", "configuiracion_reloj", "color_alerta"))
         self.blinking_label_importe.start_blinking(
             self.label_importe_total, self.blink_interval)
 
-        self.blinking_label_importe_horas = BlinkingLabel()
+        self.blinking_label_importe_horas = BlinkingLabel(self.instance_config.get_config(
+            "general", "configuiracion_reloj", "color_alerta"))
         self.blinking_label_importe_horas.start_blinking(
             self.label_importe_total_horas, self.blink_interval)
 
@@ -464,11 +476,3 @@ class RelojAnalogico:
 
     def open_window(self):
         self.root.mainloop()
-
-
-if debug:
-    # Ejemplo de uso:
-    reloj_test = RelojAnalogico()
-    reloj_test.set_time(entrada=entrada_test, salida=salida_test,
-                        hour=hora_test, minute=minuto_test, importe=importe_test)
-    reloj_test.open_window()

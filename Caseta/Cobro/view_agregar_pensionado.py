@@ -8,15 +8,16 @@ from tkinter import StringVar
 from datetime import datetime
 from queries import Pensionados
 import traceback
+from config_controller import ConfigController
 
 
 class View_agregar_pensionados:
     """Clase de la vista para agregar pensionados."""
 
-    def __init__(self, nombre_estacionamiento: str):
+    def __init__(self):
         """Inicializa una instancia de la clase ViewAgregarPensionados y crea la ventana principal de la interfaz."""
-        self.nombre_estacionamiento = nombre_estacionamiento
         self.query = Pensionados()
+        instance_config = ConfigController()
 
         # Crea la ventana principal
         self.panel_crud = tk.Toplevel()
@@ -26,7 +27,7 @@ class View_agregar_pensionados:
             "WM_DELETE_WINDOW", lambda: self.desconectar())
 
         self.panel_crud.title(
-            f'Agregar pensionado - {self.nombre_estacionamiento}')
+            f"Agregar pensionado - {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
 
         # Configura la columna principal del panel para que use todo el espacio disponible
         self.panel_crud.columnconfigure(0, weight=1)

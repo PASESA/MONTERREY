@@ -5,25 +5,24 @@ from tkinter import messagebox as mb
 import tkinter as tk
 from tkinter import ttk
 from tkinter import StringVar
-
 from datetime import datetime
-
 from queries import Pensionados
 import traceback
 from escpos.printer import Usb, USBNotFoundError
+from config_controller import ConfigController
 
 
 class View_modificar_pensionados():
     """Clase para mostrar la ventana de modificación de datos de un pensionado."""
 
-    def __init__(self, datos_pensionado, nombre_estacionamiento):
+    def __init__(self, datos_pensionado):
         """
         Constructor de la clase. Inicializa la ventana y los atributos.
 
         Args:
             datos_pensionado (tuple): Tupla con los datos del pensionado a modificar.
         """
-        self.nombre_estacionamiento = nombre_estacionamiento
+        instance_config = ConfigController()
         self.query = Pensionados()
         self.datos_pensionado = datos_pensionado
 
@@ -35,7 +34,7 @@ class View_modificar_pensionados():
             "WM_DELETE_WINDOW", lambda: self.desconectar())
 
         self.panel_crud.title(
-            f'Modificar pensionado . {self.nombre_estacionamiento}')
+            f"Modificar pensionado -> {instance_config.get_config('general', 'informacion_estacionamiento', 'nombre_estacionamiento')}")
 
         # Configura la columna principal del panel para que use todo el espacio disponible
         self.panel_crud.columnconfigure(0, weight=1)

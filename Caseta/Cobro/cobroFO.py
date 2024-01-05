@@ -3034,7 +3034,7 @@ class FormularioOperacion:
 
         self.variable_contraseña_pensionados.set("")
         self.variable_numero_tarjeta.set("")
-        View_agregar_pensionados(self.nombre_estacionamiento)
+        View_agregar_pensionados()
 
         self.limpiar_datos_pago()
         self.ver_pensionados()
