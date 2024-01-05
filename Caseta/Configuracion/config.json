@@ -1,10 +1,10 @@
 {
     "general": {
         "informacion_estacionamiento": {
-            "nombre_estacionamiento": "Monterrey",
+            "nombre_estacionamiento": "Monterrey 75",
             "path_logo": "a xd",
             "correo": "sistemas@pasesa.com.mx",
-            "contraseña": "123456789",
+            "contraseña": "@System23",
             "cantidad_cajones": 200
         },
         "configuracion_sistema": {
@@ -16,15 +16,16 @@
             "formato_hora_boleto": "%d-%b-%Y %H:%M",
             "formato_hora_reloj": "%d-%b-%Y %H:%M:%S",
             "color_botones": "#062546",
+            "color_letra_botones": "white",
             "fuente": "Arial",
             "penalizacion_boleto_perdido": true,
-            "reloj": true,
-            "envio_información": true,
-            "pantalla_completa": true,
-            "requiere_placa": true
+            "reloj": false,
+            "envio_información": false,
+            "pantalla_completa": false,
+            "requiere_placa": false
         },
         "configuracion_pensionados": {
-            "contraseña": "123456",
+            "contraseña": "P4s3",
             "costo_tarjeta": 100,
             "costo_reposicion_tarjeta": 250,
             "penalizacion_diaria": 5
