@@ -21,10 +21,14 @@ class ConfigController:
         :return:
             - current_data: El valor de configuración obtenido del archivo JSON.
 
-        Ejemplo:
+        Ejemplo 1:
         >>> config_controller = ConfigController()
         >>> print(config_controller.get_config("funcionamiento_interno", "db", "usuario"))
         >>> "Jhon Doe"
+
+        Ejemplo 2:
+        >>> print(config_controller.get_config("general", "configuracion_sistema", "impresora", "idVendor"))
+        >>> "0x04b8"
         """
         try:
             with open(self.__json_path, encoding='utf-8') as f:
@@ -57,9 +61,12 @@ class ConfigController:
         :return: None
 
 
-        Ejemplo:
+        Ejemplo 1:
         >>> config_controller = ConfigController()
-        >>> config_controller.set_config("funcionamiento_interno", "db", "usuario", new_value="Jhon Doe")
+        >>> config_controller.set_config("funcionamiento_interno", "db", "usuario", new_value="Jhon Doe"
+
+        Ejemplo 2:
+        >>> config_controller.set_config("general", "configuracion_sistema", "impresora", "idVendor = "0x04b8")
         """
         try:
             with open(self.__json_path, 'r', encoding='utf-8') as f:

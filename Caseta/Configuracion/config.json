@@ -2,45 +2,45 @@
     "general": {
         "informacion_estacionamiento": {
             "nombre_estacionamiento": "Monterrey",
-            "path_logo": "",
-            "correo": "",
-            "contraseña": "",
-            "cantidad_cajones": 0
+            "path_logo": "a xd",
+            "correo": "sistemas@pasesa.com.mx",
+            "contraseña": "123456789",
+            "cantidad_cajones": 200
         },
         "configuracion_sistema": {
             "impresora": {
-                "idVendor": 1000000000,
-                "idProduct": 0
+                "idVendor": "0x04b8",
+                "idProduct": "0x0202"
             },
-            "formato_hora_interface": "",
-            "formato_hora_boleto": "",
-            "formato_hora_reloj": "",
-            "color_botones": "",
-            "fuente": "",
-            "penalizacion_boleto_perdido": false,
-            "reloj": false,
-            "envio_información": false,
-            "pantalla_completa": false,
-            "requiere_placa": false
+            "formato_hora_interface": "%Y-%m-%d %H:%M",
+            "formato_hora_boleto": "%d-%b-%Y %H:%M",
+            "formato_hora_reloj": "%d-%b-%Y %H:%M:%S",
+            "color_botones": "#062546",
+            "fuente": "Arial",
+            "penalizacion_boleto_perdido": true,
+            "reloj": true,
+            "envio_información": true,
+            "pantalla_completa": true,
+            "requiere_placa": true
         },
         "configuracion_pensionados": {
-            "contraseña": "",
-            "costo_tarjeta": 0,
-            "costo_reposicion_tarjeta": 0,
-            "penalizacion_diaria": 0
+            "contraseña": "123456",
+            "costo_tarjeta": 100,
+            "costo_reposicion_tarjeta": 250,
+            "penalizacion_diaria": 5
         },
         "configuiracion_envio": {
-            "destinatario_DB": "a",
-            "destinatario_corte": "",
-            "destinatario_notificacinoes": ""
+            "destinatario_DB": "sistemas@pasesa.com.mx",
+            "destinatario_corte": "sistemas@pasesa.com.mx",
+            "destinatario_notificaciones": "sistemas@pasesa.com.mx"
         },
         "configuiracion_reloj": {
-            "color_antes_de_hora": "",
-            "color_hora_completa": "",
-            "color_1_fraccion": "",
-            "color_2_fraccion": "",
-            "color_3_fraccion": "",
-            "color_alerta": ""
+            "color_primera_hora": "#062445",
+            "color_1_fraccion": "#b9d8f9",
+            "color_2_fraccion": "#5ba3f1",
+            "color_3_fraccion": "#1270d3",
+            "color_hora_completa": "#062546",
+            "color_alerta": "red"
         }
     },
     "tarifa": {
@@ -82,17 +82,18 @@
             "tarifa_22_hora": 0.0,
             "tarifa_23_hora": 0.0,
             "tarifa_24_hora": 0.0
-        }
+        },
+        "tarifa_boleto_perdido": 200
     },
     "funcionamiento_interno": {
         "db": {
-            "usuario": "Noe",
-            "contraseña": "",
-            "host": "",
-            "db": ""
+            "usuario": "Admin",
+            "contraseña": "P4S3S4_ADMIN",
+            "host": "localhost",
+            "db": "db_monterrey_89"
         },
         "controlador": {
-            "pin_barrera": 0
+            "pin_barrera": 45
         }
     }
 }
