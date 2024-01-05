@@ -4,13 +4,15 @@ from tkinter import messagebox
 from operacion import Operacion
 import traceback
 
+
 class Usuarios:
     """
     Clase para interactuar con la tabla de Usuarios en la base de datos.
 
     Esta clase proporciona métodos para agregar, consultar, ver, eliminar y actualizar usuarios en la tabla de Usuarios.
     """
-    def __init__ (self):
+
+    def __init__(self):
         """
         Inicializa la clase Usuarios.
 
@@ -60,7 +62,8 @@ class Usuarios:
             traceback.print_exc()
             if "10054" in str(e):
                 print(e)
-                messagebox.showwarning("Error", "Se ha perdido la conexión con el servidor.\nEl programa se cerrará, posterior a eso inicie nuevamente sesión\n\nEn caso de que el error persista contacte a un administrador.")
+                messagebox.showwarning(
+                    "Error", "Se ha perdido la conexión con el servidor.\nEl programa se cerrará, posterior a eso inicie nuevamente sesión\n\nEn caso de que el error persista contacte a un administrador.")
 
         except err.ProgrammingError as error:
             traceback.print_exc()
@@ -71,15 +74,16 @@ class Usuarios:
             error_number = int(match.group(1))
             if error_number == 1146:
                 print(error)
-                messagebox.showwarning("Error", f"Error: La tabla no existe.\n Es probable que la conexión actual no cuente con la tabla a la que intenta acceder, de ser caso contrario contacte con un administrador.")
+                messagebox.showwarning(
+                    "Error", f"Error: La tabla no existe.\n Es probable que la conexión actual no cuente con la tabla a la que intenta acceder, de ser caso contrario contacte con un administrador.")
                 return None
 
         except Exception as e:
             print(e)
             traceback.print_exc()
-            messagebox.showwarning("Error", f"Error al realizar la consulta, por favor contacte con un administrador y muestre el siguiente error:\n Error: {str(e)} ")
+            messagebox.showwarning(
+                "Error", f"Error al realizar la consulta, por favor contacte con un administrador y muestre el siguiente error:\n Error: {str(e)} ")
             return None
-
 
     def agregar_usuarios(self, datos):
         """
@@ -155,12 +159,14 @@ class Usuarios:
         # Se ejecuta la consulta
         self.execute_query(query)
 
+
 class Pensionados(Usuarios):
     """
     Clase para interactuar con la tabla de Pensionados en la base de datos.
 
     Esta clase hereda de la clase Usuarios y proporciona métodos adicionales para agregar, consultar, ver, eliminar y actualizar pensionados en la tabla de Pensionados.
     """
+
     def agregar_pensionados(self, datos):
         """
         Agrega un nuevo pensionado a la base de datos.
@@ -225,10 +231,12 @@ class Pensionados(Usuarios):
         """
         datos_pensionado = tuple(datos_pensionado)
         vigencia = datos_pensionado[17]
-        if vigencia == None: vigencia = 'Null'
-        else: vigencia = f"""'{vigencia}'"""
+        if vigencia == None:
+            vigencia = 'Null'
+        else:
+            vigencia = f"""'{vigencia}'"""
 
-        query =f"""UPDATE Pensionados SET Num_tarjeta = '{datos_pensionado[0]}', Nom_cliente = '{datos_pensionado[1]}', Apell1_cliente = '{datos_pensionado[2]}', Apell2_cliente = '{datos_pensionado[3]}', Telefono1 = '{datos_pensionado[4]}', Telefono2 = '{datos_pensionado[5]}', Ciudad = '{datos_pensionado[6]}', Colonia = '{datos_pensionado[7]}', CP = '{datos_pensionado[8]}', Calle_num = '{datos_pensionado[9]}', Placas = '{datos_pensionado[10]}', Modelo_auto = '{datos_pensionado[11]}', Color_auto = '{datos_pensionado[12]}', Monto = '{datos_pensionado[13]}', Cortesia = '{datos_pensionado[14]}', Tolerancia = {datos_pensionado[15]}, Ult_Cambio = '{datos_pensionado[16]}', Fecha_vigencia = {vigencia}, Vigencia = '{datos_pensionado[18]}' WHERE Num_tarjeta = '{Num_tarjeta}';"""
+        query = f"""UPDATE Pensionados SET Num_tarjeta = '{datos_pensionado[0]}', Nom_cliente = '{datos_pensionado[1]}', Apell1_cliente = '{datos_pensionado[2]}', Apell2_cliente = '{datos_pensionado[3]}', Telefono1 = '{datos_pensionado[4]}', Telefono2 = '{datos_pensionado[5]}', Ciudad = '{datos_pensionado[6]}', Colonia = '{datos_pensionado[7]}', CP = '{datos_pensionado[8]}', Calle_num = '{datos_pensionado[9]}', Placas = '{datos_pensionado[10]}', Modelo_auto = '{datos_pensionado[11]}', Color_auto = '{datos_pensionado[12]}', Monto = '{datos_pensionado[13]}', Cortesia = '{datos_pensionado[14]}', Tolerancia = {datos_pensionado[15]}, Ult_Cambio = '{datos_pensionado[16]}', Fecha_vigencia = {vigencia}, Vigencia = '{datos_pensionado[18]}' WHERE Num_tarjeta = '{Num_tarjeta}';"""
 
         # Se ejecuta la consulta
         self.execute_query(query)
@@ -241,7 +249,7 @@ class Pensionados(Usuarios):
 
         Esta función desactiva las tarjetas de pensionados cuya vigencia ha expirado, asignándoles el estado "InactivaPerm".
         """
-        query =f"""UPDATE Pensionados SET Vigencia = 'InactivaPerm', Fecha_vigencia = NULL, Estatus = 'Afuera', Ult_Cambio = '{hoy}' WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH);"""
+        query = f"""UPDATE Pensionados SET Vigencia = 'InactivaPerm', Fecha_vigencia = NULL, Estatus = 'Afuera', Ult_Cambio = '{hoy}' WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH);"""
 
         # Se ejecuta la consulta
         self.execute_query(query)
@@ -252,17 +260,16 @@ class Pensionados(Usuarios):
 
         :return: (list) Una lista con los números de tarjeta y fechas de vigencia de las tarjetas expiradas.
         """
-        query =f"""SELECT Num_tarjeta, Fecha_vigencia FROM Pensionados WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH) ORDER BY Id_cliente DESC;"""
+        query = f"""SELECT Num_tarjeta, Fecha_vigencia FROM Pensionados WHERE Fecha_vigencia < DATE_ADD(CURDATE(), INTERVAL -2 MONTH) ORDER BY Id_cliente DESC;"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
 
         return resultado
 
-
     def get_Entradas_Totales_Pensionados(self, folio):
 
-        query =f"""SELECT COUNT(*) AS Entradas_Totales_Pensionados FROM MovimientosPens p INNER JOIN Cortes c ON p.Entrada BETWEEN c.FechaIni AND c.FechaFin WHERE c.Folio = {folio};"""
+        query = f"""SELECT COUNT(*) AS Entradas_Totales_Pensionados FROM MovimientosPens p INNER JOIN Cortes c ON p.Entrada BETWEEN c.FechaIni AND c.FechaFin WHERE c.Folio = {folio};"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
@@ -271,7 +278,7 @@ class Pensionados(Usuarios):
 
     def get_Salidas_Pensionados(self, corte):
 
-        query =f"""SELECT COUNT(*) AS Salidas_Pensionados FROM MovimientosPens WHERE Estatus = "Afuera" AND Salida BETWEEN (SELECT FechaIni from Cortes WHERE Folio = {corte}) AND (SELECT FechaFin from Cortes WHERE Folio = {corte}) AND Corte = {corte};"""
+        query = f"""SELECT COUNT(*) AS Salidas_Pensionados FROM MovimientosPens WHERE Estatus = "Afuera" AND Salida BETWEEN (SELECT FechaIni from Cortes WHERE Folio = {corte}) AND (SELECT FechaFin from Cortes WHERE Folio = {corte}) AND Corte = {corte};"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
@@ -280,7 +287,7 @@ class Pensionados(Usuarios):
 
     def get_Quedados_Pensionados(self):
 
-        query =f"""SELECT COUNT(*) AS Quedados_Pensionados FROM MovimientosPens WHERE Estatus = "Adentro" AND Corte = 0;"""   
+        query = f"""SELECT COUNT(*) AS Quedados_Pensionados FROM MovimientosPens WHERE Estatus = "Adentro" AND Corte = 0;"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
@@ -293,7 +300,7 @@ class Pensionados(Usuarios):
         self.execute_query(query)
 
     def get_Anteriores_Pensionados(self, corte):
-        query =f"""SELECT COALESCE(Pensionados_Quedados, 0) FROM Cortes WHERE Folio = {corte};"""   
+        query = f"""SELECT COALESCE(Pensionados_Quedados, 0) FROM Cortes WHERE Folio = {corte};"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
@@ -301,7 +308,7 @@ class Pensionados(Usuarios):
         return resultado[0][0]
 
     def get_QR_id(self):
-        query =f"""SELECT COALESCE(MAX(Id_cliente), 0) FROM Pensionados;"""
+        query = f"""SELECT COALESCE(MAX(Id_cliente), 0) FROM Pensionados;"""
 
         # Se ejecuta la consulta y se obtiene el resultado.
         resultado = self.execute_query(query)
@@ -309,4 +316,3 @@ class Pensionados(Usuarios):
         ID = resultado[0][0] + 1
 
         return ID
-

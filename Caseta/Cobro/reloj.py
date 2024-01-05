@@ -7,6 +7,7 @@ importe_test = "100"
 hora_test = 10
 minut_testo = 1
 
+
 class BlinkingLabel:
     # Clase para manejar el parpadeo de etiquetas
 
@@ -28,7 +29,8 @@ class BlinkingLabel:
         else:
             self.label.config(bg=self.color_alert)
         # Configura el siguiente parpadeo
-        self._blink_id = self.label.after(self.blink_interval, self.toggle_color)
+        self._blink_id = self.label.after(
+            self.blink_interval, self.toggle_color)
 
     def start_blinking(self, label: tk.Label, interval_ms: int):
         """
@@ -63,6 +65,7 @@ class BlinkingLabel:
             self._blink_id = None
             print("se detiene parpadeo")
 
+
 class RelojAnalogico:
     # Clase para la interfaz de reloj analógico
 
@@ -72,9 +75,9 @@ class RelojAnalogico:
         self.root.title(" ")
         # Colores para cada cuarto de hora
         self.colors = [
-            "#b9d8f9", # Cielo Azul (Primer cuarto de hora)
-            "#5ba3f1", # Azul Marino (Segundo cuarto de hora)
-            "#1270d3", # Noche Azul (Tercer cuarto de hora)
+            "#b9d8f9",  # Cielo Azul (Primer cuarto de hora)
+            "#5ba3f1",  # Azul Marino (Segundo cuarto de hora)
+            "#1270d3",  # Noche Azul (Tercer cuarto de hora)
             "#062546"  # Profundo Azul (Último cuarto de hora)
         ]
 
@@ -94,49 +97,61 @@ class RelojAnalogico:
         frame_contenedor.grid(row=0, column=0, padx=5, pady=5)
 
         # Frame para los colores y rango
-        self.frame_colores = tk.LabelFrame(frame_contenedor, text="Colores y Rangos")
+        self.frame_colores = tk.LabelFrame(
+            frame_contenedor, text="Colores y Rangos")
         self.frame_colores.grid(row=0, column=0)
 
         # Etiqueta informativa para el color verde
-        label_hora_inicial = tk.Label(self.frame_colores, text="Primera hora", font=self.font)
+        label_hora_inicial = tk.Label(
+            self.frame_colores, text="Primera hora", font=self.font)
         label_hora_inicial.grid(row=0, column=0, columnspan=2, pady=5)
 
         # Color verde para cuando el tiempo sea menor o igual a una hora
-        range_label = tk.Label(self.frame_colores, text="0 - 60  Minutos", font=self.font, padx=5)
+        range_label = tk.Label(
+            self.frame_colores, text="0 - 60  Minutos", font=self.font, padx=5)
         range_label.grid(row=1, column=0, sticky="w")
 
-        self.color_box_0 = tk.Label(self.frame_colores, bg=self.color_first_hour, width=12, height=2)
+        self.color_box_0 = tk.Label(
+            self.frame_colores, bg=self.color_first_hour, width=12, height=2)
         self.color_box_0.grid(row=1, column=1, sticky="w")
 
         # Etiqueta informativa para el color verde
-        label_hora_despues = tk.Label(self.frame_colores, text="Despues de la primera hora", font=self.font)
+        label_hora_despues = tk.Label(
+            self.frame_colores, text="Despues de la primera hora", font=self.font)
         label_hora_despues.grid(row=2, column=0, columnspan=2, pady=5)
 
         # Etiquetas informativas y recuadros de colores
-        range_label_1 = tk.Label(self.frame_colores, text=f"01 - 15  Minutos", font=self.font, padx=5)
+        range_label_1 = tk.Label(
+            self.frame_colores, text=f"01 - 15  Minutos", font=self.font, padx=5)
         range_label_1.grid(row=3, column=0, sticky="w")
 
-        self.color_box_1 = tk.Label(self.frame_colores, bg=self.colors[0], width=12, height=2)
+        self.color_box_1 = tk.Label(
+            self.frame_colores, bg=self.colors[0], width=12, height=2)
         self.color_box_1.grid(row=3, column=1, sticky="w")
 
-        range_label_2 = tk.Label(self.frame_colores, text=f"16 - 30  Minutos", font=self.font, padx=5)
+        range_label_2 = tk.Label(
+            self.frame_colores, text=f"16 - 30  Minutos", font=self.font, padx=5)
         range_label_2.grid(row=4, column=0, sticky="w")
 
-        self.color_box_2 = tk.Label(self.frame_colores, bg=self.colors[1], width=12, height=2)
+        self.color_box_2 = tk.Label(
+            self.frame_colores, bg=self.colors[1], width=12, height=2)
         self.color_box_2.grid(row=4, column=1, sticky="w")
 
-        range_label_3 = tk.Label(self.frame_colores, text=f"31 - 45  Minutos", font=self.font, padx=5)
+        range_label_3 = tk.Label(
+            self.frame_colores, text=f"31 - 45  Minutos", font=self.font, padx=5)
         range_label_3.grid(row=5, column=0, sticky="w")
 
-        self.color_box_3 = tk.Label(self.frame_colores, bg=self.colors[2], width=12, height=2)
+        self.color_box_3 = tk.Label(
+            self.frame_colores, bg=self.colors[2], width=12, height=2)
         self.color_box_3.grid(row=5, column=1, sticky="w")
 
-        range_label_4 = tk.Label(self.frame_colores, text=f"46 - 60  Minutos", font=self.font, padx=5)
+        range_label_4 = tk.Label(
+            self.frame_colores, text=f"46 - 60  Minutos", font=self.font, padx=5)
         range_label_4.grid(row=6, column=0, sticky="w")
 
-        self.color_box_4 = tk.Label(self.frame_colores, bg=self.colors[3], width=12, height=2)
+        self.color_box_4 = tk.Label(
+            self.frame_colores, bg=self.colors[3], width=12, height=2)
         self.color_box_4.grid(row=6, column=1, sticky="w")
-
 
         # Frame para el reloj
         frame_total_reloj = tk.LabelFrame(frame_contenedor, text="Reloj")
@@ -145,25 +160,28 @@ class RelojAnalogico:
         frame_horas = tk.Frame(frame_total_reloj)
         frame_horas.grid(row=0, column=0)
 
-
-        self.label_horas = tk.Label(frame_horas, text="0 Días 00 Hrs 00 Min 00 Seg", font=("Arial", 20))
+        self.label_horas = tk.Label(
+            frame_horas, text="0 Días 00 Hrs 00 Min 00 Seg", font=("Arial", 20))
         self.label_horas.grid(row=0, column=0)
 
         frame_importe = tk.Frame(frame_horas, padx=5, pady=5)
         frame_importe.grid(row=1, column=0)
 
         # Etiqueta para el importe total
-        label_importe = tk.Label(frame_importe, text="Importe Total:", font=self.font)
+        label_importe = tk.Label(
+            frame_importe, text="Importe Total:", font=self.font)
         label_importe.grid(row=0, column=0, padx=5, pady=5)
 
         # Etiqueta para el importe total
-        self.label_importe_total_horas = tk.Label(frame_importe, text="$0.00", font=("Arial", 20))
+        self.label_importe_total_horas = tk.Label(
+            frame_importe, text="$0.00", font=("Arial", 20))
         self.label_importe_total_horas.grid(row=0, column=1, padx=5, pady=5)
 
         frame_reloj = tk.Frame(frame_total_reloj, padx=5, pady=5)
         frame_reloj.grid(row=1, column=0)
 
-        self.canvas_background = tk.Canvas(frame_reloj, width=300, height=300, bg="white")
+        self.canvas_background = tk.Canvas(
+            frame_reloj, width=300, height=300, bg="white")
         self.canvas_background.pack()
 
         # Dibujar el círculo del reloj en el canvas de fondo
@@ -184,9 +202,12 @@ class RelojAnalogico:
             # Dibujar los números de los minutos en las líneas de división
             if i % 5 == 0:
                 number = i // 5 * 5
-                x_text = 150 + 130 * cos(angle)  # Ajustar la posición de los números
-                y_text = 150 - 130 * sin(angle)  # Ajustar la posición de los números
-                self.canvas_background.create_text(x_text, y_text, text=str(number), font=("Arial", 13))
+                # Ajustar la posición de los números
+                x_text = 150 + 130 * cos(angle)
+                # Ajustar la posición de los números
+                y_text = 150 - 130 * sin(angle)
+                self.canvas_background.create_text(
+                    x_text, y_text, text=str(number), font=("Arial", 13))
 
         # Dibujar las divisiones en 4 partes iguales en el canvas de fondo
         for i in range(4):
@@ -194,51 +215,58 @@ class RelojAnalogico:
             angle_division = radians(i * 90)
             x1_division = 150 + 100 * cos(angle_division)
             y1_division = 150 - 100 * sin(angle_division)
-            x2_division = 150 + 120 * cos(angle_division)  # Ajustar la longitud de las divisiones
-            y2_division = 150 - 120 * sin(angle_division)  # Ajustar la longitud de las divisiones
-            self.canvas_background.create_line(x1_division, y1_division, x2_division, y2_division, width=5, fill="gray")
+            # Ajustar la longitud de las divisiones
+            x2_division = 150 + 120 * cos(angle_division)
+            # Ajustar la longitud de las divisiones
+            y2_division = 150 - 120 * sin(angle_division)
+            self.canvas_background.create_line(
+                x1_division, y1_division, x2_division, y2_division, width=5, fill="gray")
 
         self.x_minute = 150
         self.y_minute = 150
-        self.minute_hand = self.canvas_background.create_line(150, 150, self.x_minute, self.y_minute, width=5, fill="black", tags="minute")
+        self.minute_hand = self.canvas_background.create_line(
+            150, 150, self.x_minute, self.y_minute, width=5, fill="black", tags="minute")
 
         # Frame para los datos
         self.frame_datos = tk.LabelFrame(frame_contenedor, text="Datos")
         self.frame_datos.grid(row=0, column=2)
 
-
         # Etiqueta para el tiempo total
-        self.label_tiempo_entrada = tk.Label(self.frame_datos, text="Entrada:\n00:00 Hrs", font=self.font)
+        self.label_tiempo_entrada = tk.Label(
+            self.frame_datos, text="Entrada:\n00:00 Hrs", font=self.font)
         self.label_tiempo_entrada.grid(row=0, column=0, padx=5, pady=5)
 
         # Etiqueta para el importe total
-        self.label_tiempo_salida = tk.Label(self.frame_datos, text="Salida:\n00:00 Hrs", font=self.font)
+        self.label_tiempo_salida = tk.Label(
+            self.frame_datos, text="Salida:\n00:00 Hrs", font=self.font)
         self.label_tiempo_salida.grid(row=1, column=0, padx=5, pady=5)
 
-
-
         # Etiqueta para el tiempo total
-        self.label_tiempo = tk.Label(self.frame_datos, text="Tiempo Total", font=self.font)
+        self.label_tiempo = tk.Label(
+            self.frame_datos, text="Tiempo Total", font=self.font)
         # self.label_tiempo.grid(row=2, column=0, padx=5, pady=5)
 
         # Etiqueta para el tiempo total
-        self.label_tiempo_total = tk.Label(self.frame_datos, text="00 Hrs 00 Min 00 Seg", font=("Arial", 25))
+        self.label_tiempo_total = tk.Label(
+            self.frame_datos, text="00 Hrs 00 Min 00 Seg", font=("Arial", 25))
         # self.label_tiempo_total.grid(row=3, column=0, padx=5, pady=5)
 
         # Etiqueta para el tiempo total
-        self.label_tarifa = tk.Label(self.frame_datos, text="Tarifa: Normal", font=self.font)
+        self.label_tarifa = tk.Label(
+            self.frame_datos, text="Tarifa: Normal", font=self.font)
         self.label_tarifa.grid(row=4, column=0, padx=5, pady=5)
-
 
         frame_importe = tk.Frame(self.frame_datos, padx=5, pady=5)
         frame_importe.grid(row=5, column=0)
 
         # Etiqueta para el importe total
-        self.label_importe = tk.Label(frame_importe, text="Importe Total: ", font=self.font)
+        self.label_importe = tk.Label(
+            frame_importe, text="Importe Total: ", font=self.font)
         self.label_importe.grid(row=0, column=0, padx=5, pady=5, sticky="w")
 
         # Etiqueta para el importe total
-        self.label_importe_total = tk.Label(frame_importe, text="$0.00", font=("Arial", 25))
+        self.label_importe_total = tk.Label(
+            frame_importe, text="$0.00", font=("Arial", 25))
         self.label_importe_total.grid(row=0, column=1, padx=5, pady=5)
 
         self.update_background(0, False)
@@ -284,7 +312,8 @@ class RelojAnalogico:
                 label_select = self.color_box_4
 
         # Crear un arco en el canvas con el color y el ángulo calculados
-        self.canvas_background.create_arc(50, 50, 250, 250, start=start_angle, extent=extent, fill=color, outline=color, tags="previous_area")
+        self.canvas_background.create_arc(
+            50, 50, 250, 250, start=start_angle, extent=extent, fill=color, outline=color, tags="previous_area")
 
         # Actualizar la posición de la manecilla de minutos en el reloj
         self.update_clock(all_minutes)
@@ -364,34 +393,39 @@ class RelojAnalogico:
 
         # Iterar para simular el paso del tiempo
         while current_minutes <= total_minutes:
-            label_select = self.update_background(current_minutes, more_than_hour)
+            label_select = self.update_background(
+                current_minutes, more_than_hour)
             self.root.update()  # Actualizar la ventana
             current_minutes += 1
-            self.root.after(int(time_per_frame * 1000))  # Convertir a milisegundos
+            # Convertir a milisegundos
+            self.root.after(int(time_per_frame * 1000))
 
             # Actualizar las horas cada 60 minutos
             if current_minutes % 60 == 0:
-                self.label_horas.config(text = f"{time_str}", font=("Arial", 20))
+                self.label_horas.config(text=f"{time_str}", font=("Arial", 20))
 
         # Iniciar el parpadeo de la etiqueta de color seleccionada
-        self.blinking_label_info_color.start_blinking(label_select, self.blink_interval)
-
+        self.blinking_label_info_color.start_blinking(
+            label_select, self.blink_interval)
 
         # Actualizar etiquetas con los valores de tiempo y importe
-        self.label_tiempo_entrada.config(text = f"Entrada:\n{entrada[:-3]} Hrs")
-        self.label_tiempo_salida.config(text = f"  Salida:\n{salida[:-3]} Hrs")
+        self.label_tiempo_entrada.config(text=f"Entrada:\n{entrada[:-3]} Hrs")
+        self.label_tiempo_salida.config(text=f"  Salida:\n{salida[:-3]} Hrs")
 
-        if days == 0:time_str = f"{self.hour:02d} Hrs {minute:02d} Min {seconds:02d} Seg"
+        if days == 0:
+            time_str = f"{self.hour:02d} Hrs {minute:02d} Min {seconds:02d} Seg"
 
-        self.label_tiempo_total.config(text = f"{time_str}")
-        self.label_importe_total.config(text = f"${importe}.00")
-        self.label_importe_total_horas.config(text = f"${importe}.00")
+        self.label_tiempo_total.config(text=f"{time_str}")
+        self.label_importe_total.config(text=f"${importe}.00")
+        self.label_importe_total_horas.config(text=f"${importe}.00")
 
         self.blinking_label_importe = BlinkingLabel()
-        self.blinking_label_importe.start_blinking(self.label_importe_total, self.blink_interval)
+        self.blinking_label_importe.start_blinking(
+            self.label_importe_total, self.blink_interval)
 
         self.blinking_label_importe_horas = BlinkingLabel()
-        self.blinking_label_importe_horas.start_blinking(self.label_importe_total_horas, self.blink_interval)
+        self.blinking_label_importe_horas.start_blinking(
+            self.label_importe_total_horas, self.blink_interval)
 
     def update_data(self, tarifa: str, importe: int) -> None:
         """Actualiza la información de la tarifa y el importe en la interfaz.
@@ -403,10 +437,10 @@ class RelojAnalogico:
         Returns:
             None
         """
-        self.label_importe_total.config(text = f"${importe}.00")
-        self.label_importe_total_horas.config(text = f"${importe}.00")
-        self.label_tarifa.config(text = f"Tarifa: {tarifa}")
-    
+        self.label_importe_total.config(text=f"${importe}.00")
+        self.label_importe_total_horas.config(text=f"${importe}.00")
+        self.label_tarifa.config(text=f"Tarifa: {tarifa}")
+
     def clear_data(self) -> None:
         """Limpia los datos en la interfaz.
 
@@ -417,24 +451,24 @@ class RelojAnalogico:
         self.blinking_label_importe.stop_blinking()
         self.blinking_label_importe_horas.stop_blinking()
         self.canvas_background.delete("previous_area")
-        self.label_tiempo_entrada.config(text = f"Entrada: 00:00 Hrs")
-        self.label_tiempo_salida.config(text =  f"  Salida: 00:00 Hrs")
+        self.label_tiempo_entrada.config(text=f"Entrada: 00:00 Hrs")
+        self.label_tiempo_salida.config(text=f"  Salida: 00:00 Hrs")
 
-        self.label_tiempo_total.config(text = f"0 Hrs 00 Min 00 Seg")
-        self.label_importe_total.config(text = f"$0.00")
-        self.label_importe_total_horas.config(text = f"$0.00")
-        self.label_tarifa.config(text = f"Tarifa: Normal")
-        self.label_horas.config(text = f"0 Días 0 Hrs 00 Min 00 Seg")
+        self.label_tiempo_total.config(text=f"0 Hrs 00 Min 00 Seg")
+        self.label_importe_total.config(text=f"$0.00")
+        self.label_importe_total_horas.config(text=f"$0.00")
+        self.label_tarifa.config(text=f"Tarifa: Normal")
+        self.label_horas.config(text=f"0 Días 0 Hrs 00 Min 00 Seg")
 
         self.update_background(0, False)
 
     def open_window(self):
         self.root.mainloop()
 
+
 if debug:
     # Ejemplo de uso:
     reloj_test = RelojAnalogico()
-    reloj_test.set_time(entrada=entrada_test, salida=salida_test, hour= hora_test,minute= minuto_test, importe=importe_test)
+    reloj_test.set_time(entrada=entrada_test, salida=salida_test,
+                        hour=hora_test, minute=minuto_test, importe=importe_test)
     reloj_test.open_window()
-
-

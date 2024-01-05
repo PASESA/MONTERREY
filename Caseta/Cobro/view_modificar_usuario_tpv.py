@@ -28,7 +28,8 @@ class View_modificar_usuarios:
         self.panel_crud = tk.Toplevel()
 
         # Se elimina la funcionalidad del botón de cerrar
-        self.panel_crud.protocol("WM_DELETE_WINDOW", lambda: self.desconectar())
+        self.panel_crud.protocol(
+            "WM_DELETE_WINDOW", lambda: self.desconectar())
 
         self.panel_crud.title(f'Modificar usuarios')
 
@@ -70,69 +71,83 @@ class View_modificar_usuarios:
         seccion_logo = ttk.LabelFrame(seccion_superior, text='')
         seccion_logo.grid(row=0, column=0, padx=5, sticky=tk.W)
 
-
         # Se crea un Label Frame para la sección de la conexión
         etiqueta_user = ttk.Label(seccion_superior, text=f'Bienvenido/a')
         etiqueta_user.grid(row=0, column=1, padx=5, pady=5)
 
-
-        seccion_datos_usuario = ttk.LabelFrame(self.panel_crud, text="\tIngresa los datos del usuario a registrar")
-        seccion_datos_usuario.grid(row=1, column=0,padx=10, pady=10)
+        seccion_datos_usuario = ttk.LabelFrame(
+            self.panel_crud, text="\tIngresa los datos del usuario a registrar")
+        seccion_datos_usuario.grid(row=1, column=0, padx=10, pady=10)
 
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Nombre de usuario: ')
-        etiqueta_nombre_usuario.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Nombre de usuario: ')
+        etiqueta_nombre_usuario.grid(
+            row=0, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        self.campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_nombre)
+        self.campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_nombre)
         self.campo_nombre_usuario.grid(row=0, column=1, padx=5, pady=5)
 
-
-
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Nombre completo: ')
-        etiqueta_nombre_usuario.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Nombre completo: ')
+        etiqueta_nombre_usuario.grid(
+            row=1, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_nombre_completo)
+        campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_nombre_completo)
         campo_nombre_usuario.grid(row=1, column=1, padx=5, pady=5)
 
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Contraseña: ')
-        etiqueta_nombre_usuario.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Contraseña: ')
+        etiqueta_nombre_usuario.grid(
+            row=2, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_contraseña)
+        campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_contraseña)
         campo_nombre_usuario.grid(row=2, column=1, padx=5, pady=5)
 
-
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Telefono: ')
-        etiqueta_nombre_usuario.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Telefono: ')
+        etiqueta_nombre_usuario.grid(
+            row=4, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_telefono)
+        campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_telefono)
         campo_nombre_usuario.grid(row=4, column=1, padx=5, pady=5)
 
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Telefono de emergencia: ')
-        etiqueta_nombre_usuario.grid(row=5, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Telefono de emergencia: ')
+        etiqueta_nombre_usuario.grid(
+            row=5, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_telefono_emergencia)
+        campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_telefono_emergencia)
         campo_nombre_usuario.grid(row=5, column=1, padx=5, pady=5)
 
-
         # Crea la etiqueta para el campo de entrada de texto del nombre de usuario
-        etiqueta_nombre_usuario = ttk.Label(seccion_datos_usuario, text='Sucursal: ')
-        etiqueta_nombre_usuario.grid(row=6, column=0, padx=5, pady=5, sticky=tk.W)
+        etiqueta_nombre_usuario = ttk.Label(
+            seccion_datos_usuario, text='Sucursal: ')
+        etiqueta_nombre_usuario.grid(
+            row=6, column=0, padx=5, pady=5, sticky=tk.W)
 
         # Crea el campo de entrada de texto para el nombre de usuario
-        campo_nombre_usuario = ttk.Entry(seccion_datos_usuario, textvariable=self.usuario_sucursal)
+        campo_nombre_usuario = ttk.Entry(
+            seccion_datos_usuario, textvariable=self.usuario_sucursal)
         campo_nombre_usuario.grid(row=6, column=1, padx=5, pady=5)
 
         # Crea un botón y lo empaqueta en la seccion_botones_consulta
-        boton_agregar_usuario = ttk.Button(self.panel_crud, text='Modificar usuario', command=self.modificar_usuario, width=16)
+        boton_agregar_usuario = ttk.Button(
+            self.panel_crud, text='Modificar usuario', command=self.modificar_usuario, width=16)
         boton_agregar_usuario.grid(row=2, column=0, padx=5, pady=5)
 
         # Establecer el foco en el campo de entrada de texto para el nombre de usuario
@@ -154,11 +169,13 @@ class View_modificar_usuarios:
                 raise IndexError("No dejar campos en blanco")
 
             # Actualizar los datos del usuario en la base de datos
-            datos_usuario = [usuario_nombre, usuario_contraseña, usuario_nombre_completo, usuario_telefono, usuario_telefono_emergencia, usuario_sucursal]
+            datos_usuario = [usuario_nombre, usuario_contraseña, usuario_nombre_completo,
+                             usuario_telefono, usuario_telefono_emergencia, usuario_sucursal]
             self.query.actualizar_usuarios(datos_usuario, self.id)
 
             # Mostrar mensaje de éxito y cerrar la ventana
-            mb.showinfo("Información", "El usuario fue modificado correctamente")
+            mb.showinfo("Información",
+                        "El usuario fue modificado correctamente")
             self.desconectar()
 
         except Exception as e:
@@ -170,4 +187,3 @@ class View_modificar_usuarios:
         """Cierra la ventana principal y detiene el hilo en el que se ejecuta."""
         self.panel_crud.quit()
         self.panel_crud.destroy()
-

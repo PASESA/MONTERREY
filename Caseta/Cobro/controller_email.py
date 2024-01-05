@@ -22,8 +22,8 @@ password = '#Monterrey75'
 
 # Correos para enviar la informacion
 EMAIL_send_database = "enviocorreospasesa@outlook.com"
-EMAIL_send_corte = "ingresos@pasesa.com.mx"
-EMAIL_notification = "ingresos@pasesa.com.mx"
+EMAIL_send_corte = "sistemas@pasesa.com.mx"
+EMAIL_notification = "sistemas@pasesa.com.mx"
 
 
 class ToolsEmail:
@@ -54,7 +54,7 @@ class ToolsEmail:
             print("No se pudo establecer conexion a Internet.")
             return False
 
-    def compress_to_zip(self, source: str, output_filename: str = None, is_dir: bool = False, rename:bool = True) -> str or None:
+    def compress_to_zip(self, source: str, output_filename: str = None, is_dir: bool = False, rename: bool = True) -> str or None:
         """Comprime un archivo o directorio en un archivo ZIP.
 
         Args:
@@ -81,14 +81,16 @@ class ToolsEmail:
                     last_number = files[len(files)-1][position_number:-4]
 
                     numbers = f"Cortes {first_number} a {last_number}" if first_number != last_number else f"Corte {first_number}"
-                    output_filename = f"{source[:-6]+numbers}.zip".replace(" ", "_")
+                    output_filename = f"{source[:-6]+numbers}.zip".replace(
+                        " ", "_")
 
             with ZipFile(output_filename, 'w', ZIP_DEFLATED) as zipf:
                 if is_dir:
                     for file in files:
                         file_path = path.join(source, file)
                         # Agregar archivos del directorio al ZIP con su ruta relativa
-                        zipf.write(file_path, arcname=path.relpath(file_path, source))
+                        zipf.write(file_path, arcname=path.relpath(
+                            file_path, source))
                 else:
                     # Agregar archivo al ZIP con su nombre base
                     arcname = path.basename(source)
@@ -137,7 +139,6 @@ class ToolsEmail:
             # Maneja cualquier error que pueda ocurrir al intentar eliminar el archivo
             print(f"No se pudo eliminar el archivo [{path_file}]: {e}")
 
-
     def get_DB(self, backup_path: str = '/ruta/de/respaldo/Parqueadero1.sql') -> str or None:
         """Genera un respaldo de la base de datos utilizando el comando mysqldump.
 
@@ -173,6 +174,7 @@ class ToolsEmail:
             print("Error al crear el respaldo.")
             self.remove_file(backup_path)
             return None
+
 
 class SendEmail:
     """Clase que permite enviar correos electronicos con archivos adjuntos."""
@@ -224,7 +226,8 @@ class SendEmail:
                 attached_file = MIMEApplication(f.read(), _subtype="zip")
                 filename = path.basename(zip_file)
                 print(filename)
-                attached_file.add_header('content-disposition', 'attachment', filename=filename)
+                attached_file.add_header(
+                    'content-disposition', 'attachment', filename=filename)
                 msg.attach(attached_file)
 
             # Conectar al servidor SMTP y enviar el correo
@@ -245,8 +248,10 @@ class SendEmail:
             print(e)
             return False
 
+
 # Inicializar herramientas de correo electronico y envío
 tools = ToolsEmail()
+
 
 def send_database() -> str:
     """
@@ -257,7 +262,7 @@ def send_database() -> str:
     """
 
     email_database = SendEmail(
-        username=username, 
+        username=username,
         password=password)
 
     # Generar ruta y obtener el archivo de respaldo de la base de datos
@@ -283,6 +288,7 @@ def send_database() -> str:
     tools.remove_file(zip_file)
     return "Error: No se pudo enviar la base de datos\n"
 
+
 def send_corte() -> str:
     """
     Envía la base de datos por correo electronico.
@@ -292,12 +298,12 @@ def send_corte() -> str:
     """
     dir_path = path.abspath(dir_cortes)
     files = listdir(dir_path)
-    if len(files) == 0: return "No hay cortes para enviar\n"
-
+    if len(files) == 0:
+        return "No hay cortes para enviar\n"
 
     # Inicializar herramientas de correo electronico y envío
     email_corte = SendEmail(
-        username=username, 
+        username=username,
         password=password)
 
     zip_file = tools.compress_to_zip(source=dir_path, is_dir=True)
@@ -322,6 +328,7 @@ def send_corte() -> str:
     tools.remove_file(zip_file)
     return "Error: No se pudo enviar el corte\n"
 
+
 def send_other_corte():
     """
     Envía la base de datos por correo electronico.
@@ -331,14 +338,16 @@ def send_other_corte():
     """
     dir_path = path.abspath("../Reimpresion_Cortes/")
     files = listdir(dir_path)
-    if len(files) == 0: return
+    if len(files) == 0:
+        return
 
     # Inicializar herramientas de correo electronico y envío
     email_corte = SendEmail(
-        username=username, 
+        username=username,
         password=password)
 
-    zip_file = tools.compress_to_zip(source=dir_path, is_dir=True, rename=False)
+    zip_file = tools.compress_to_zip(
+        source=dir_path, is_dir=True, rename=False)
 
     # Crear el asunto y mensaje del correo
     hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -346,7 +355,8 @@ def send_other_corte():
     message = f"Notificacion de reimpresion de corte del estacionamiento: {nombre_estacionamiento}."
 
     # Enviar el correo y manejar el resultado
-    email_corte.send_mail(to_email=EMAIL_notification, subject=subject, message=message, zip_file=zip_file)
+    email_corte.send_mail(to_email=EMAIL_notification,
+                          subject=subject, message=message, zip_file=zip_file)
 
     tools.remove_file(zip_file)
 
@@ -355,28 +365,27 @@ def main() -> None:
     """
     Funcion principal del programa para enviar la base de datos por correo electronico y mostrar el resultado.
     """
-    try: 
+    try:
         # Ejecutar la funcion para enviar los correos electronicos
         message_send_database = send_database()
         message_send_corte = send_corte()
 
         # Instanciar el objeto Usb para imprimir el resultado
-        ###-###printer = Usb(0x04b8, 0x0202, 0)
+        # -###printer = Usb(0x04b8, 0x0202, 0)
 
         # Alinea al centro el texto
-        ###-###printer.set(align = "center")
+        # -###printer.set(align = "center")
 
         # Imprimir separadores y mensaje de resultado en la consola
         print(""+"-" * 30 + "\n")
         print(""+f"{message_send_database}\n")
         print(""+f"{message_send_corte}\n")
         print(""+"-" * 30 + "\n")
-        ###-###printer.cut()
-        ###-###printer.close()
+        # -###printer.cut()
+        # -###printer.close()
 
         # Imprimir el mensaje en la consola
         print(message_send_database)
         print(message_send_corte)
     except Exception as e:
         print(e)
-

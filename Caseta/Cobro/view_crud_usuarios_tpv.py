@@ -14,7 +14,8 @@ class ViewCRUDUsuarios:
         """Constructor de la clase. Inicializa la ventana y los atributos."""
         # Crear la ventana principal
         self.panel_crud = tk.Toplevel()
-        self.panel_crud.protocol("WM_DELETE_WINDOW", lambda: self.desconectar())
+        self.panel_crud.protocol(
+            "WM_DELETE_WINDOW", lambda: self.desconectar())
         self.panel_crud.title(f'Administración de usuarios -> Monterrey')
         self.panel_crud.columnconfigure(0, weight=1)
 
@@ -37,26 +38,30 @@ class ViewCRUDUsuarios:
         # Sección de bienvenida
         seccion_logo = ttk.LabelFrame(seccion_superior, text='')
         seccion_logo.grid(row=0, column=0, padx=5, sticky=tk.W)
-        seccion_admin_usuarios = ttk.LabelFrame(seccion_superior, text=f'Bienvenido/a')
+        seccion_admin_usuarios = ttk.LabelFrame(
+            seccion_superior, text=f'Bienvenido/a')
         seccion_admin_usuarios.grid(row=0, column=1, sticky=tk.NW)
 
-        seccion_botones_admin_usuarios = ttk.LabelFrame(seccion_admin_usuarios, text="Selecciona qué deseas realizar")
+        seccion_botones_admin_usuarios = ttk.LabelFrame(
+            seccion_admin_usuarios, text="Selecciona qué deseas realizar")
         seccion_botones_admin_usuarios.grid(row=0, column=1, sticky=tk.NW)
 
         # Botón para agregar usuario
         boton_agregar_usuario = ttk.Button(seccion_botones_admin_usuarios, text='Agregar usuario',
-            command=lambda: [View_agregar_usuarios(), self.ver_usuarios()], width=16)
+                                           command=lambda: [View_agregar_usuarios(), self.ver_usuarios()], width=16)
         boton_agregar_usuario.grid(row=0, column=0, padx=5, pady=5)
 
         # Campo de entrada para el ID del usuario
-        etiqueta_user = ttk.Label(seccion_botones_admin_usuarios, text='Ingresa el ID del usuario: ')
+        etiqueta_user = ttk.Label(
+            seccion_botones_admin_usuarios, text='Ingresa el ID del usuario: ')
         etiqueta_user.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
-        self.campo_user = ttk.Entry(seccion_botones_admin_usuarios, textvariable=self.ID_usuario)
+        self.campo_user = ttk.Entry(
+            seccion_botones_admin_usuarios, textvariable=self.ID_usuario)
         self.campo_user.grid(row=0, column=2, padx=5, pady=5)
 
         # Botón para modificar usuario
         boton_modificar_usuario = ttk.Button(seccion_botones_admin_usuarios, text='Modificar usuario',
-            command=self.modificar_usuario, width=16)
+                                             command=self.modificar_usuario, width=16)
         boton_modificar_usuario.grid(row=0, column=3, padx=5, pady=5)
 
         # Botón para eliminar usuario
@@ -74,7 +79,8 @@ class ViewCRUDUsuarios:
         self.seccion_tabla.columnconfigure(0, weight=1)
         self.seccion_tabla.rowconfigure(0, weight=1)
 
-        columnas = ['ID', 'Nombre de usuario', 'Nombre completo', 'Fecha Alta', 'Telefono', 'Telefono de Emergencia', 'Sucursal']
+        columnas = ['ID', 'Nombre de usuario', 'Nombre completo',
+                    'Fecha Alta', 'Telefono', 'Telefono de Emergencia', 'Sucursal']
 
         # Crear un Treeview con una columna por cada campo de la tabla
         self.tabla = ttk.Treeview(self.seccion_tabla, columns=columnas)
@@ -96,16 +102,19 @@ class ViewCRUDUsuarios:
         self.tabla.column('#7', width=120, stretch=False)
 
         # Crear un Scrollbar vertical y lo asocia con el Treeview
-        scrollbar_Y = ttk.Scrollbar(self.seccion_tabla, orient='vertical', command=self.tabla.yview)
+        scrollbar_Y = ttk.Scrollbar(
+            self.seccion_tabla, orient='vertical', command=self.tabla.yview)
         self.tabla.configure(yscroll=scrollbar_Y.set)
         scrollbar_Y.grid(row=0, column=1, sticky='NS')
 
         # Crear un Scrollbar horizontal y lo asocia con el Treeview
-        scrollbar_X = ttk.Scrollbar(self.seccion_tabla, orient='horizontal', command=self.tabla.xview)
+        scrollbar_X = ttk.Scrollbar(
+            self.seccion_tabla, orient='horizontal', command=self.tabla.xview)
         self.tabla.configure(xscroll=scrollbar_X.set)
         scrollbar_X.grid(row=1, column=0, sticky='EW')
 
-        self.tabla.grid(row=0, column=0, sticky='NESW', padx=5, pady=5, ipadx=5, ipady=5, columnspan=2, rowspan=2)
+        self.tabla.grid(row=0, column=0, sticky='NESW', padx=5,
+                        pady=5, ipadx=5, ipady=5, columnspan=2, rowspan=2)
 
         self.seccion_tabla.grid_rowconfigure(0, weight=1, minsize=0)
 
@@ -140,7 +149,8 @@ class ViewCRUDUsuarios:
         Returns:
             bool: True si el usuario existe, False en caso contrario.
         """
-        self.registros = self.controlador_crud_usuarios.consultar_usuario(id=id)
+        self.registros = self.controlador_crud_usuarios.consultar_usuario(
+            id=id)
         if self.registros:
             return True
         else:
@@ -161,7 +171,8 @@ class ViewCRUDUsuarios:
             self.campo_user.focus()
             return None
 
-        pregunta = mb.askokcancel("Alerta", f"¿Estás seguro de eliminar al usuario con folio: {id}?")
+        pregunta = mb.askokcancel(
+            "Alerta", f"¿Estás seguro de eliminar al usuario con folio: {id}?")
         if pregunta:
             if self.consultar_usuario(id):
                 self.controlador_crud_usuarios.eliminar_usuario(id)
@@ -169,7 +180,8 @@ class ViewCRUDUsuarios:
                 self.ID_usuario.set("")
                 self.campo_user.focus()
             else:
-                mb.showwarning("Error", f"No existe usuario con folio {id} o ya ha sido eliminado")
+                mb.showwarning(
+                    "Error", f"No existe usuario con folio {id} o ya ha sido eliminado")
                 self.ID_usuario.set("")
                 self.ver_usuarios()
                 self.campo_user.focus()
@@ -186,12 +198,15 @@ class ViewCRUDUsuarios:
             self.campo_user.focus()
             return None
 
-        pregunta = mb.askokcancel("Alerta", f"¿Estás seguro de modificar al usuario con folio: {id}?")
+        pregunta = mb.askokcancel(
+            "Alerta", f"¿Estás seguro de modificar al usuario con folio: {id}?")
 
         if pregunta:
             if self.consultar_usuario(id):
-                usuario_informacion = self.controlador_crud_usuarios.consultar_usuario(id=id)
-                View_modificar_usuarios(usuario_informacion=usuario_informacion, id=id)
+                usuario_informacion = self.controlador_crud_usuarios.consultar_usuario(
+                    id=id)
+                View_modificar_usuarios(
+                    usuario_informacion=usuario_informacion, id=id)
                 self.ver_usuarios()
                 self.ID_usuario.set("")
                 self.campo_user.focus()
