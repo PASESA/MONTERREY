@@ -84,7 +84,7 @@
             "tarifa_23_hora": 0.0,
             "tarifa_24_hora": 0.0
         },
-        "tarifa_boleto_perdido": 200
+        "tarifa_boleto_perdido": 250
     },
     "funcionamiento_interno": {
         "db": {
