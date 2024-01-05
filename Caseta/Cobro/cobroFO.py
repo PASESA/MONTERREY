@@ -22,6 +22,10 @@ from threading import Thread
 from os import path, listdir
 from controller_email import ToolsEmail
 from enum import Enum
+
+from config_controller import ConfigController
+instance_config = ConfigController()
+
 tools = ToolsEmail()
 
 date_format_system = "%Y-%m-%d %H:%M:%S"
@@ -3311,12 +3315,15 @@ class FormularioOperacion:
 
         frame_checkbox = tk.Frame(tarifa_general_frame)
         frame_checkbox.grid(column=0, row=1, padx=3, pady=3)
+        self.variable_primer_hora = tk.BooleanVar()
         checkbox_pimera_hora = tk.Checkbutton(
-            frame_checkbox, text="Primera hora", font=('Arial', 12), anchor="center")
+            frame_checkbox, variable=self.variable_primer_hora, text="Primera hora", font=('Arial', 12), anchor="center")
         checkbox_pimera_hora.grid(
             column=0, row=0, padx=3, pady=3)
+
+        self.variable_segunda_hora = tk.BooleanVar()
         checkbox_segunda_hora = tk.Checkbutton(
-            frame_checkbox, text="Segunda hora", font=('Arial', 12), anchor="center")
+            frame_checkbox, variable=self.variable_segunda_hora, text="Segunda hora", font=('Arial', 12), anchor="center")
         checkbox_segunda_hora.grid(
             column=1, row=0, padx=3, pady=3)
 
@@ -3326,7 +3333,8 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de hora completa", font=('Arial', 12))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_importe_hora = tk.IntVar()
+        self.variable_importe_hora = tk.IntVar(
+            value=instance_config.get_config("tarifa", "tarifa_simple", "tarifa_hora"))
         entry_importe_hora = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_hora, justify='center')
         entry_importe_hora.grid(column=1, row=0, padx=3, pady=3)
@@ -3334,34 +3342,38 @@ class FormularioOperacion:
         label = tk.Label(frame_importe_hora,
                          text="Importe de 1/4 hora", font=('Arial', 12))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.IntVar()
+        self.variable_importe_primer_cuarto_hora = tk.IntVar(
+            value=instance_config.get_config("tarifa", "tarifa_simple", "tarifa_1_fraccion"))
         entry_importe_cuarto_hora = tk.Entry(
-            frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+            frame_importe_hora, width=15, textvariable=self.variable_importe_primer_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
             column=1, row=1, padx=3, pady=3)
 
         label = tk.Label(frame_importe_hora,
                          text="Importe de 2/4 hora", font=('Arial', 12))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.IntVar()
+        self.variable_importe_segundo_cuarto_hora = tk.IntVar(
+            value=instance_config.get_config("tarifa", "tarifa_simple", "tarifa_2_fraccion"))
         entry_importe_cuarto_hora = tk.Entry(
-            frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+            frame_importe_hora, width=15, textvariable=self.variable_importe_segundo_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
             column=1, row=2, padx=3, pady=3)
 
         label = tk.Label(frame_importe_hora,
                          text="Importe de 3/4 hora", font=('Arial', 12))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_importe_cuarto_hora = tk.IntVar()
+        self.variable_importe_tercer_cuarto_hora = tk.IntVar(
+            value=instance_config.get_config("tarifa", "tarifa_simple", "tarifa_3_fraccion"))
         entry_importe_cuarto_hora = tk.Entry(
-            frame_importe_hora, width=15, textvariable=self.variable_importe_cuarto_hora, justify='center')
+            frame_importe_hora, width=15, textvariable=self.variable_importe_tercer_cuarto_hora, justify='center')
         entry_importe_cuarto_hora.grid(
             column=1, row=3, padx=3, pady=3)
 
         label = tk.Label(frame_importe_hora,
                          text="Importe de boleto perdido", font=('Arial', 12))
         label.grid(column=0, row=4, padx=3, pady=3)
-        self.variable_importe_boleto_perdido = tk.IntVar()
+        self.variable_importe_boleto_perdido = tk.IntVar(
+            value=instance_config.get_config("tarifa", "tarifa_boleto_perdido"))
         entry_importe_boleto_perdido = tk.Entry(
             frame_importe_hora, width=15, textvariable=self.variable_importe_boleto_perdido, justify='center')
         entry_importe_boleto_perdido.grid(
@@ -3389,7 +3401,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Nombre del estacionamiento", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_nombre_estacionamiento = tk.StringVar()
+        self.variable_nombre_estacionamiento = tk.StringVar(
+            value=instance_config.get_config("general", "informacion_estacionamiento", "nombre_estacionamiento"))
         entry_nombre_estacionamiento = tk.Entry(
             labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_nombre_estacionamiento, justify='center')
         entry_nombre_estacionamiento.grid(
@@ -3398,7 +3411,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Logo", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_path_logo = tk.StringVar()
+        self.variable_path_logo = tk.StringVar(
+            value=instance_config.get_config("general", "informacion_estacionamiento", "path_logo"))
         entry_variable_path_logo = tk.Entry(
             labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_path_logo, justify='center')
         entry_variable_path_logo.grid(
@@ -3407,7 +3421,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Correo", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_correo_estacionamiento = tk.StringVar()
+        self.variable_correo_estacionamiento = tk.StringVar(
+            value=instance_config.get_config("general", "informacion_estacionamiento", "correo"))
         entry_correo_estacionamiento = tk.Entry(
             labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_correo_estacionamiento, justify='center')
         entry_correo_estacionamiento.grid(
@@ -3416,7 +3431,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Contraseña", font=('Arial', 11))
         label.grid(column=0, row=4, padx=3, pady=3)
-        self.variable_contraseña_correo = tk.StringVar()
+        self.variable_contraseña_correo = tk.StringVar(
+            value=instance_config.get_config("general", "informacion_estacionamiento", "contraseña"))
         entry_contraseña_correo = tk.Entry(
             labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_contraseña_correo, justify='center')
         entry_contraseña_correo.grid(
@@ -3425,7 +3441,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_info_estacionamiento, text="Cajones de estacionamiento", font=('Arial', 11))
         label.grid(column=0, row=5, padx=3, pady=3)
-        self.variable_cantidad_cajones = tk.IntVar()
+        self.variable_cantidad_cajones = tk.IntVar(
+            value=instance_config.get_config("general", "informacion_estacionamiento", "cantidad_cajones"))
         entry_cantidad_cajones = tk.Entry(
             labelframe_formulario_info_estacionamiento, width=15, textvariable=self.variable_cantidad_cajones, justify='center')
         entry_cantidad_cajones.grid(
@@ -3444,7 +3461,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_pensionados, text="Contraseña del modulo", font=('Arial', 11))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_contraseña_modulo_pensionados = tk.StringVar()
+        self.variable_contraseña_modulo_pensionados = tk.StringVar(
+            value=instance_config.get_config("general", "configuracion_pensionados", "contraseña"))
         entry_contraseña_modulo_pensionados = tk.Entry(
             labelframe_formulario_pensionados, width=15, textvariable=self.variable_contraseña_modulo_pensionados, justify='center')
         entry_contraseña_modulo_pensionados.grid(
@@ -3453,7 +3471,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_pensionados, text="Costo de tarjeta/tarjetón", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_costo_tarjeta = tk.IntVar()
+        self.variable_costo_tarjeta = tk.IntVar(value=instance_config.get_config(
+            "general", "configuracion_pensionados", "costo_tarjeta"))
         entry_costo_tarjeta = tk.Entry(
             labelframe_formulario_pensionados, width=15, textvariable=self.variable_costo_tarjeta, justify='center')
         entry_costo_tarjeta.grid(
@@ -3462,16 +3481,18 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_pensionados, text="Costo reposición de tarjeta/tarjetón", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_costo_reposicion = tk.IntVar()
-        entry_variable_costo_reposicion = tk.Entry(
+        self.variable_costo_reposicion = tk.IntVar(value=instance_config.get_config(
+            "general", "configuracion_pensionados", "costo_reposicion_tarjeta"))
+        entry_costo_reposicion = tk.Entry(
             labelframe_formulario_pensionados, width=15, textvariable=self.variable_costo_reposicion, justify='center')
-        entry_variable_costo_reposicion.grid(
+        entry_costo_reposicion.grid(
             column=1, row=2, padx=3, pady=3)
 
         label = tk.Label(
             labelframe_formulario_pensionados, text="Penalización diaria por pago atrasado", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_penalizacion_diaria = tk.IntVar()
+        self.variable_penalizacion_diaria = tk.IntVar(value=instance_config.get_config(
+            "general", "configuracion_pensionados", "penalizacion_diaria"))
         entry_penalizacion_diaria = tk.Entry(
             labelframe_formulario_pensionados, width=15, textvariable=self.variable_penalizacion_diaria, justify='center')
         entry_penalizacion_diaria.grid(
@@ -3504,7 +3525,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_impresora_info, text="ID Vendor", font=('Arial', 11))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_id_vendor_impresora = tk.StringVar()
+        self.variable_id_vendor_impresora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "impresora", "idVendor"))
         entry_id_vendor_impresora = tk.Entry(
             labelframe_impresora_info, width=15, textvariable=self.variable_id_vendor_impresora, justify='center')
         entry_id_vendor_impresora.grid(
@@ -3513,7 +3535,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_impresora_info, text="ID Product", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_id_product_impresora = tk.StringVar()
+        self.variable_id_product_impresora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "impresora", "idProduct"))
         entry_id_product_impresora = tk.Entry(
             labelframe_impresora_info, width=15, textvariable=self.variable_id_product_impresora, justify='center')
         entry_id_product_impresora.grid(
@@ -3527,7 +3550,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Formato de fecha de interface", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_formato_fecha_interface = tk.StringVar()
+        self.variable_formato_fecha_interface = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "formato_hora_interface"))
         entry_formato_fecha_interface = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_formato_fecha_interface, justify='center')
         entry_formato_fecha_interface.grid(
@@ -3536,7 +3560,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Formato de fecha de boleto", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_formato_fecha_boleto = tk.StringVar()
+        self.variable_formato_fecha_boleto = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "formato_hora_boleto"))
         entry_formato_fecha_boleto = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_formato_fecha_boleto, justify='center')
         entry_formato_fecha_boleto.grid(
@@ -3545,7 +3570,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Formato de fecha de reloj", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_formato_fecha_reloj = tk.StringVar()
+        self.variable_formato_fecha_reloj = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "formato_hora_reloj"))
         entry_formato_fecha_reloj = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_formato_fecha_reloj, justify='center')
         entry_formato_fecha_reloj.grid(
@@ -3554,7 +3580,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Fuente del sistema", font=('Arial', 11))
         label.grid(column=0, row=4, padx=3, pady=3)
-        self.variable_fuente_sistema = tk.StringVar()
+        self.variable_fuente_sistema = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "fuente"))
         entry_formato_fuente_sistema = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_fuente_sistema, justify='center')
         entry_formato_fuente_sistema.grid(
@@ -3563,7 +3590,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_form, text="Color de los botones", font=('Arial', 11))
         label.grid(column=0, row=5, padx=3, pady=3)
-        self.variable_color_botones_sistema = tk.StringVar()
+        self.variable_color_botones_sistema = tk.StringVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "color_botones"))
         entry_color_botones_sistema = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_color_botones_sistema, justify='center')
         entry_color_botones_sistema.grid(
@@ -3574,31 +3602,36 @@ class FormularioOperacion:
         labelframe_form.grid(
             column=0, row=3, padx=3, pady=3)
 
-        self.variable_requiere_placa = tk.BooleanVar()
+        self.variable_requiere_placa = tk.BooleanVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "requiere_placa"))
         entry_requiere_placa = tk.Checkbutton(
             labelframe_form, variable=self.variable_requiere_placa, justify='center', text="Requiere placa para generar boleto", font=('Arial', 11))
         entry_requiere_placa.grid(
             column=0, row=1, padx=3, pady=3)
 
-        self.variable_penalizacion_bolet_perdido = tk.BooleanVar()
+        self.variable_penalizacion_bolet_perdido = tk.BooleanVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "penalizacion_boleto_perdido"))
         entry_penalizacion_bolet_perdido = tk.Checkbutton(
             labelframe_form, variable=self.variable_penalizacion_bolet_perdido, justify='center', text="Aplica penalización mas\nimporte de boleto perdido", font=('Arial', 11))
         entry_penalizacion_bolet_perdido.grid(
             column=0, row=2, padx=3, pady=3)
 
-        self.variable_reloj_habilitado = tk.BooleanVar()
+        self.variable_reloj_habilitado = tk.BooleanVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "reloj"))
         entry_reloj_habilitado = tk.Checkbutton(
             labelframe_form, variable=self.variable_reloj_habilitado, justify='center', text="Reloj habilitado", font=('Arial', 11))
         entry_reloj_habilitado.grid(
             column=0, row=3, padx=3, pady=3)
 
-        self.variable_envio_informacion = tk.BooleanVar()
+        self.variable_envio_informacion = tk.BooleanVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "envio_información"))
         entry_formato_envio_informacion = tk.Checkbutton(
             labelframe_form, variable=self.variable_envio_informacion, justify='center', text="Envio de información", font=('Arial', 11))
         entry_formato_envio_informacion.grid(
             column=0, row=4, padx=3, pady=3)
 
-        self.variable_pantalla_completa = tk.BooleanVar()
+        self.variable_pantalla_completa = tk.BooleanVar(value=instance_config.get_config(
+            "general", "configuracion_sistema", "pantalla_completa"))
         entry_formato_pantalla_completa = tk.Checkbutton(
             labelframe_form, variable=self.variable_pantalla_completa, justify='center', text="Pantalla completa", font=('Arial', 11))
         entry_formato_pantalla_completa.grid(
@@ -3620,7 +3653,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_config_envio, text="Destinatario de base de datos", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_destinatario_db = tk.StringVar()
+        self.variable_destinatario_db = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_envio", "destinatario_DB"))
         entry_destinatario_db = tk.Entry(
             labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_db, justify='center')
         entry_destinatario_db.grid(
@@ -3629,7 +3663,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_config_envio, text="Destinatario de corte", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_destinatario_corte = tk.StringVar()
+        self.variable_destinatario_corte = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_envio", "destinatario_corte"))
         entry_variable_destinatario_corte = tk.Entry(
             labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_corte, justify='center')
         entry_variable_destinatario_corte.grid(
@@ -3638,7 +3673,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_config_envio, text="Destinatario de notificaciones", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_destinatario_notificaciones = tk.StringVar()
+        self.variable_destinatario_notificaciones = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_envio", "destinatario_notificaciones"))
         entry_destinatario_notificaciones = tk.Entry(
             labelframe_formulario_config_envio, width=15, textvariable=self.variable_destinatario_notificaciones, justify='center')
         entry_destinatario_notificaciones.grid(
@@ -3655,18 +3691,20 @@ class FormularioOperacion:
             column=0, row=1, padx=3, pady=3)
 
         label = tk.Label(
-            labelframe_formulario_reloj, text="Color menor a una hora", font=('Arial', 11))
+            labelframe_formulario_reloj, text="Color de la primera hora", font=('Arial', 11))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_color_menor_hora = tk.StringVar()
-        entry_color_menor_hora = tk.Entry(
-            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_menor_hora, justify='center')
-        entry_color_menor_hora.grid(
+        self.variable_color_primera_hora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_primera_hora"))
+        entry_color_primera_hora = tk.Entry(
+            labelframe_formulario_reloj, width=15, textvariable=self.variable_color_primera_hora, justify='center')
+        entry_color_primera_hora.grid(
             column=1, row=0, padx=3, pady=3)
 
         label = tk.Label(
             labelframe_formulario_reloj, text="Color hora completa", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_color_hora_completa = tk.StringVar()
+        self.variable_color_hora_completa = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_hora_completa"))
         entry_color_hora_completa = tk.Entry(
             labelframe_formulario_reloj, width=15, textvariable=self.variable_color_hora_completa, justify='center')
         entry_color_hora_completa.grid(
@@ -3675,7 +3713,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_reloj, text="Color 1/4 Hora", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_color_1_4_hora = tk.StringVar()
+        self.variable_color_1_4_hora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_1_fraccion"))
         entry_variable_color_1_4_hora = tk.Entry(
             labelframe_formulario_reloj, width=15, textvariable=self.variable_color_1_4_hora, justify='center')
         entry_variable_color_1_4_hora.grid(
@@ -3684,7 +3723,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_reloj, text="Color 2/4 Hora", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable_color_2_4_hora = tk.StringVar()
+        self.variable_color_2_4_hora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_2_fraccion"))
         entry_variable_color_2_4_hora = tk.Entry(
             labelframe_formulario_reloj, width=15, textvariable=self.variable_color_2_4_hora, justify='center')
         entry_variable_color_2_4_hora.grid(
@@ -3693,7 +3733,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_reloj, text="Color 3/4 Hora", font=('Arial', 11))
         label.grid(column=0, row=4, padx=3, pady=3)
-        self.variable_color_3_4_hora = tk.StringVar()
+        self.variable_color_3_4_hora = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_3_fraccion"))
         entry_variable_color_3_4_hora = tk.Entry(
             labelframe_formulario_reloj, width=15, textvariable=self.variable_color_3_4_hora, justify='center')
         entry_variable_color_3_4_hora.grid(
@@ -3702,7 +3743,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_reloj, text="Color alerta", font=('Arial', 11))
         label.grid(column=0, row=5, padx=3, pady=3)
-        self.variable_color_alerta = tk.StringVar()
+        self.variable_color_alerta = tk.StringVar(value=instance_config.get_config(
+            "general", "configuiracion_reloj", "color_alerta"))
         entry_variable_color_alerta = tk.Entry(
             labelframe_formulario_reloj, width=15, textvariable=self.variable_color_alerta, justify='center')
         entry_variable_color_alerta.grid(
@@ -3728,7 +3770,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_db, text="Nombre de usuario", font=('Arial', 11))
         label.grid(column=0, row=1, padx=3, pady=3)
-        self.variable_db_usuario = tk.StringVar()
+        self.variable_db_usuario = tk.StringVar(value=instance_config.get_config(
+            "funcionamiento_interno", "db", "usuario"))
         entry_db_usuario = tk.Entry(
             labelframe_formulario_db, width=15, textvariable=self.variable_db_usuario, justify='center')
         entry_db_usuario.grid(
@@ -3737,7 +3780,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_db, text="Contraseña", font=('Arial', 11))
         label.grid(column=0, row=2, padx=3, pady=3)
-        self.variable_db_contraseña = tk.StringVar()
+        self.variable_db_contraseña = tk.StringVar(value=instance_config.get_config(
+            "funcionamiento_interno", "db", "contraseña"))
         entry_variable_db_contraseña = tk.Entry(
             labelframe_formulario_db, width=15, textvariable=self.variable_db_contraseña, justify='center')
         entry_variable_db_contraseña.grid(
@@ -3746,7 +3790,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_db, text="Host", font=('Arial', 11))
         label.grid(column=0, row=3, padx=3, pady=3)
-        self.variable__db_host = tk.StringVar()
+        self.variable__db_host = tk.StringVar(value=instance_config.get_config(
+            "funcionamiento_interno", "db", "host"))
         entry__db_host = tk.Entry(
             labelframe_formulario_db, width=15, textvariable=self.variable__db_host, justify='center')
         entry__db_host.grid(
@@ -3755,7 +3800,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_db, text="Base de datos", font=('Arial', 11))
         label.grid(column=0, row=4, padx=3, pady=3)
-        self.variable_db_db = tk.StringVar()
+        self.variable_db_db = tk.StringVar(value=instance_config.get_config(
+            "funcionamiento_interno", "db", "db"))
         entry_db_db = tk.Entry(
             labelframe_formulario_db, width=15, textvariable=self.variable_db_db, justify='center')
         entry_db_db.grid(
@@ -3775,7 +3821,8 @@ class FormularioOperacion:
         label = tk.Label(
             labelframe_formulario_controlador, text="Pin de barrera", font=('Arial', 11))
         label.grid(column=0, row=0, padx=3, pady=3)
-        self.variable_pin_barrera = tk.IntVar()
+        self.variable_pin_barrera = tk.IntVar(value=instance_config.get_config(
+            "funcionamiento_interno", "controlador", "pin_barrera"))
         entry_pin_barrera = tk.Entry(
             labelframe_formulario_controlador, width=15, textvariable=self.variable_pin_barrera, justify='center')
         entry_pin_barrera.grid(
