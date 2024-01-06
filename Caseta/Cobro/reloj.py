@@ -419,8 +419,8 @@ class RelojAnalogico:
             label_select, self.blink_interval)
 
         # Actualizar etiquetas con los valores de tiempo y importe
-        self.label_tiempo_entrada.config(text=f"Entrada:\n{entrada[:-3]} Hrs")
-        self.label_tiempo_salida.config(text=f"  Salida:\n{salida[:-3]} Hrs")
+        self.label_tiempo_entrada.config(text=f"Entrada:\n{entrada} Hrs")
+        self.label_tiempo_salida.config(text=f"  Salida:\n{salida} Hrs")
 
         if days == 0:
             time_str = f"{self.hour:02d} Hrs {minute:02d} Min {seconds:02d} Seg"

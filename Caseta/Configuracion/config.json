@@ -15,7 +15,7 @@
             },
             "formato_hora_interface": "%Y-%m-%d %H:%M",
             "formato_hora_boleto": "%d-%b-%Y %H:%M",
-            "formato_hora_reloj": "%d-%b-%Y %H:%M:%S",
+            "formato_hora_reloj_expedidor_boleto": "%d-%b-%Y %H:%M:%S",
             "color_botones": "#062546",
             "color_letra_botones": "white",
             "fuente": "Arial",

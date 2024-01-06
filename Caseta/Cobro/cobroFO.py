@@ -73,7 +73,7 @@ class FormularioOperacion:
         self.date_format_ticket = self.instance_config.get_config(
             "general", "configuracion_sistema", "formato_hora_boleto")
         self.date_format_clock = self.instance_config.get_config(
-            "general", "configuracion_sistema", "formato_hora_reloj")
+            "general", "configuracion_sistema", "formato_hora_reloj_expedidor_boleto")
 
         self.penalizacion_con_importe = self.instance_config.get_config(
             "general", "configuracion_sistema", "penalizacion_boleto_perdido")
@@ -3598,7 +3598,7 @@ class FormularioOperacion:
             labelframe_form, text="Formato de fecha de reloj", font=self.fuente_formulario_configuracion)
         label.grid(column=0, row=3, padx=3, pady=3, sticky=tk.NW)
         self.variable_formato_fecha_reloj = tk.StringVar(value=self.instance_config.get_config(
-            "general", "configuracion_sistema", "formato_hora_reloj"))
+            "general", "configuracion_sistema", "formato_hora_reloj_expedidor_boleto"))
         entry_formato_fecha_reloj = tk.Entry(
             labelframe_form, width=15, textvariable=self.variable_formato_fecha_reloj, justify='center', font=self.fuente_formulario_configuracion)
         entry_formato_fecha_reloj.grid(
