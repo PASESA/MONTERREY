@@ -47,7 +47,7 @@
     "tarifa": {
         "tarifa_sistema": "",
         "tarifa_simple": {
-            "inicio_cobro_fraccion": 1,
+            "inicio_cobro_fraccion": 2,
             "tarifa_1_fraccion": 7.0,
             "tarifa_2_fraccion": 14.0,
             "tarifa_3_fraccion": 21.0,
