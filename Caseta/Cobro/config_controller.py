@@ -8,6 +8,7 @@ class ConfigController:
         """
         # Ruta al archivo de configuración JSON
         self.__json_path = '../Configuracion/config.json'
+        self.__json_path = r'Caseta\Configuracion\config.json'
 
     def get_config(self, *args: tuple):
         """

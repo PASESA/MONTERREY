@@ -5,6 +5,7 @@
             "path_logo": "a xd",
             "correo": "sistemas@pasesa.com.mx",
             "contraseña": "@System2023",
+            "iv": "",
             "cantidad_cajones": 200
         },
         "configuracion_sistema": {
@@ -90,6 +91,7 @@
         "db": {
             "usuario": "Admin",
             "contraseña": "P4S3S4_ADMIN",
+            "iv": "",
             "host": "localhost",
             "db": "db_monterrey_89"
         },

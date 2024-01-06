@@ -755,14 +755,18 @@ class FormularioOperacion:
             minutos = 4
 
         importe = 0
+        importe_hora = self.instance_config.get_config(
+            "tarifa", "tarifa_simple", "tarifa_hora")
+        inicio_cobro_fraccion = self.instance_config.get_config(
+            "tarifa", "tarifa_simple", "inicio_cobro_fraccion") - 1
 
-        if self.dias_dentro == 0 and self.horas_dentro == 0:
+        if self.dias_dentro == 0 and self.horas_dentro < inicio_cobro_fraccion:
             # Si la permanencia es menor a 1 hora, se aplica una tarifa fija de 28 unidades
-            importe = 28
+            importe = importe_hora * self.horas_dentro if self.horas_dentro > 0 else importe_hora
         else:
             # Si la permanencia es mayor a 1 hora, se calcula el importe según una formula específica
             importe = ((self.dias_dentro) * 250 +
-                       (self.horas_dentro * 28) + (minutos) * 7)
+                       (self.horas_dentro * importe_hora) + (minutos) * 7)
 
         # Establecer el importe y mostrarlo
         self.mostrar_importe(importe)
