@@ -742,17 +742,16 @@ class FormularioOperacion:
         self.TiempoTotal_auxiliar.set(self.TiempoTotal.get()[:-3])
 
         # Calcula la tarifa y el importe a pagar
-        minutos = 0
-        if self.minutos_dentro == 0:
-            minutos = 0
-        elif self.minutos_dentro < 16 and self.minutos_dentro >= 1:
-            minutos = 1
+        importe_cuarto_hora = 0
+        if self.minutos_dentro < 16 and self.minutos_dentro >= 1:
+            importe_cuarto_hora = self.instance_config.get_config(
+                "tarifa", "tarifa_simple", "tarifa_1_fraccion")
         elif self.minutos_dentro < 31 and self.minutos_dentro >= 16:
-            minutos = 2
+            importe_cuarto_hora = self.instance_config.get_config(
+                "tarifa", "tarifa_simple", "tarifa_2_fraccion")
         elif self.minutos_dentro < 46 and self.minutos_dentro >= 31:
-            minutos = 3
-        elif self.minutos_dentro <= 59 and self.minutos_dentro >= 46:
-            minutos = 4
+            importe_cuarto_hora = self.instance_config.get_config(
+                "tarifa", "tarifa_simple", "tarifa_3_fraccion")
 
         importe = 0
         importe_hora = self.instance_config.get_config(
@@ -765,8 +764,7 @@ class FormularioOperacion:
             importe = importe_hora * self.horas_dentro if self.horas_dentro > 0 else importe_hora
         else:
             # Si la permanencia es mayor a 1 hora, se calcula el importe según una formula específica
-            importe = ((self.dias_dentro) * 250 +
-                       (self.horas_dentro * importe_hora) + (minutos) * 7)
+            importe = (self.dias_dentro * 250) + (self.horas_dentro * importe_hora) + importe_cuarto_hora
 
         # Establecer el importe y mostrarlo
         self.mostrar_importe(importe)
