@@ -348,9 +348,6 @@ class Entrada:
             # Cambiar el label de auto a rojo y con el mensaje de que no hay auto
             self.change_info_label(self.label_auto, Alerts.AUTO_NOT_EXISTS, Colors.RED)
 
-            # Imprimir en la consola que no ejecuta Pensionado
-            print("No ejecuta Pensionado")
-
             # Limpiar el entry de la tarjeta
             self.variable_numero_tarjeta.set("")
 
